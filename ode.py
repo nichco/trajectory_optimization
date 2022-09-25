@@ -1,6 +1,5 @@
 import csdl
 from atm_explicit import Atm
-from performance import load_factor, dynamic_pressure
 
 
 class ODESystemModel(csdl.Model):
@@ -29,7 +28,10 @@ class ODESystemModel(csdl.Model):
         # constants
         g = 9.81 # (m/s^2)
         
-        alpha = csdl.arctan(w/u) # angle of attack
+        # angle of attack
+        alpha = csdl.arctan(w/u)
+
+        # add aerodynamic model
         
         fax = -drag*csdl.cos(alpha) + lift*csdl.sin(alpha)
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
