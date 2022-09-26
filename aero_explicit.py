@@ -1,0 +1,1 @@
+from aero_surrogate import sm_cl, sm_cd
