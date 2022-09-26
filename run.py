@@ -58,6 +58,7 @@ class RunModel(csdl.Model):
         # add design variables
         self.add_design_variable('theta',lower=-np.pi/6,upper=np.pi/6)
         self.add_design_variable('thrust',lower=0,upper=1)
+        self.add_design_variable('dt',lower=0,upper=5)
         # add objective
 
 
