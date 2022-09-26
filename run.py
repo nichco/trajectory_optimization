@@ -77,7 +77,12 @@ dt = 1
 num = 10
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
-sim.run()
+# sim.run()
+
+prob = CSDLProblem(problem_name='TrajectoryOptimization', simulator=sim)
+optimizer = SLSQP(prob, maxiter=100, ftol=1e-10)
+optimizer.solve()
+optimizer.print_results()
 
 
 t2 = time.perf_counter()
