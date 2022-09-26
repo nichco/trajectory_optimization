@@ -29,7 +29,7 @@ class RunModel(csdl.Model):
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
         # add dynamic inputs to the csdl model
-        thrust = np.ones(num)*0
+        thrust = np.ones(num)*1000
         self.create_input('thrust',thrust)
         theta = np.ones(num)*np.deg2rad(3)
         self.create_input('theta',theta)
@@ -54,12 +54,17 @@ class RunModel(csdl.Model):
         # compute load factor
 
         # add constraints
+        final_altitude = z[-1]
+        self.register_output('final_altitude', final_altitude)
+        self.add_constraint('final_altitude', equals=10)
 
         # add design variables
         self.add_design_variable('theta',lower=-np.pi/6,upper=np.pi/6)
         self.add_design_variable('thrust',lower=0,upper=1)
         self.add_design_variable('dt',lower=0,upper=5)
+
         # add objective
+        self.add_objective('dt')
 
 
 # aircraft data
