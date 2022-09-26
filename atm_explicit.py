@@ -53,7 +53,7 @@ class AtmExplicit(csdl.CustomExplicitOperation):
 
 """
 # run model
-sim = python_csdl_backend.Simulator(Atm(alt=20000))
+sim = python_csdl_backend.Simulator(Atm())
 sim.run()
 
 print(sim['pressure'])

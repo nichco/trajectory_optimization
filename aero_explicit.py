@@ -53,7 +53,7 @@ class AeroExplicit(csdl.CustomExplicitOperation):
 
 """
 # run model
-sim = python_csdl_backend.Simulator(airfoil(alpha=0))
+sim = python_csdl_backend.Simulator(airfoil())
 sim.run()
 
 print(sim['cl'])

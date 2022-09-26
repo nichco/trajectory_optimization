@@ -11,6 +11,7 @@ class ODEProblemTest(ODEProblem):
         # If dynamic != True, it is a static parameter. i.e, the parameter used in the ODE is constant through time.
         # Therefore, the shape does not depend on the number of timesteps
         self.add_parameter('mass')
+        self.add_parameter('wing_area')
 
         # Inputs names correspond to respective upstream CSDL variables
         self.add_state('u', 'du', initial_condition_name='u_0', output='u')

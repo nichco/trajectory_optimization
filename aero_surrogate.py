@@ -2,7 +2,7 @@ from smt.surrogate_models import RBF, RMTB
 import numpy as np
 import matplotlib.pyplot as plt
 
-xt = np.linspace(-30, 30, 61)
+xt = np.deg2rad(np.linspace(-30, 30, 61))
 yt_cl = np.array([0,0,0,0,0,0,0,0,0,0,
                 -0,-0,-0.01,-0.02,-0.04,-0.07,-0.1,-0.17,-0.25,-0.37,
                 -0.5314,-0.61,-0.6353,-0.568,-0.4854,-0.3957,-0.3076,-0.1436,0.0914,0.2692,
@@ -17,17 +17,17 @@ yt_cd = np.array([0.37536,0.34,0.3,0.23,0.20285,0.18013,0.16549,0.15658,0.13657,
                 0.04141,0.05186,0.06233,0.07,0.073,0.075,0.08,0.088,0.09923,0.10924,
                 0.12493,0.14493,0.15622,0.17977,0.19094,0.20944,0.22779,0.2466,0.27293,0.29])
 
-sm_cl = RBF(d0=8,print_global=False,print_solver=False,)
+sm_cl = RBF(d0=0.1,print_global=False,print_solver=False,)
 sm_cl.set_training_values(xt, yt_cl)
 sm_cl.train()
 
-sm_cd = RBF(d0=30,print_global=False,print_solver=False,)
+sm_cd = RBF(d0=0.5,print_global=False,print_solver=False,)
 sm_cd.set_training_values(xt, yt_cd)
 sm_cd.train()
 
 """
 num = 1000
-x = np.linspace(-30, 30, num)
+x = np.deg2rad(np.linspace(-30, 30, num))
 
 ycl = sm_cl.predict_values(x)
 

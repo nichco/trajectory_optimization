@@ -14,9 +14,11 @@ class RunModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('dt')
         self.parameters.declare('mass')
+        self.parameters.declare('wing_area')
 
     def define(self):
         mass = self.parameters['mass']
+        wing_area = self.parameters['wing_area']
         dt = self.parameters['dt']
         
         # add the time vector to the csdl model
@@ -25,10 +27,11 @@ class RunModel(csdl.Model):
 
         # add constant inputs to the csdl model
         self.create_input('mass',mass)
+        self.create_input('wing_area',wing_area)
         # add dynamic inputs to the csdl model
-        thrust = np.zeros(num)
+        thrust = np.ones(num)*0
         self.create_input('thrust',thrust)
-        theta = np.zeros(num)
+        theta = np.ones(num)*np.deg2rad(3)
         self.create_input('theta',theta)
 
         # initial conditions for states
@@ -58,14 +61,15 @@ class RunModel(csdl.Model):
 
 
 # aircraft data
-mass = 3724 # kg
+mass = 3724 # mass (kg)
+wing_area = 30 # wing area (m^2)
 
 t1 = time.perf_counter()
 # ode problem instance
 dt = 1
 num = 10
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
-sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass))
+sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
 sim.run()
 
 
@@ -81,5 +85,12 @@ u = sim['u']
 w = sim['w']
 x = sim['x']
 z = sim['z']
+
+plt.plot(u)
+plt.plot(w)
+plt.plot(x)
+plt.plot(z)
+plt.legend(['u','w','x','z'])
+plt.show()
 
 
