@@ -6,5 +6,6 @@ class timestep(csdl.Model):
     def define(self):
         num = self.parameters['num']
         dt = self.declare_variable('dt')
-        h_vec = csdl.expand(dt, num)
+
+        h_vec = csdl.expand(dt, num-1)
         self.register_output('h', h_vec)
