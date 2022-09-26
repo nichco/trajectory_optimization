@@ -1,5 +1,6 @@
 import csdl
 from atm_explicit import Atm
+from aero import aero
 
 
 class ODESystemModel(csdl.Model):
@@ -15,13 +16,14 @@ class ODESystemModel(csdl.Model):
         w = self.create_input('w', shape=n)
         x = self.create_input('x', shape=n)
         z = self.create_input('z', shape=n)
-        # inputs
+        # parameters are inputs
         thrust = self.create_input('thrust', shape=(n)) # thrust (0-1)
         theta = self.create_input('theta', shape=(n)) # pitch angle
+        m = self.declare_variable('mass')
 
         # add atmospheric model
-        self.register_output('altitude', 1*z)
-        self.add(Atm(alt=-1*z))
+        self.register_output('altitude', -1*z)
+        self.add(Atm())
         rho = self.declare_variable('density')
         p = self.declare_variable('pressure')
         
@@ -32,7 +34,11 @@ class ODESystemModel(csdl.Model):
         alpha = csdl.arctan(w/u)
 
         # add aerodynamic model
+        self.add(aero())
+        lift = self.declare_variable('lift')
+        drag = self.declare_variable('drag')
         
+        # transform aerodynamic forces to body axis system
         fax = -drag*csdl.cos(alpha) + lift*csdl.sin(alpha)
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
         

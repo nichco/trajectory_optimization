@@ -4,13 +4,14 @@ from aero_surrogate import sm_cl, sm_cd
 
 class airfoil(csdl.Model):
     def initialize(self):
-        self.parameters.declare('alpha')
+        # self.parameters.declare('alpha')
+        pass
     def define(self):
-        aoa = self.parameters['alpha']
+        # aoa = self.parameters['alpha']
 
-        alpha = self.create_input('alpha', val=aoa)
+        # alpha = self.create_input('alpha', val=aoa)
 
-        # alpha = self.declare_variable('alpha')
+        alpha = self.declare_variable('alpha')
 
         # custom operation insertion
         cl, cd = csdl.custom(alpha, op=AeroExplicit())
@@ -50,7 +51,7 @@ class AeroExplicit(csdl.CustomExplicitOperation):
         derivatives['cl', 'alpha'] = dcl_dalpha
         derivatives['cd', 'alpha'] = dcd_dalpha
 
-
+"""
 # run model
 sim = python_csdl_backend.Simulator(airfoil(alpha=0))
 sim.run()
@@ -60,3 +61,4 @@ print(sim['cd'])
 
 # print partials
 # sim.check_partials(compact_print=True)
+"""

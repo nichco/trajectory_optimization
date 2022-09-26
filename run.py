@@ -11,11 +11,20 @@ from modopt.csdl_library import CSDLProblem
 class RunModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('dt')
+        self.parameters.declare('mass')
 
     def define(self):
+        mass = self.parameters['mass']
         dt = self.parameters['dt']
+
+        # add the time vector to the csdl model
         self.create_input('dt', dt)
         self.add(timestep(num=num))
+
+        # add constant inputs to the csdl model
+        self.create_input('mass',mass)
+        # add dynamic inputs to the csdl model
+
 
         # create model containing the integrator
         self.add(ODEProblem.create_solver_model(), 'subgroup', ['*'])
@@ -29,13 +38,26 @@ class RunModel(csdl.Model):
         thrust = self.declare_variable('thrust', shape=(num,))
         theta = self.declare_variable('theta', shape=(num,))
 
+        # recalculate aerodynamic data
+
+        # compute load factor
+
+        # add constraints
+
+        # add design variables
+
+        # add objective
+
+
+# aircraft data
+mass = 3724 # kg
 
 t1 = time.perf_counter()
 # ode problem instance
 dt = 1
 num = 10
 ODEProblem = ODEProblemTest('ExplicitMidpoint', 'time-marching', num_times=num, display='default', visualization='end')
-sim = python_csdl_backend.Simulator(RunModel(dt=dt))
+sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass))
 sim.run()
 
 
