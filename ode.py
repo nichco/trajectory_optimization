@@ -12,14 +12,15 @@ class ODESystemModel(csdl.Model):
         # Required every time for ODE systems or Profile Output systems
         n = self.parameters['num_nodes']
         # states
-        u = self.create_input('u', shape=n)
-        w = self.create_input('w', shape=n)
-        x = self.create_input('x', shape=n)
-        z = self.create_input('z', shape=n)
+        u = self.declare_variable('u', shape=n)
+        w = self.declare_variable('w', shape=n)
+        x = self.declare_variable('x', shape=n)
+        z = self.declare_variable('z', shape=n)
         # parameters are inputs
         thrust = self.create_input('thrust', shape=(n)) # thrust (0-1)
         theta = self.create_input('theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
+
 
         # add atmospheric model
         self.register_output('altitude', -1*z)
@@ -35,6 +36,7 @@ class ODESystemModel(csdl.Model):
 
         # add aerodynamic model
         self.add(aero())
+        
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')
         
