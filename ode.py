@@ -41,6 +41,10 @@ class ODESystemModel(csdl.Model):
         # transform aerodynamic forces to body axis system
         fax = -drag*csdl.cos(alpha) + lift*csdl.sin(alpha)
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
+
+        # add propulsion model
+        fpx = 1*thrust
+        fpz = 0
         
         # system of ODE's
         du = -g*csdl.sin(theta) + (fax + fpx)/m

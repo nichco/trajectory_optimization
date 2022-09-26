@@ -24,19 +24,20 @@ class RunModel(csdl.Model):
         # add constant inputs to the csdl model
         self.create_input('mass',mass)
         # add dynamic inputs to the csdl model
+        thrust = np.zeros(num)
+        self.create_input('thrust',thrust)
+        theta = np.zeros(num)
+        self.create_input('theta',theta)
 
+        # initial conditions for states
+        self.create_input('u_0', 0.1)
+        self.create_input('w_0', 0)
+        self.create_input('x_0', 0)
+        self.create_input('z_0', 0)
 
         # create model containing the integrator
-        self.add(ODEProblem.create_solver_model(), 'subgroup', ['*'])
-
-        # declare variables from integrator
-        # states
-        u = self.declare_variable('u', shape=(num+1,))
-        w = self.declare_variable('w', shape=(num+1,))
-        z = self.declare_variable('z', shape=(num+1,))
-        # inputs
-        thrust = self.declare_variable('thrust', shape=(num,))
-        theta = self.declare_variable('theta', shape=(num,))
+        # self.add(ODEProblem.create_solver_model(), 'subgroup', ['*'])
+        self.add(ODEProblem.create_solver_model(), 'subgroup')
 
         # recalculate aerodynamic data
 
