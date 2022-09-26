@@ -3,7 +3,6 @@ import numpy as np
 import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
-import time
 from modopt.scipy_library import SLSQP
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
@@ -29,13 +28,13 @@ class RunModel(csdl.Model):
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
         # add dynamic inputs to the csdl model
-        thrust = np.ones(num)*1000
+        thrust = np.ones(num)*40000
         self.create_input('thrust',thrust)
-        theta = np.ones(num)*np.deg2rad(3)
+        theta = np.ones(num)*np.deg2rad(4)
         self.create_input('theta',theta)
 
         # initial conditions for states
-        self.create_input('u_0', 0.1)
+        self.create_input('u_0', 1)
         self.create_input('w_0', 0)
         self.create_input('x_0', 0)
         self.create_input('z_0', 0)
@@ -50,6 +49,8 @@ class RunModel(csdl.Model):
         z = self.declare_variable('z', shape=(num,))
 
         # recalculate aerodynamic data
+        alpha = csdl.arctan(w/u)
+        self.register_output('alpha',alpha)
 
         # compute load factor
 
@@ -69,11 +70,11 @@ class RunModel(csdl.Model):
 
 # aircraft data
 mass = 3724 # mass (kg)
-wing_area = 30 # wing area (m^2)
+wing_area = 40 # wing area (m^2)
 
 # ode problem instance
 dt = 1
-num = 20
+num = 50
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
 sim.run()
@@ -94,17 +95,16 @@ z = sim['z']
 dt = sim['dt']
 thrust = sim['thrust']
 theta = sim['theta']
+alpha = sim['alpha']
 
-print(dt)
+at = np.arctan(w/u)
 
 plt.plot(u)
 plt.plot(w)
-plt.plot(x)
-plt.plot(z)
+#plt.plot(x)
+#plt.plot(z)
 plt.legend(['u','w','x','z'])
 plt.show()
 
-plt.plot(thrust)
+plt.plot(at)
 plt.show()
-
-

@@ -38,6 +38,10 @@ class ODESystemModel(csdl.Model):
         self.register_output('alpha',alpha)
         self.register_output('velocity',1*u)
         self.add(aero())
+
+        cl = self.declare_variable('cl')
+        cl = self.declare_variable('cd')
+
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')
         
