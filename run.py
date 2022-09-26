@@ -56,39 +56,33 @@ class RunModel(csdl.Model):
         # add constraints
         final_altitude = z[-1]
         self.register_output('final_altitude', final_altitude)
-        self.add_constraint('final_altitude', equals=10)
+        self.add_constraint('final_altitude', lower=100)
 
         # add design variables
-        self.add_design_variable('theta',lower=-np.pi/6,upper=np.pi/6)
-        self.add_design_variable('thrust',lower=0,upper=1)
-        self.add_design_variable('dt',lower=0,upper=5)
+        # self.add_design_variable('theta',lower=-np.pi/6,upper=np.pi/6)
+        self.add_design_variable('thrust',lower=0, upper=50000)
+        self.add_design_variable('dt',lower=1,upper=5)
 
         # add objective
-        self.add_objective('dt')
+        self.add_objective('final_altitude')
 
 
 # aircraft data
 mass = 3724 # mass (kg)
 wing_area = 30 # wing area (m^2)
 
-t1 = time.perf_counter()
 # ode problem instance
 dt = 1
-num = 10
+num = 20
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
-# sim.run()
-
-prob = CSDLProblem(problem_name='TrajectoryOptimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=100, ftol=1e-10)
+sim.run()
+"""
+prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
+optimizer = SLSQP(prob, maxiter=50, ftol=1e-10)
 optimizer.solve()
 optimizer.print_results()
-
-
-t2 = time.perf_counter()
-delta_t = (t2 - t1)
-print('elapsed time: ', delta_t)
-
+"""
 # plot states from integrator
 plt.show()
 
@@ -97,12 +91,20 @@ u = sim['u']
 w = sim['w']
 x = sim['x']
 z = sim['z']
+dt = sim['dt']
+thrust = sim['thrust']
+theta = sim['theta']
+
+print(dt)
 
 plt.plot(u)
 plt.plot(w)
 plt.plot(x)
 plt.plot(z)
 plt.legend(['u','w','x','z'])
+plt.show()
+
+plt.plot(thrust)
 plt.show()
 
 
