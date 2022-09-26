@@ -7,6 +7,7 @@ import time
 from modopt.scipy_library import SLSQP
 from modopt.csdl_library import CSDLProblem
 
+
 # The CSDL Model containing the ODE integrator
 class RunModel(csdl.Model):
     def initialize(self):
