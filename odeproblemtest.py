@@ -13,7 +13,7 @@ class ODEProblemTest(ODEProblem):
         self.add_parameter('mass')
         self.add_parameter('wing_area')
 
-        # Inputs names correspond to respective upstream CSDL variables
+        # inputs names correspond to respective upstream CSDL variables
         self.add_state('u', 'du', initial_condition_name='u_0', output='u')
         self.add_state('w', 'dw', initial_condition_name='w_0', output='w')
         self.add_state('x', 'dx', initial_condition_name='x_0', output='x')
@@ -21,5 +21,13 @@ class ODEProblemTest(ODEProblem):
 
         self.add_times(step_vector='h')
 
-        # Define ODE
+        # define ODE
         self.set_ode_system(ODESystemModel)
+
+        # export variables of interest from ode for troubleshooting
+        self.set_profile_system(ODESystemModel)
+        self.add_profile_output('lift')
+        self.add_profile_output('drag')
+        self.add_profile_output('alpha')
+        self.add_profile_output('cl')
+        self.add_profile_output('cd')

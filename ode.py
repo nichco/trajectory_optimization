@@ -27,14 +27,14 @@ class ODESystemModel(csdl.Model):
         # angle of attack
         alpha = csdl.arctan(w/u)
 
+        # velocity
+        velocity = (u**2 + w**2)**0.5
+
         # add aerodynamic model
         self.register_output('alpha',alpha)
-        self.register_output('velocity',1*u)
+        self.register_output('velocity',velocity)
         self.register_output('altitude',1*z)
         self.add(aero())
-
-        cl = self.declare_variable('cl')
-        cl = self.declare_variable('cd')
 
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')

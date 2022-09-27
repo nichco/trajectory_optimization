@@ -48,11 +48,9 @@ class RunModel(csdl.Model):
         x = self.declare_variable('x', shape=(num,))
         z = self.declare_variable('z', shape=(num,))
 
-        # recalculate aerodynamic data
-        alpha = csdl.arctan(w/u)
-        self.register_output('alpha',alpha)
-
-        # compute load factor
+        lift = self.declare_variable('lift', shape=(num,))
+        drag = self.declare_variable('drag', shape=(num,))
+        alpha = self.declare_variable('alpha', shape=(num,))
 
         # add constraints
         final_altitude = z[-1]
@@ -61,26 +59,26 @@ class RunModel(csdl.Model):
 
         # add design variables
         # self.add_design_variable('theta',lower=-np.pi/6,upper=np.pi/6)
-        self.add_design_variable('thrust',lower=0, upper=50000)
-        self.add_design_variable('dt',lower=1,upper=5)
+        self.add_design_variable('thrust',lower=0, upper=10000)
+        self.add_design_variable('dt',lower=0.5,upper=3)
 
         # add objective
-        self.add_objective('final_altitude')
+        self.add_objective('dt')
 
 
 # aircraft data
-mass = 3724 # mass (kg)
+mass = 2000 # mass (kg)
 wing_area = 40 # wing area (m^2)
 
 # ode problem instance
-dt = 0.1
-num = 500
+dt = 0.5
+num = 80
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
 sim.run()
 """
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=50, ftol=1e-10)
+optimizer = SLSQP(prob, maxiter=50, ftol=1e-12)
 optimizer.solve()
 optimizer.print_results()
 """
@@ -96,8 +94,10 @@ dt = sim['dt']
 thrust = sim['thrust']
 theta = sim['theta']
 alpha = sim['alpha']
-
-at = np.arctan(w/u)
+cl = sim['cl']
+cd = sim['cd']
+lift = sim['lift']
+drag = sim['drag']
 
 plt.plot(u)
 plt.plot(w)
@@ -106,5 +106,16 @@ plt.plot(z)
 plt.legend(['u','w','x','z'])
 plt.show()
 
-plt.plot(at)
+plt.plot(lift)
+plt.plot(drag)
+plt.legend(['lift','drag'])
+plt.show()
+
+plt.plot(cl)
+plt.plot(cd)
+plt.legend(['cl','cd'])
+plt.show()
+
+plt.plot(thrust)
+plt.legend(['thrust'])
 plt.show()
