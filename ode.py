@@ -30,6 +30,7 @@ class ODESystemModel(csdl.Model):
         # add aerodynamic model
         self.register_output('alpha',alpha)
         self.register_output('velocity',1*u)
+        self.register_output('altitude',1*z)
         self.add(aero())
 
         cl = self.declare_variable('cl')

@@ -8,13 +8,9 @@ class aero(csdl.Model):
     def define(self):
         
         self.add(airfoil())
-
-        altitude = self.declare_variable('z')
-        self.register_output('altitude', 1*altitude)
         self.add(Atm())
         
         s = self.declare_variable('wing_area')
-
         cl = self.declare_variable('cl')
         cd = self.declare_variable('cd')
         pressure = self.declare_variable('pressure')
