@@ -10,7 +10,7 @@ class aero(csdl.Model):
         self.add(airfoil())
         self.add(Atm())
         
-        s = self.declare_variable('wing_area')
+        s = self.declare_variable('ref_area')
         cl = self.declare_variable('cl')
         cd = self.declare_variable('cd')
         pressure = self.declare_variable('pressure')

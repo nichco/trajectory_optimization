@@ -1,5 +1,6 @@
 import csdl
 from aero import aero
+from prop import prop
 
 
 class ODESystemModel(csdl.Model):
@@ -16,7 +17,7 @@ class ODESystemModel(csdl.Model):
         x = self.create_input('x', shape=n)
         z = self.create_input('z', shape=n)
         # parameters are inputs
-        thrust = self.create_input('thrust', shape=(n)) # thrust (0-1)
+        power = self.create_input('power', shape=(n)) # thrust (0-1)
         theta = self.create_input('theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
         s = self.declare_variable('wing_area')
@@ -34,6 +35,7 @@ class ODESystemModel(csdl.Model):
         self.register_output('alpha',alpha)
         self.register_output('velocity',velocity)
         self.register_output('altitude',1*z)
+        self.register_output('ref_area',1*s)
         self.add(aero())
 
         lift = self.declare_variable('lift')
@@ -44,6 +46,13 @@ class ODESystemModel(csdl.Model):
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
 
         # add propulsion model
+        # self.register_output('pwr',1*power)
+        # self.add(prop())
+        # thrust = self.declare_variable('thrust')
+
+        thrust = 1*power
+        self.register_output('thrust',thrust)
+
         fpx = 1*thrust
         fpz = 0
         
