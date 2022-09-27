@@ -1,5 +1,4 @@
 import csdl
-from atm_explicit import Atm
 from aero import aero
 
 
@@ -21,12 +20,6 @@ class ODESystemModel(csdl.Model):
         theta = self.create_input('theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
         s = self.declare_variable('wing_area')
-
-        # add atmospheric model
-        self.register_output('altitude', -1*z)
-        self.add(Atm())
-        rho = self.declare_variable('density')
-        p = self.declare_variable('pressure')
         
         # constants
         g = 9.81 # (m/s^2)

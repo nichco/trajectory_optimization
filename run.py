@@ -28,9 +28,9 @@ class RunModel(csdl.Model):
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
         # add dynamic inputs to the csdl model
-        thrust = np.ones(num)*40000
+        thrust = np.ones(num)*0
         self.create_input('thrust',thrust)
-        theta = np.ones(num)*np.deg2rad(4)
+        theta = np.ones(num)*np.deg2rad(0)
         self.create_input('theta',theta)
 
         # initial conditions for states
@@ -101,8 +101,8 @@ at = np.arctan(w/u)
 
 plt.plot(u)
 plt.plot(w)
-#plt.plot(x)
-#plt.plot(z)
+plt.plot(x)
+plt.plot(z)
 plt.legend(['u','w','x','z'])
 plt.show()
 

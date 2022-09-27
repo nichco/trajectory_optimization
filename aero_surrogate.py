@@ -2,7 +2,7 @@ from smt.surrogate_models import RBF, RMTB
 import numpy as np
 import matplotlib.pyplot as plt
 
-xt_cl = np.deg2rad(np.linspace(-90, 90, 181))
+xt = np.deg2rad(np.linspace(-90, 90, 181))
 buff = np.zeros(60)
 yt_cl_center = np.array([0,0,0,0,0,0,0,0,0,0,
                 -0,-0,-0.01,-0.02,-0.04,-0.07,-0.1,-0.17,-0.25,-0.37,
@@ -12,7 +12,6 @@ yt_cl_center = np.array([0,0,0,0,0,0,0,0,0,0,
                 0,0,0,0,0,0,0,0,0,0])
 yt_cl = np.append(np.append(buff,yt_cl_center),buff) # extends data through +/- 90 degrees
 
-xt_cd = np.deg2rad(np.linspace(-30, 30, 61))
 yt_cd = np.array([1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,
                 1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.19,1.19,1.18,1.175,1.17,1.16,1.15,
                 1.14,1.125,1.115,1.09,1.06,1.02,0.99,0.95,0.9,0.85,0.803131468,0.767530626,0.730953264,
@@ -29,11 +28,11 @@ yt_cd = np.array([1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.
                 1.2,1.2,1.2,1.2,1.2,1.2,1.2,1.2])
 
 sm_cl = RBF(d0=0.1,print_global=False,print_solver=False,)
-sm_cl.set_training_values(xt_cl, yt_cl)
+sm_cl.set_training_values(xt, yt_cl)
 sm_cl.train()
 
-sm_cd = RBF(d0=1,print_global=False,print_solver=False,)
-sm_cd.set_training_values(xt_cd, yt_cd)
+sm_cd = RBF(d0=0.25,print_global=False,print_solver=False,)
+sm_cd.set_training_values(xt, yt_cd)
 sm_cd.train()
 
 """
@@ -42,18 +41,16 @@ x = np.deg2rad(np.linspace(-90, 90, num))
 
 ycl = sm_cl.predict_values(x)
 
-plt.plot(xt_cl, yt_cl, "o")
+plt.plot(xt, yt_cl, "o")
 plt.plot(x, ycl)
 plt.xlabel("x")
 plt.ylabel("y")
 plt.legend(["Training data", "Prediction"])
 plt.show()
 
-
-x = np.deg2rad(np.linspace(-30, 30, num))
 ycd = sm_cd.predict_values(x)
 
-plt.plot(xt_cd, yt_cd, "o")
+plt.plot(xt, yt_cd, "o")
 plt.plot(x, ycd)
 plt.xlabel("x")
 plt.ylabel("y")
