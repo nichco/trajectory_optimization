@@ -38,7 +38,7 @@ sm_cd = RBF(d0=0.25,print_global=False,print_solver=False,)
 sm_cd.set_training_values(xt, yt_cd)
 sm_cd.train()
 
-
+"""
 num = 1000
 x = np.deg2rad(np.linspace(-90, 90, num))
 
@@ -58,3 +58,4 @@ ax2.set_ylabel('Cd')
 ax2.set_xlabel('Alpha (rad)')
 ax2.set_title('Drag')
 plt.show()
+"""
