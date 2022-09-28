@@ -18,6 +18,7 @@ class ODEProblemTest(ODEProblem):
         self.add_state('w', 'dw', initial_condition_name='w_0', output='w')
         self.add_state('x', 'dx', initial_condition_name='x_0', output='x')
         self.add_state('z', 'dz', initial_condition_name='z_0', output='z')
+        self.add_state('e', 'de', initial_condition_name='e_0', output='e')
 
         self.add_times(step_vector='h')
 
@@ -31,4 +32,3 @@ class ODEProblemTest(ODEProblem):
         self.add_profile_output('alpha')
         self.add_profile_output('cl')
         self.add_profile_output('cd')
-        self.add_profile_output('thrust')
