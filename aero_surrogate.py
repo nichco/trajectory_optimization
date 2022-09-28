@@ -46,7 +46,7 @@ ycl = sm_cl.predict_values(x)
 ycd = sm_cd.predict_values(x)
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('Aerodynamic Surrogate Models')
+fig.suptitle('Aerodynamic Surrogate Models for NACA 2412')
 ax1.plot(xt, yt_cl, "o")
 ax1.plot(x, ycl)
 ax1.set_ylabel('Cl')
