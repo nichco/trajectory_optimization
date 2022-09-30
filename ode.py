@@ -47,7 +47,7 @@ class ODESystemModel(csdl.Model):
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
 
         # add propulsion model
-        fpx = 1*power*10000
+        fpx = 1*power*30000
         fpz = 0
         
         # system of ODE's

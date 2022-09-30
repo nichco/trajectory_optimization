@@ -28,7 +28,7 @@ class RunModel(csdl.Model):
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
         # add dynamic inputs to the csdl model
-        power = np.ones(num)*1 # power percent (0-1)
+        power = np.ones(num)*0.5 # power percent (0-1)
         self.create_input('power',power)
         
         theta = np.ones(num)*np.deg2rad(0)
@@ -77,13 +77,13 @@ dt = 0.1
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
-sim.run()
-"""
+# sim.run()
+
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=50, ftol=1e-12)
 optimizer.solve()
 optimizer.print_results()
-"""
+
 # plot states from integrator
 plt.show()
 
@@ -101,27 +101,29 @@ lift = sim['lift']
 drag = sim['drag']
 power = sim['power']
 
-plt.plot(u)
-plt.plot(w)
-plt.plot(x)
-plt.plot(z)
-plt.legend(['u','w','x','z'])
-plt.show()
+# post-processing
+fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3)
+fig.suptitle('trajectory optimization')
+ax1.plot(u,color='b')
+ax1.plot(w,color='g')
+ax1.legend(['u','w'])
 
-plt.plot(lift)
-plt.plot(drag)
-plt.legend(['lift','drag'])
-plt.show()
+ax2.plot(x,color='r')
+ax2.plot(z,color='c')
+ax2.legend(['x','z'])
 
-plt.plot(cl)
-plt.plot(cd)
-plt.legend(['cl','cd'])
-plt.show()
+ax3.plot(lift,color='m')
+ax3.plot(drag,color='y')
+ax3.legend(['lift','drag'])
 
-plt.plot(power)
-plt.legend(['power'])
-plt.show()
+ax4.plot(cl)
+ax4.plot(cd)
+ax4.legend(['cl','cd'])
 
-plt.plot(alpha)
-plt.legend(['alpha'])
+ax5.plot(alpha,color='k')
+ax5.set_title('alpha')
+ax5.set_ylabel('rad')
+
+ax6.plot(power,color='k')
+ax6.set_title('power')
 plt.show()
