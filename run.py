@@ -31,7 +31,7 @@ class RunModel(csdl.Model):
         power = np.ones(num)*0.5 # power percent (0-1)
         self.create_input('power',power)
         
-        theta = np.ones(num)*np.deg2rad(0)
+        theta = np.ones(num)*np.deg2rad(0.05)
         self.create_input('theta',theta)
 
         # initial conditions for states
@@ -59,12 +59,12 @@ class RunModel(csdl.Model):
 
         # add design variables
         # self.add_design_variable('theta',lower=-np.pi/6,upper=np.pi/6)
-        self.add_design_variable('power',lower=0, upper=1)
+        self.add_design_variable('power',lower=0, upper=2.8)
         # self.add_design_variable('dt',lower=0,upper=3)
 
         # add objective
         energy = e[-1]
-        self.register_output('energy',energy)
+        self.register_output('energy',energy/10)
         self.add_objective('energy')
 
 
@@ -73,14 +73,14 @@ mass = 1000 # mass (kg)
 wing_area = 30 # wing area (m^2)
 
 # ode problem instance
-dt = 0.2
-num = 100
+dt = 0.1
+num = 150
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=50, ftol=1e-12)
+optimizer = SLSQP(prob, maxiter=400, ftol=1e-8)
 optimizer.solve()
 optimizer.print_results()
 
