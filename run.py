@@ -73,7 +73,7 @@ mass = 1000 # mass (kg)
 wing_area = 30 # wing area (m^2)
 
 # ode problem instance
-dt = 0.1
+dt = 0.2
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
