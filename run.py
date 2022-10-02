@@ -125,5 +125,6 @@ ax5.set_title('alpha')
 ax5.set_ylabel('rad')
 
 ax6.plot(power,color='k')
+ax6.plot(theta,color='c')
 ax6.set_title('power')
 plt.show()
