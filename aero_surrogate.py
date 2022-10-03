@@ -1,4 +1,4 @@
-from smt.surrogate_models import RBF, RMTB
+from smt.surrogate_models import RBF
 import numpy as np
 import matplotlib.pyplot as plt
 
