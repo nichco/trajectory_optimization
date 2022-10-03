@@ -27,6 +27,7 @@ class RunModel(csdl.Model):
         # add constant inputs to the csdl model
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
+
         # add dynamic inputs to the csdl model
         power = np.ones(num)*0.5 # power percent (0-1)
         self.create_input('power',power)
@@ -50,12 +51,13 @@ class RunModel(csdl.Model):
         x = self.declare_variable('x', shape=(num,))
         z = self.declare_variable('z', shape=(num,))
         e = self.declare_variable('e', shape=(num,))
-        alpha = self.declare_variable('alpha', shape=(num,))
 
         # add constraints
         final_altitude = z[-1]
         self.register_output('final_altitude', final_altitude)
         self.add_constraint('final_altitude', lower=100)
+
+        self.add_constraint('load_factor', lower=-2,upper=2)
 
         # add design variables
         self.add_design_variable('theta',lower=-np.pi/4,upper=np.pi/4)
@@ -100,9 +102,10 @@ cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
 power = sim['power']
+load_factor = sim['load_factor']
 
 # post-processing
-fig, ((ax1, ax2, ax3), (ax4, ax5, ax6)) = plt.subplots(2, 3)
+fig, ((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4)
 fig.suptitle('trajectory optimization')
 ax1.plot(u,color='b')
 ax1.plot(w,color='g')
@@ -125,6 +128,12 @@ ax5.set_title('alpha')
 ax5.set_ylabel('rad')
 
 ax6.plot(power,color='k')
-ax6.plot(theta,color='c')
 ax6.set_title('power')
+
+ax7.plot(theta,color='c')
+ax7.set_title('theta')
+
+ax8.plot(load_factor)
+ax8.set_title('load_factor')
+
 plt.show()
