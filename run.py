@@ -58,16 +58,16 @@ class RunModel(csdl.Model):
         self.register_output('final_altitude', final_altitude)
         self.add_constraint('final_altitude', lower=100)
 
-        self.add_constraint('load_factor', lower=-2,upper=2)
+        # self.add_constraint('load_factor', lower=-2,upper=2)
 
         # add design variables
-        self.add_design_variable('theta',lower=-np.pi/4,upper=np.pi/4)
+        # self.add_design_variable('theta',lower=-np.pi/4,upper=np.pi/4)
         self.add_design_variable('power',lower=0, upper=2.8)
         # self.add_design_variable('dt',lower=0,upper=3)
 
         # add objective
         energy = e[-1]
-        self.register_output('energy',energy/10)
+        self.register_output('energy',energy)
         self.add_objective('energy')
 
 
