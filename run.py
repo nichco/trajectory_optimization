@@ -33,7 +33,7 @@ class RunModel(csdl.Model):
         power = np.ones(num)*0.5 # power percent (0-1)
         self.create_input('power',power)
         
-        theta = np.ones(num)*np.deg2rad(0.05)
+        theta = np.ones(num)*np.deg2rad(0.0)
         self.create_input('theta',theta)
 
         # initial conditions for states
@@ -64,12 +64,14 @@ class RunModel(csdl.Model):
         # self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
         # self.add_design_variable('power',lower=0, upper=1.0)
 
-        self.add_design_variable('u_0')
+        self.add_design_variable('u_0',scaler=0.001)
+        self.add_design_variable('dt',lower=0.1,upper=10)
 
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
-        self.add_objective('energy', scaler=0.1)
+        # self.add_objective('energy', scaler=0.1)
+        self.add_objective('dt')
 
 
 # aircraft data
@@ -78,7 +80,7 @@ wing_area = 30 # wing area (m^2)
 
 # ode problem instance
 dt = 0.1
-num = 200
+num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
 # sim.run()
