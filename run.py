@@ -61,9 +61,10 @@ class RunModel(csdl.Model):
         # self.add_constraint('load_factor', lower=-2,upper=2)
 
         # add design variables
-        self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
-        self.add_design_variable('power',lower=0, upper=1.0)
-        # self.add_design_variable('dt',lower=0,upper=3)
+        # self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
+        # self.add_design_variable('power',lower=0, upper=1.0)
+
+        self.add_design_variable('u_0')
 
         # add objective
         energy = e[-1]
@@ -86,7 +87,7 @@ prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 # optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
 optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
-# optimizer.print_results()
+optimizer.print_results()
 
 # plot states from integrator
 plt.show()
