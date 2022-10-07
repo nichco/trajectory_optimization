@@ -61,17 +61,15 @@ class RunModel(csdl.Model):
         # self.add_constraint('load_factor', lower=-2,upper=2)
 
         # add design variables
-        # self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
-        # self.add_design_variable('power',lower=0, upper=1.0)
-
-        self.add_design_variable('u_0',scaler=0.001)
+        self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
+        self.add_design_variable('power',lower=0, upper=1.0)
         self.add_design_variable('dt',lower=0.1,upper=10)
 
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
         # self.add_objective('energy', scaler=0.1)
-        self.add_objective('dt')
+        self.add_objective('dt',scaler=0.1)
 
 
 # aircraft data
