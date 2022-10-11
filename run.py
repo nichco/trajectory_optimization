@@ -33,14 +33,14 @@ class RunModel(csdl.Model):
         self.create_input('wing_set_angle',wing_set_angle)
 
         # add dynamic inputs to the csdl model
-        power = np.ones(num)*0.5 # power percent (0-1)
+        power = np.ones(num)*0 # power percent (0-1)
         self.create_input('power',power)
         
         theta = np.ones(num)*np.deg2rad(0.0)
         self.create_input('theta',theta)
 
         # initial conditions for states
-        self.create_input('u_0', 1)
+        self.create_input('u_0', 0.1)
         self.create_input('w_0', 0)
         self.create_input('x_0', 0)
         self.create_input('z_0', 0)
@@ -76,9 +76,9 @@ class RunModel(csdl.Model):
 
 
 # aircraft data
-mass = 1000 # mass (kg)
-wing_area = 30 # wing area (m^2)
-wing_set_angle = 2 # (deg)
+mass = 1111 # mass (kg)
+wing_area = 16.2 # wing area (m^2)
+wing_set_angle = 1 # (deg)
 
 # ode problem instance
 dt = 0.1

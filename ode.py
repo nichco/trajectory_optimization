@@ -18,11 +18,10 @@ class ODESystemModel(csdl.Model):
         z = self.create_input('z', shape=n)
         e = self.create_input('e', shape=n)
         # parameters are inputs
-        power = self.create_input('power', shape=(n)) # thrust (0-1)
-        theta = self.create_input('theta', shape=(n)) # pitch angle
-        m = self.create_input('mass')
-        wing_area = self.create_input('wing_area')
-        # wing_set_angle = self.declare_variable('wing_set_angle')
+        power = self.declare_variable('power', shape=(n)) # thrust (0-1)
+        theta = self.declare_variable('theta', shape=(n)) # pitch angle
+        m = self.declare_variable('mass')
+        wing_area = self.declare_variable('wing_area')
         
         # constants
         g = 9.81 # (m/s^2)
