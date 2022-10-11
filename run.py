@@ -85,14 +85,14 @@ dt = 0.1
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area,wing_set_angle=wing_set_angle))
-# sim.run()
-
+sim.run()
+"""
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 # optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
 optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
-optimizer.print_results()
-
+# optimizer.print_results()
+"""
 # plot states from integrator
 plt.show()
 

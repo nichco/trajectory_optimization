@@ -21,7 +21,8 @@ class ODESystemModel(csdl.Model):
         power = self.create_input('power', shape=(n)) # thrust (0-1)
         theta = self.create_input('theta', shape=(n)) # pitch angle
         m = self.create_input('mass')
-        s = self.create_input('wing_area')
+        wing_area = self.create_input('wing_area')
+        # wing_set_angle = self.declare_variable('wing_set_angle')
         
         # constants
         g = 9.81 # (m/s^2)
@@ -36,7 +37,7 @@ class ODESystemModel(csdl.Model):
         self.register_output('alpha',alpha)
         self.register_output('velocity',velocity)
         self.register_output('altitude',1*z)
-        self.register_output('ref_area',1*s)
+        self.register_output('ref_area',1*wing_area)
         self.add(aero())
 
         lift = self.declare_variable('lift')
@@ -55,8 +56,10 @@ class ODESystemModel(csdl.Model):
         fpz = 0
         
         # system of ODE's
-        du = -g*csdl.sin(theta) + (fax + fpx)/m
-        dw = g*csdl.cos(theta) + (faz + fpz)/m
+        # du = -g*csdl.sin(theta) + (fax + fpx)/m
+        # dw = g*csdl.cos(theta) + (faz + fpz)/m
+        du = (fax + fpx)/m
+        dw = (faz + fpz)/m
         dx = u*csdl.cos(theta) + w*csdl.sin(theta)
         dz = u*csdl.sin(theta) - w*csdl.cos(theta)
         de = 1*power
