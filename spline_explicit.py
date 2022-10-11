@@ -1,7 +1,7 @@
 import csdl
 import python_csdl_backend
 import numpy as np
-from smt.surrogate_models import RMTB
+from smt.surrogate_models import RMTB, RBF
 
 class spline(csdl.Model):
     def initialize(self):
@@ -112,6 +112,7 @@ dt=0.1
 xt = np.linspace(0,num_nodes*dt,N)
 yt = np.ones(N)
 xlimits = np.array([[0.0, num_nodes*dt]])
+"""
 sm = RMTB(
         xlimits=xlimits,
         order=4,
@@ -120,11 +121,16 @@ sm = RMTB(
         regularization_weight=0.0,)
 sm.set_training_values(xt, yt)
 sm.train()
+"""
+sm = RBF(d0=0.1,print_global=False,print_solver=False,)
+sm.set_training_values(xt, yt)
+sm.train()
 
 xnew = np.arange(0, num_nodes*dt, dt)
 dict = sm.predict_output_derivatives(xnew)
-list = list(dict.items())
-array = np.array(list)
+lst = list(dict.items())
+
+array = np.array(list(dict.items()), dtype=object)
 """
 yder = np.zeros((num_nodes,N))
 for i in range(0,num_nodes):
@@ -132,5 +138,5 @@ for i in range(0,num_nodes):
         yder[i,j] = items[i,j]
 """
 
-
-print(list[0])
+print(array)
+print(np.shape(array))
