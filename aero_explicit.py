@@ -24,7 +24,7 @@ class AeroExplicit(csdl.CustomExplicitOperation):
         pass
     def define(self):
 
-        # input: altitude
+        # input: alpha
         self.add_input('alpha', shape=(1,))
 
         # output: pressure and density
