@@ -92,7 +92,6 @@ class SplineExplicit(csdl.CustomExplicitOperation):
 
         xnew = np.arange(0, num_nodes*dt, dt)
         yder = sm.predict_output_derivatives(xnew)
-        print(np.shape(yder))
 
         derivatives['interp', 'control'] = yder
 
@@ -103,15 +102,15 @@ sim.run()
 
 print(sim['interp'])
 # print partials
-# sim.check_partials(compact_print=True)
-"""
+sim.check_partials(compact_print=True)
 
+"""
 # test code
-N=10
-num_nodes=20
+N=5
+num_nodes=10
 dt=0.1
 xt = np.linspace(0,num_nodes*dt,N)
-yt = np.ones(10)
+yt = np.ones(N)
 xlimits = np.array([[0.0, num_nodes*dt]])
 sm = RMTB(
         xlimits=xlimits,
@@ -124,8 +123,14 @@ sm.train()
 
 xnew = np.arange(0, num_nodes*dt, dt)
 dict = sm.predict_output_derivatives(xnew)
-items = list(dict.items())
-# array = np.array(items)
+list = list(dict.items())
+array = np.array(list)
+"""
+yder = np.zeros((num_nodes,N))
+for i in range(0,num_nodes):
+    for j in range(0,N):
+        yder[i,j] = items[i,j]
+"""
 
 
-print(items)
+print(list[0])
