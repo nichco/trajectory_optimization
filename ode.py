@@ -24,11 +24,9 @@ class ODESystemModel(csdl.Model):
         wing_area = self.declare_variable('wing_area')
         max_power = self.declare_variable('max_power')
         propeller_efficiency = self.declare_variable('propeller_efficiency')
+        g = self.declare_variable('gravity')
         
-        # constants
-        g = 9.81 # (m/s^2)
-        
-        # angle of attack
+        # compute angle of attack
         alpha = csdl.arctan(w/u)
 
         # velocity
