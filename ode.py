@@ -38,7 +38,7 @@ class ODESystemModel(csdl.Model):
         self.register_output('altitude',1*z)
         self.register_output('ref_area',1*wing_area)
         self.add(aero())
-
+        # define outputs from aero model
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')
 
