@@ -27,9 +27,31 @@ class ThrottleExplicit(csdl.CustomExplicitOperation):
     def compute(self, inputs, outputs):
         # add surrogate model
 
+        xt = np.linspace(0,num_nodes*dt,N)
+        yt = inputs['throttle']
+
+        xlimits = np.array([[0.0, num_nodes*dt]])
+
+        sm = RMTB(
+            xlimits=xlimits,
+            order=4,
+            num_ctrl_pts=20,
+            energy_weight=1e-15,
+            regularization_weight=0.0,)
+        sm.set_training_values(xt, yt)
+        sm.train()
+
+        t_vec = np.linspace(0,num_nodes*dt,num_nodes)
+        in_throttle = sm.predict_values(t_vec)
+
+        outputs['in_throttle'] = 1*in_throttle
+
 
     def compute_derivatives(self, inputs, derivatives):
         # compute derivatives with SMT
+        dthrottle_dt = sm.predict_derivatives(inputs['alpha'], 0)
+
+        derivatives['cl', 'alpha'] = dcl_dalpha
 
 
 
