@@ -15,6 +15,7 @@ class ODEProblemTest(ODEProblem):
         self.add_parameter('wing_set_angle')
         self.add_parameter('max_power')
         self.add_parameter('propeller_efficiency')
+        self.add_parameter('gravity')
 
         # inputs names correspond to respective upstream CSDL variables
         self.add_state('u', 'du', initial_condition_name='u_0', output='u')

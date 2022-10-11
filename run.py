@@ -18,6 +18,7 @@ class RunModel(csdl.Model):
         self.parameters.declare('wing_set_angle')
         self.parameters.declare('max_power')
         self.parameters.declare('propeller_efficiency')
+        self.parameters.declare('gravity')
 
     def define(self):
         mass = self.parameters['mass']
@@ -25,6 +26,7 @@ class RunModel(csdl.Model):
         wing_set_angle = self.parameters['wing_set_angle']
         max_power = self.parameters['max_power']
         propeller_efficiency = self.parameters['propeller_efficiency']
+        gravity = self.parameters['gravity']
         dt = self.parameters['dt']
         
         # add the time vector to the csdl model
@@ -37,6 +39,7 @@ class RunModel(csdl.Model):
         self.create_input('wing_set_angle',wing_set_angle)
         self.create_input('max_power',max_power)
         self.create_input('propeller_efficiency',propeller_efficiency)
+        self.create_input('gravity',gravity)
 
         # add dynamic inputs to the csdl model
         power = np.ones(num)*0 # power fraction (0-1)
@@ -81,12 +84,17 @@ class RunModel(csdl.Model):
         self.add_objective('dt',scaler=0.1)
 
 
+
+
+
 # aircraft data
 mass = 1111 # mass (kg)
 wing_area = 16.2 # wing area (m^2)
 wing_set_angle = 1 # (deg)
 max_power = 120000 # maximum engine power (w)
 propeller_efficiency = 0.8 # propeller efficiency factor
+# mission parameters
+gravity = 9.81 # acceleration due to gravity (m/s^2)
 
 # ode problem instance
 dt = 0.1
@@ -96,7 +104,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 wing_area=wing_area,
                                                 wing_set_angle=wing_set_angle,
                                                 max_power=max_power,
-                                                propeller_efficiency=propeller_efficiency))
+                                                propeller_efficiency=propeller_efficiency,
+                                                gravity=gravity))
 sim.run()
 """
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
@@ -154,5 +163,4 @@ ax7.set_title('theta')
 
 ax8.plot(load_factor)
 ax8.set_title('load_factor')
-
 plt.show()
