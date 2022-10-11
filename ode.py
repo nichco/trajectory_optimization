@@ -22,6 +22,8 @@ class ODESystemModel(csdl.Model):
         theta = self.declare_variable('theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
         wing_area = self.declare_variable('wing_area')
+        max_power = self.declare_variable('max_power')
+        propeller_efficiency = self.declare_variable('propeller_efficiency')
         
         # constants
         g = 9.81 # (m/s^2)
@@ -50,8 +52,8 @@ class ODESystemModel(csdl.Model):
         fax = -drag*csdl.cos(alpha) + lift*csdl.sin(alpha)
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
 
-        # add propulsion model
-        fpx = 1*power*10000
+        # compute thrust
+        fpx = propeller_efficiency*power*max_power
         fpz = 0
         
         # system of ODE's
