@@ -15,10 +15,12 @@ class RunModel(csdl.Model):
         self.parameters.declare('dt')
         self.parameters.declare('mass')
         self.parameters.declare('wing_area')
+        self.parameters.declare('wing_set_angle')
 
     def define(self):
         mass = self.parameters['mass']
         wing_area = self.parameters['wing_area']
+        wing_set_angle = self.parameters['wing_set_angle']
         dt = self.parameters['dt']
         
         # add the time vector to the csdl model
@@ -28,6 +30,7 @@ class RunModel(csdl.Model):
         # add constant inputs to the csdl model
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
+        self.create_input('wing_set_angle',wing_set_angle)
 
         # add dynamic inputs to the csdl model
         power = np.ones(num)*0.5 # power percent (0-1)
@@ -75,12 +78,13 @@ class RunModel(csdl.Model):
 # aircraft data
 mass = 1000 # mass (kg)
 wing_area = 30 # wing area (m^2)
+wing_set_angle = 2 # (deg)
 
 # ode problem instance
 dt = 0.1
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
-sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area))
+sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,wing_area=wing_area,wing_set_angle=wing_set_angle))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
