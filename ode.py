@@ -29,7 +29,7 @@ class ODESystemModel(csdl.Model):
         # compute angle of attack
         alpha = csdl.arctan(w/u)
 
-        # velocity
+        # compute velocity
         velocity = (u**2 + w**2)**0.5
 
         # add aerodynamic model
