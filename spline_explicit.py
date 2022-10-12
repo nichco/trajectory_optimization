@@ -91,11 +91,13 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         sm.train()
 
         xnew = np.arange(0, num_nodes*dt, dt)
-        yder = sm.predict_output_derivatives(xnew)
+        yder_dict = sm.predict_output_derivatives(xnew)
 
-        derivatives['interp', 'control'] = yder
+        array = np.array(yder_dict[None])
 
-"""
+        derivatives['interp', 'control'] = array
+
+
 # run model
 sim = python_csdl_backend.Simulator(spline(N=10,num_nodes=100,dt=0.1))
 sim.run()
@@ -111,32 +113,14 @@ num_nodes=10
 dt=0.1
 xt = np.linspace(0,num_nodes*dt,N)
 yt = np.ones(N)
-xlimits = np.array([[0.0, num_nodes*dt]])
-"""
-sm = RMTB(
-        xlimits=xlimits,
-        order=4,
-        num_ctrl_pts=20,
-        energy_weight=1e-15,
-        regularization_weight=0.0,)
-sm.set_training_values(xt, yt)
-sm.train()
-"""
+
 sm = RBF(d0=0.1,print_global=False,print_solver=False,)
 sm.set_training_values(xt, yt)
 sm.train()
 
 xnew = np.arange(0, num_nodes*dt, dt)
 dict = sm.predict_output_derivatives(xnew)
-lst = list(dict.items())
 
-array = np.array(list(dict.items()), dtype=object)
-"""
-yder = np.zeros((num_nodes,N))
-for i in range(0,num_nodes):
-    for j in range(0,N):
-        yder[i,j] = items[i,j]
-"""
-
-print(array)
+array = np.array(dict[None])
 print(np.shape(array))
+"""
