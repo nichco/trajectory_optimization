@@ -4,7 +4,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-# from modopt.snopt_library import SNOPT
+from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from spline_explicit import spline
@@ -52,12 +52,12 @@ class RunModel(csdl.Model):
         self.create_input('gravity',gravity)
 
         # add dynamic inputs to the csdl model
-        # power = np.ones(num)*0 # power fraction (0-1)
-        # self.create_input('power',power)
-        N = 5
-        control = np.ones(N)*1
-        self.create_input('control',control)
-        self.add(spline(N=N,num_nodes=num,dt=dt))
+        power = np.ones(num)*0.1 # power fraction (0-1)
+        self.create_input('interp',power)
+        #N = 5
+        #control = np.ones(N)*0.1
+        #self.create_input('control',control)
+        #self.add(spline(N=N,num_nodes=num,dt=dt))
         
         theta = np.ones(num)*np.deg2rad(0.0)
         self.create_input('theta',theta)
@@ -80,22 +80,23 @@ class RunModel(csdl.Model):
         e = self.declare_variable('e', shape=(num,))
 
         # add constraints
-        final_altitude = z[-1]
-        self.register_output('final_altitude', final_altitude)
-        self.add_constraint('final_altitude', lower=100, scaler=0.01)
+        final_z = z[-1]
+        self.register_output('final_z', final_z)
+        self.add_constraint('final_z', equals=z_0, scaler=0.01)
 
-        # self.add_constraint('load_factor', lower=-2,upper=2)
+        final_u = u[-1]
+        self.register_output('final_u', final_u)
+        self.add_constraint('final_u', equals=u_0, scaler=0.01)
 
         # add design variables
-        self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
-        self.add_design_variable('control',lower=0, upper=1.0)
-        self.add_design_variable('dt',lower=0.1,upper=10)
+        self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
+        # self.add_design_variable('control',lower=0, upper=1.0)
+        self.add_design_variable('interp',lower=0, upper=1.0)
 
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
-        # self.add_objective('energy', scaler=0.1)
-        self.add_objective('dt',scaler=0.1)
+        self.add_objective('energy', scaler=0.01)
 
 
 
@@ -104,7 +105,7 @@ class RunModel(csdl.Model):
 # aircraft data
 mass = 1111 # mass (kg)
 wing_area = 16.2 # wing area (m^2)
-wing_set_angle = 1 # (deg)
+wing_set_angle = 4 # (deg)
 max_power = 120000 # maximum engine power (w)
 propeller_efficiency = 0.8 # propeller efficiency factor
 # mission parameters
@@ -115,7 +116,7 @@ x_0 = 0 # (m)
 z_0 = 1000 # (m)
 
 # ode problem instance
-dt = 0.1
+dt = 0.2
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
@@ -128,14 +129,14 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 w_0=w_0,
                                                 x_0=x_0,
                                                 z_0=z_0))
-sim.run()
-"""
+# sim.run()
+
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 # optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
+optimizer = SNOPT(prob, Optimality_tolerance=1e-12)
 optimizer.solve()
 # optimizer.print_results()
-"""
+
 # plot states from integrator
 plt.show()
 

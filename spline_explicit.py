@@ -90,7 +90,6 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         yder_dict = self.sm.predict_output_derivatives(xnew)
 
         array = np.array(yder_dict[None])
-        print(array)
 
         derivatives['interp', 'control'] = array
 
