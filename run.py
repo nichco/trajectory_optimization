@@ -64,10 +64,6 @@ class RunModel(csdl.Model):
         theta = np.ones(num)*np.deg2rad(0)
         self.create_input('theta',theta)
 
-        theta_control = np.ones(N)*0.1
-        self.create_input('theta_control',theta_control)
-        self.add(theta_exp(N=N,num_nodes=num,dt=dt))
-
         # initial conditions for states
         self.create_input('u_0', u_0)
         self.create_input('w_0', w_0)
@@ -90,9 +86,9 @@ class RunModel(csdl.Model):
         self.register_output('final_z', final_z)
         self.add_constraint('final_z', equals=z_0, scaler=0.01)
 
-        final_u = u[-1]
-        self.register_output('final_u', final_u)
-        self.add_constraint('final_u', equals=u_0, scaler=0.01)
+        #final_u = u[-1]
+        #self.register_output('final_u', final_u)
+        #self.add_constraint('final_u', equals=u_0, scaler=0.01)
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
@@ -158,7 +154,6 @@ cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
 power = sim['interp']
-load_factor = sim['load_factor']
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4)
@@ -189,6 +184,4 @@ ax6.set_title('power')
 ax7.plot(theta,color='c')
 ax7.set_title('theta')
 
-ax8.plot(load_factor)
-ax8.set_title('load_factor')
 plt.show()

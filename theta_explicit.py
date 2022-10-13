@@ -19,10 +19,10 @@ class theta_exp(csdl.Model):
         theta_control = self.declare_variable('theta_control', shape=(N,))
 
         # custom operation insertion
-        interp = csdl.custom(theta_control, op=ThetaExplicit(N=N,num_nodes=num_nodes,dt=dt))
+        theta_interp = csdl.custom(theta_control, op=ThetaExplicit(N=N,num_nodes=num_nodes,dt=dt))
 
         # output interpolated spline vector
-        self.register_output('theta_interp', interp)
+        self.register_output('theta_interp', theta_interp)
 
 class ThetaExplicit(csdl.CustomExplicitOperation):
     def initialize(self):
@@ -57,7 +57,7 @@ class ThetaExplicit(csdl.CustomExplicitOperation):
 
         # sm = RBF(d0=100,print_global=False,print_solver=False,)
         
-        sm = RMTB(
+        sm_theta = RMTB(
             xlimits=xlimits,
             order=3,
             num_ctrl_pts=N,
@@ -66,16 +66,16 @@ class ThetaExplicit(csdl.CustomExplicitOperation):
             print_global=False,
             print_solver=False,)
         
-        sm.set_training_values(xt, yt)
-        sm.train()
+        sm_theta.set_training_values(xt, yt)
+        sm_theta.train()
         
-        self.sm = sm
+        self.sm_theta = sm_theta
 
         # vector for spline interpolation
         xnew = np.arange(0, num_nodes*dt, dt)
 
         # interpolate spline
-        ynew = sm.predict_values(xnew)
+        ynew = sm_theta.predict_values(xnew)
 
         # assign interpolated output vector
         outputs['theta_interp'] = ynew
@@ -85,11 +85,10 @@ class ThetaExplicit(csdl.CustomExplicitOperation):
         num_nodes = self.parameters['num_nodes']
         dt = self.parameters['dt']
 
-
         xnew = np.arange(0, num_nodes*dt, dt)
-        yder_dict = self.sm.predict_output_derivatives(xnew)
+        dict_theta = self.sm_theta.predict_output_derivatives(xnew)
 
-        array = np.array(yder_dict[None])
+        array = np.array(dict_theta[None])
 
         derivatives['theta_interp', 'theta_control'] = array
 

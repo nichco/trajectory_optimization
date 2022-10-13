@@ -85,7 +85,6 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         num_nodes = self.parameters['num_nodes']
         dt = self.parameters['dt']
 
-
         xnew = np.arange(0, num_nodes*dt, dt)
         yder_dict = self.sm.predict_output_derivatives(xnew)
 
