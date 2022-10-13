@@ -26,6 +26,7 @@ class RunModel(csdl.Model):
         self.parameters.declare('w_0')
         self.parameters.declare('x_0')
         self.parameters.declare('z_0')
+        self.parameters.declare('z_f')
 
     def define(self):
         mass = self.parameters['mass']
@@ -40,6 +41,7 @@ class RunModel(csdl.Model):
         w_0 = self.parameters['w_0']
         x_0 = self.parameters['x_0']
         z_0 = self.parameters['z_0']
+        z_f = self.parameters['z_f']
         dt = self.parameters['dt']
         
         
@@ -88,7 +90,7 @@ class RunModel(csdl.Model):
         # add final altitude constraint
         final_z = z[-1]
         self.register_output('final_z', final_z)
-        self.add_constraint('final_z', equals=z_0, scaler=0.01)
+        self.add_constraint('final_z', equals=z_f, scaler=0.01)
 
         # final u constraint
         final_u = u[-1]
@@ -97,7 +99,7 @@ class RunModel(csdl.Model):
 
         # control slope constraint
         self.add(slope(dt=dt,num=num))
-        self.add_constraint('dtheta', lower=-0.003, upper=0.003)
+        self.add_constraint('dtheta', lower=-0.005, upper=0.005)
         self.add_constraint('dpwr', lower=-0.005, upper=0.005)
 
 
@@ -118,7 +120,7 @@ class RunModel(csdl.Model):
 # aircraft data
 mass = 1111 # mass (kg)
 wing_area = 16.2 # wing area (m^2)
-wing_set_angle = 2 # (deg)
+wing_set_angle = 3 # (deg)
 max_power = 120000 # maximum engine power (w)
 propeller_efficiency = 0.7 # propeller efficiency factor
 oswald = 0.8 # finite wing correction
@@ -126,10 +128,11 @@ cd_0 = 0.025 # zero-lift drag coefficient
 
 # mission parameters
 gravity = 9.81 # acceleration due to gravity (m/s^2)
-u_0 = 63 # 63 (m/s)
+u_0 = 63 # (m/s)
 w_0 = 0 # (m/s)
 x_0 = 0 # (m)
 z_0 = 2000 # (m)
+z_f = 2500 # (m)
 
 # ode problem instance
 dt = 0.2
@@ -146,14 +149,15 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 u_0=u_0,
                                                 w_0=w_0,
                                                 x_0=x_0,
-                                                z_0=z_0))
+                                                z_0=z_0,
+                                                z_f=z_f))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
 # optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
-# optimizer.print_results()
+optimizer.print_results()
 
 # plot states from integrator
 plt.show()
