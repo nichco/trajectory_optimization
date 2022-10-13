@@ -29,21 +29,21 @@
  --------------
  QPsolver Cholesky......
  Scale tolerance........     0.900       Minor feasibility tol..  1.00E-06       Iteration limit........     10000
- Scale option...........         0       Minor optimality  tol..  1.00E-12       Minor print level......         1
+ Scale option...........         0       Minor optimality  tol..  1.00E-10       Minor print level......         1
  Crash tolerance........     0.100       Pivot tolerance........  3.25E-11       New superbasics........        99
  Crash option...........         3       Elastic weight.........  1.00E+05
 
  Partial pricing
  ---------------
- LP Partial price.......         1       Prtl price section ( A)       200       Prtl price section (-I)         2
- QP Partial price.......         1       Prtl price section ( A)       200       Prtl price section (-I)         2
+ LP Partial price.......         1       Prtl price section ( A)       105       Prtl price section (-I)         2
+ QP Partial price.......         1       Prtl price section ( A)       105       Prtl price section (-I)         2
 
  The SQP Method
  --------------
  Minimize...............                 Cold start.............                 Proximal Point method..         1
- Nonlinear objectiv vars       200       Major optimality tol...  2.00E-06       Function precision.....  3.00E-13
- Unbounded step size....  1.00E+20       Superbasics limit......       200       Difference interval....  5.48E-07
- Unbounded objective....  1.00E+10       Reduced Hessian dim....       200       Central difference int.  6.70E-05
+ Nonlinear objectiv vars       105       Major optimality tol...  2.00E-06       Function precision.....  3.00E-13
+ Unbounded step size....  1.00E+20       Superbasics limit......       105       Difference interval....  5.48E-07
+ Unbounded objective....  1.00E+10       Reduced Hessian dim....       105       Central difference int.  6.70E-05
  Major step limit.......  2.00E+00       Derivative linesearch..                 Derivative level.......         3
  Major iterations limit.      1000       Linesearch tolerance...   0.90000       Verify level...........         0
  Minor iterations limit.       500       Penalty parameter......  0.00E+00       Major Print Level......         1
@@ -57,7 +57,7 @@
  Nonlinear constraints
  ---------------------
  Nonlinear constraints..         2       Major feasibility tol..  1.00E-06       Violation limit........  1.00E+06
- Nonlinear Jacobian vars       200
+ Nonlinear Jacobian vars       105
 
  Miscellaneous
  -------------
@@ -74,115 +74,195 @@
  -----------------
                Total      Normal        Free       Fixed     Bounded
  Rows              2           0           0           2           0
- Columns         200           0           0           0         200
+ Columns         105           0           0           0         105
 
- No. of matrix elements                  400     Density     100.000
+ No. of matrix elements                  210     Density     100.000
  Biggest  constant element        0.0000E+00  (excluding fixed columns,
  Smallest constant element        0.0000E+00   free rows, and RHS)
 
  No. of objective coefficients             0
 
  Nonlinear constraints       2     Linear constraints       0
- Nonlinear variables       200     Linear variables         0
- Jacobian  variables       200     Objective variables    200
- Total constraints           2     Total variables        200
+ Nonlinear variables       105     Linear variables         0
+ Jacobian  variables       105     Objective variables    105
+ Total constraints           2     Total variables        105
 1
 
 
 
- The user has defined     400   out of     400   constraint gradients.
- The user has defined     200   out of     200   objective  gradients.
+ The user has defined     210   out of     210   constraint gradients.
+ The user has defined     105   out of     105   objective  gradients.
 
  Cheap test of user-supplied problem derivatives...
 
  The constraint gradients seem to be OK.
 
- -->  The largest discrepancy was    5.48E-04  in constraint   202
+ -->  The largest discrepancy was    2.10E-02  in constraint   106
 
 
  The objective  gradients seem to be OK.
 
- Gradient projected in one direction   4.99255612200E-11
- Difference approximation              4.49144492695E-11
+ Gradient projected in one direction   0.00000000000E+00
+ Difference approximation             -3.68750958314E-04
 1
 
 
     Itn     FP mult  FP step   rgNorm          NumInf         SumInf   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
-    100     4.1E-01  1.0E-01                        1  2.7061995E-01    118    118         1.0E+00       4
-
-    Itn     QP mult  QP step   rgNorm          NonOpt   QP Objective   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
-    200     4.8E-02  1.0E+00  1.6E-14             125  5.7327454E-01     37                              5        73 2.0E+03
-    300    -7.9E-03  2.5E-01  5.9E-03              19  5.4230314E-01    176    194         2.6E-04       5       157 6.4E+01
+    100     7.5E-04  1.5E-01                        1  8.3422091E-01     10     10     75  4.8E-01       3
 
 
    Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
-    322     0    322              1  2.2E+00  3.4E-02  1.9800000E-02       5          172 6.4E+01         _  r  T
+    115     0    115              1  2.2E+00  9.5E-01  1.9800000E-02       3                              _  r i
+    130     1     15 5.8E-01     11  8.1E-01  4.6E-01  7.3462094E+04       3            6 1.9E+00 3.5E+04 _  r i
+    140     2     10 1.0E+00     16  7.9E-01  1.8E-01  7.9838417E+04       3            9 1.3E+01 8.7E+04 _s   i
+    170     3     30 2.8E-01     18  7.9E-01  2.4E-01  7.8152318E+04       3           14 3.6E+01 3.4E+02 _    i
+    209     4     39 1.5E-03     22  7.9E-01  2.7E-01  7.8129922E+04       3           10 2.6E+03 3.1E+01 _    i
+    223     5     14 1.8E-03     26  7.9E-01  3.1E-01  7.8103651E+04       3            5 4.7E+03 9.3E+00 _    i
+    240     6     17 9.5E-03     37  7.8E-01  1.4E+00  7.7770704E+04       3           10 4.8E+03 9.3E+00 _    i
+    278     7     38 3.6E-03     41  7.8E-01  2.5E+00  7.7640941E+04       3           16 7.2E+03 9.3E+00 _    i
+    337     8     59 4.1E-03     45  7.8E-01  4.6E+00  7.7511904E+04       3           15 3.4E+03 9.3E+00 _    i
+    396     9     59 3.6E-03     49  7.8E-01  7.4E+00  7.7402878E+04       3           19 2.9E+04 9.3E+00 _    i
+    403    10      7 3.0E-08     59  7.8E-01  7.9E+00  7.7383950E+04       3           23 3.0E+04 9.3E+00 _    i
+    497    11     94 7.3E-05     69  7.8E-01  9.7E+00  7.7345162E+04       3           43 2.1E+06 9.3E+00 _  R i
+    579    12     82 6.6E-02     72  7.7E-01  1.9E+00  7.6996795E+04       3           98 2.3E+06 9.3E+00 _s   i
+    638    13     59 5.4E-07     81  7.7E-01  1.9E+00  7.6982867E+04       3           42 4.2E+06 9.3E+00 _ M  i
+    701    14     63 1.0E+00     83  7.7E-01  3.2E+00  7.6774663E+04       3            4 8.7E+01 9.3E+00 _sM  i
+    703    15      2 7.1E-05     92  7.7E-01  4.0E+00  7.6734649E+04       3            3 2.1E+00 9.3E+00 _    i
+    799    16     96 5.0E-08     99  7.7E-01  1.5E+01  7.6609472E+04       4           61 9.7E+06 9.3E+00 _  R
 
-    Itn     QP mult  QP step   rgNorm          NonOpt   QP Objective   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
-    422    -1.4E-03  1.0E+00  4.3E-18              18  5.9748463E-03    171                              4       129 4.9E+00
-
-   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
-    437     1    115 1.0E+00      2  3.4E-01  3.9E-03  4.8372353E-02       4     2    144 4.9E+00 3.3E-01 _  r
-    487     2     50 1.0E+00      3  1.8E-03  3.7E-05  2.0838719E-03       5           95 4.7E+01 3.3E-01 _s
-    506     3     19 4.4E-01      7  3.5E-02  2.3E-05  1.3943776E-03       4           77 1.8E+02 3.3E-01 _ m
-    537     4     31 2.4E-01     13  4.2E-02  3.2E-05  1.3304472E-03       4           53 1.2E+02 3.3E-01 _ m
-    568     5     31 1.5E-01     17  4.0E-02  3.2E-05  1.2834987E-03       4           79 1.5E+01 3.3E-01 _ m
-    574     6      6 1.0E+00     18  1.1E-02  2.2E-05  1.0455123E-03       4           76 4.9E+01 3.3E-01 _
-    576     7      2 3.3E-01     20  9.8E-03  1.3E-05  1.0287412E-03       4           75 3.2E+01 3.3E-01 _
-    579     8      3 3.4E-01     22  8.6E-03  1.2E-05  1.0143962E-03       4     1     73 4.6E+00 3.3E-01 _
-    582     9      3 3.9E-01     24  7.9E-03  1.1E-05  1.0017143E-03       4           71 3.6E+00 3.3E-01 _
-    583    10      1 1.0E+00     25  4.1E-03  1.5E-05  9.7847377E-04       4           71 3.0E+00 3.3E-01 _
-    589    11      6 1.0E+00     26  4.1E-04  1.5E-05  9.6723839E-04       4           66 2.5E+00 3.3E-01 _
-    606    12     17 1.0E+00     27  1.6E-03  1.8E-05  9.5133194E-04       5           58 3.7E+00 3.3E-01 _  R
-    619    13     13 1.0E+00     28  5.5E-03  1.4E-05  9.2731875E-04       4           56 7.0E+00 3.3E-01 _s
-    628    14      9 1.0E+00     29  1.6E-04  1.1E-05  9.0433463E-04       4           48 2.9E+00 3.3E-01 _
-    633    15      5 1.0E+00     30  9.0E-05  7.3E-06  8.9474970E-04       4           46 3.4E+00 3.3E-01 _
-    638    16      5 1.0E+00     31  1.6E-03  2.7E-06  8.8788958E-04       4           42 2.9E+00 3.3E-01 _
-    639    17      1 1.0E+00     32  3.8E-04 (1.1E-06) 8.8550368E-04       4           42 3.6E+00 3.3E-01 _
-    643    18      4 1.0E+00     33  1.7E-04 (6.2E-07) 8.8464348E-04       4           39 2.4E+00 3.3E-01 _
-    646    19      3 1.0E+00     35  4.9E-04 (8.3E-07) 8.8365080E-04       4           37 2.4E+00 3.3E-01 _ m
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+    899    -9.5E+03  1.0E+00  2.8E-12  7.9E-01     45  8.0010833E+04     48                              5        18 3.4E+02
 
    Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
-    649    20      3 1.0E+00     36  2.1E-03  3.6E-06  8.8273986E-04       4           35 2.5E+00 3.3E-01 _
-    651    21      2 1.0E+00     37  1.3E-03  2.6E-06  8.8082808E-04       4           34 2.4E+00 3.3E-01 _
-    661    22     10 1.0E+00     39  2.4E-04 (2.0E-06) 8.7950958E-04       4           37 3.9E+00 3.3E-01 _ m
-    665    23      4 1.0E+00     40  4.5E-04 (8.4E-07) 8.7759923E-04       4     1     36 2.4E+00 3.3E-01 _  R
-    684    24     19 1.0E+00     41  5.1E-05 (6.3E-07) 8.7694837E-04       4           18 4.0E+00 3.3E-01 _s
-    691    25      7 4.2E-01     44  2.4E-03  3.9E-06  8.7462472E-04       4           12 7.8E+00 3.3E-01 _ m
-    696    26      5 5.5E-01     46  3.2E-03  5.3E-06  8.7218548E-04       4            8 9.7E+00 3.3E-01 _
-    700    27      4 1.0E+00     47  2.3E-03  6.4E-06  8.6830644E-04       4            5 1.3E+01 3.3E-01 _
-    708    28      8 1.0E+00     49  6.6E-04  6.4E-06  8.6670818E-04       4            6 1.8E+01 3.3E-01 _ m
-    714    29      6 6.7E-01     51  1.4E-03  5.8E-06  8.6589632E-04       4            3 5.2E+00 3.3E-01 _
-    722    30      8 1.0E+00     53  4.2E-04  5.7E-06  8.6378975E-04       4            4 3.3E+00 3.3E-01 _ m
-    725    31      3 1.0E+00     54  6.9E-04  4.0E-06  8.6242235E-04       4            4 2.5E+00 3.3E-01 _
-    728    32      3 1.0E+00     55  5.2E-05  3.1E-06  8.6141060E-04       4            2 2.2E+00 3.3E-01 _
-    731    33      3 1.0E+00     56  1.0E-03 (1.8E-06) 8.6050951E-04       4            4 4.5E+00 3.3E-01 _
-    733    34      2 1.0E+00     58  8.6E-04 (1.5E-06) 8.6010962E-04       4            3 1.7E+01 3.3E-01 _ mR
-    736    35      3 1.0E+00     60  5.2E-05 (7.1E-07) 8.5982799E-04       4            1 1.3E+04 3.3E-01 _sm
-    737    36      1 1.0E+00     61  2.6E-04 (4.3E-07) 8.5956535E-04       4            1 2.1E+04 3.3E-01 _
-    738    37      1 1.0E+00     62  3.6E-04 (6.1E-07) 8.5949847E-04       4     1      1 1.5E+05 3.3E-01 _
-    739    38      1 1.0E+00     63  1.9E-05 (3.1E-08) 8.5947021E-04       4            1 1.4E+05 3.3E-01 _
-    740    39      1 1.0E+00     64 (1.2E-07)(2.0E-10) 8.5947008E-04       4            1 1.4E+05 3.3E-01 _
+    926    17    127 1.0E+00    100  2.0E+00  9.5E-01  3.8536508E+03       5     1     39 8.5E+05 9.3E+00 _s   i
+    937    18     11 1.0E+00    105  7.9E-01  1.5E-01  7.8940255E+04       3           37 6.5E+05 3.8E+04 _    i
+    947    19     10 1.0E+00    106  7.8E-01  2.1E-01  7.8231887E+04       3           34 2.3E+06 4.2E+02 _    i
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+    955    20      8 1.0E+00    107  7.8E-01  2.7E-01  7.8123866E+04       3           31 1.4E+06 6.5E+01 _    i
+    978    21     23 1.0E+00    109  7.8E-01  6.1E-01  7.7887655E+04       3           15 2.1E+06 2.7E+01 _    i
+   1057    22     79 1.0E+00    111  7.7E-01  2.6E+01  7.6840097E+04       4           34 2.2E+06 2.7E+01 _  R
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   1157              1.0E+00  2.8E-11  8.0E-01     29  8.1741157E+04                                     5        11 4.7E+03
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   1175    23    118 1.0E+00    112  2.4E+00  9.5E-01  5.2187469E+03       5     1     14 3.1E+06 2.7E+01 _s   i
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   1275    -2.4E+02  1.0E+00  9.5E-11               9  4.1805149E+03      5                              4        52 3.7E+05
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   1284    24    109 1.0E+00    118  7.9E-01  7.3E+00  7.8795946E+04       4           61 6.2E+05 2.6E+04 _ M
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   1384    -5.1E+01  6.2E-01  1.9E+01  7.9E-01      1  7.9124487E+04     66     67         9.1E-01       5        13 1.9E+05
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   1386    25    102 1.0E+00    119  2.7E+00  9.5E-01  9.2739347E+03       5           14 8.1E+05 6.7E+02 _    i
+   1405    26     19 1.0E+00    124  8.0E-01  3.7E-01  7.9979732E+04       3           12 3.6E+03 2.0E+04 _    i
+   1411    27      6 1.0E+00    125  7.9E-01  1.1E-01  7.8503118E+04       3           13 8.2E+04 1.2E+03 _    i
+   1413    28      2 8.9E-01    135  7.8E-01  1.9E-01  7.7499336E+04       3           14 7.7E+04 4.7E+02 _    i
+   1489    29     76 3.1E-01    146  7.7E-01  9.8E+00  7.6726290E+04       4           63 7.8E+05 4.7E+02 _
+   1586    30     97 1.0E+00    147  2.2E+00  9.5E-01  6.8030495E+03       4           13 6.8E+05 4.7E+02 _    i
+   1606    31     20 1.0E+00    152  8.0E-01  1.7E-01  7.9247679E+04       3           28 2.5E+04 3.0E+04 _    i
+   1613    32      7 1.0E+00    153  7.9E-01  5.7E-02  7.8759800E+04       3           28 3.7E+05 2.9E+03 _    i
+   1615    33      2 1.0E+00    155  7.9E-01  9.5E-02  7.8574844E+04       3           27 3.6E+05 1.5E+03 _    i
+   1632    34     17 1.0E+00    157  7.8E-01  3.1E-01  7.8162131E+04       3           15 3.4E+05 1.5E+03 _  R i
+   1649    35     17 1.0E+00    158  7.8E-01  6.5E-02  7.7746671E+04       3           29 8.1E+05 1.5E+03 _s   i
+   1661    36     12 1.0E+00    160  7.8E-01  9.3E-02  7.7667879E+04       3           26 1.0E+05 1.5E+03 _ M  i
+   1663    37      2 1.5E-03    171  7.8E-01  1.0E-01  7.7652500E+04       3           25 1.0E+05 1.5E+03 _    i
+   1676    38     13 4.4E-03    182  7.8E-01  1.4E-01  7.7596863E+04       3           35 1.1E+05 1.5E+03 _  R i
+   1710    39     34 7.9E-03    193  7.7E-01  3.4E-01  7.7422740E+04       3           62 1.1E+06 1.5E+03 _  R i
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   1810    -3.0E+04  1.0E+00  3.8E-10  7.7E-01     14  7.7537918E+04     21                              3        52 9.8E+05
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   1824    40    114 5.8E-03    203  7.7E-01  4.5E-01  7.6850876E+04       3           66 1.5E+06 1.5E+03 _s   i
+   1832    41      8 1.8E-03    209  7.7E-01  2.7E+01  7.7316043E+04       3           59 2.0E+06 4.4E+06 _sM  i
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   1932    -4.1E+03  1.0E+00  1.9E-09  6.2E-01     55  6.7727704E+04     50                              3        27 7.4E+04
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   2016    42    184 3.4E-02    212  7.7E-01  1.9E+01  7.6664480E+04       3           64 7.6E+06 6.7E+04 _    i
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   2116              1.0E+00  4.0E-08  8.2E-01     61  1.0121116E+05                                     3        14 6.5E+08
+   2216              1.0E+00  8.3E-06  8.0E-01     37  8.2075405E+04                                     3        38 1.6E+11
+   2316              8.0E-02  2.5E+01  7.6E-01      2  7.6487557E+04            59         1.3E-04       3        27 5.3E+11
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   2321    43    305 4.0E-11    220  7.6E-01  3.1E+01  7.6546254E+04       3           24 1.1E+11 1.2E+04 _ M  i
+   2363    43     42            225  7.6E-01  5.2E+03  7.6445332E+05       4           63 6.1E+00         _ Mr
+   2447    44     84 1.0E+00    226  1.9E+00  9.6E-01  2.3546805E+00       4     1                        _s   i
+   2448    45      1 6.4E-01    236  7.6E-01  6.4E-01  7.7581180E+05       3            1 7.6E+05 4.3E+05 _    i
+   2475    46     27 3.9E-02    238  7.6E-01  6.1E-01  7.7637007E+05       3            1 7.7E+07 4.3E+05 _    i
+   2491    47     16 1.2E-02    241  7.5E-01  6.0E-01  7.7573589E+05       3            2 5.3E+01 4.3E+05 _    i
+   2512    48     21 7.4E-04    245  7.5E-01  6.0E-01  7.7562925E+05       3     1      2 3.4E+01 4.3E+05 _    i
+   2539    49     27 7.7E-03    248  7.5E-01  6.0E-01  6.8859261E+05       3            3 6.6E+02 7.0E+02 _    i
+   2564    50     25 3.9E-04    252  7.5E-01  6.0E-01  6.8844238E+05       3            3 2.8E+02 4.3E+01 _    i
+   2578    51     14 1.6E-03    263  7.5E-01  6.1E-01  6.8799538E+05       3     1      3 9.7E+01 1.1E+01 _ M  i
+   2607    52     29 8.2E-03    268  7.5E-01  1.9E+00  6.8660667E+05       3            3 1.0E+02 7.9E+00 _    i
+   2635    53     28 1.2E-03    272  7.5E-01  2.5E+00  6.8623214E+05       4            3 7.6E+01 7.9E+00 _
+   2695    54     60 1.0E+00    273  2.0E+00  9.5E-01  5.9156895E+05       4     1     12 4.6E+03 7.9E+00 _  R i
+   2724    55     29 6.0E-01    278  7.9E-01  5.7E-01  8.0815100E+05       3           12 2.6E+03 1.1E+05 _s   i
+   2759    56     35 1.0E+00    280  8.2E-01  2.9E-03  8.2433337E+05       3                      2.1E+05 _sM  i
+   2763    57      4 1.0E+00    281  8.0E-01  1.2E-01  7.9755027E+05       3            1 7.7E+02 1.0E+03 _    i
+   2780    58     17 1.0E+00    283  7.9E-01  7.2E-02  7.8316633E+05       3            1 2.5E+02 1.0E+02 _    i
+   2804    59     24 5.7E-02    286  7.8E-01  4.9E-02  7.7797926E+05       3            1 1.1E+05 3.4E+01 _    i
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   2851    60     47 2.8E-02    296  7.7E-01  1.7E+01  7.7020216E+05       6            2 1.2E+00 3.4E+01 _
+   2888    61     37 1.0E+00    297  2.4E+00  9.5E-01  6.0320887E+05       5     1      2 4.8E+05 3.4E+01 _    i
+   2906    62     18 1.0E+00    302  8.1E-01  4.9E-01  7.9155523E+05       3            3 3.9E+05 6.7E+04 _    i
+   2958    63     52 3.0E-02    305  8.1E-01  4.7E-01  7.8393824E+05       3            3 6.7E+03 1.1E+03 _    i
+   2993    64     35 3.5E-02    315  8.0E-01  4.4E-01  7.8329915E+05       3            2 2.7E+03 2.1E+02 _    i
+   3019    65     26 5.9E-02    326  7.9E-01  7.1E+00  7.6681226E+05       3            3 2.9E+03 1.2E+02 _ M  i
+   3030    66     11 4.3E-06    336  7.9E-01  1.0E+01  7.6598725E+05       3            4 1.8E+06 1.2E+02 _    i
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   3130    -1.1E+04  1.0E+00  3.9E-06              14  4.4767278E+04     14                              4        47 2.9E+04
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   3159    67    129 3.0E-11    343  7.9E-01  7.4E+00  7.6572987E+05       4           58 1.8E+05 1.2E+02 _  R
+
+    Itn     QP mult  QP step   rgNorm  SumInfE NonOpt Elastic QP obj   +SBS   -SBS    -BS    Pivot     L+U ncp    nS condZHZ
+   3259     2.0E+05  6.1E-05  0.0E+00  4.7E+00     58  4.7096485E+06     96     96         1.7E+04       4         7 1.1E+01
+   3359    -5.4E+03  1.0E+00  5.7E-11  8.3E-01     54  8.5171998E+05     53                              4        11 6.5E+02
+
+   Itns Major Minors    Step   nCon Feasible  Optimal  MeritFunction     L+U BSwap     nS condZHZ Penalty
+   3448    68    289 1.0E+00    344  2.2E+00  9.5E-01  5.3013307E+03       4     1     18 2.6E+05 1.2E+02 _s   i
+   3471    69     23 1.0E+00    350  7.9E-01  2.6E-01  7.9158895E+05       3           12 3.8E+04 3.4E+05 _    i
+   3486    70     15 2.0E-03    354  7.9E-01  2.7E-01  7.8223131E+05       3           12 3.5E+02 4.9E+03 _    i
+   3519    71     33 6.6E-02    357  7.8E-01  7.8E-01  7.7226320E+05       3           38 1.7E+05 8.9E+02 _    i
+   3556    72     37 1.2E-02    368  7.8E-01  9.3E-01  7.7192749E+05       3           64 1.2E+06 5.4E+02 _    i
+   3570    73     14 1.5E-02    379  7.8E-01  9.2E+03  7.6303847E+05       4           65 2.4E+01 5.4E+02 _  r
+   3650    74     80 1.0E+00    380  1.4E+00  9.5E-01  4.2888731E+02       4     2                5.4E+02 _s   i
+   3650    75      0 9.5E-07    385  1.4E+00  9.5E-01  7.8511096E+05       3                      7.7E+05 _    i
+   3650    75      0            390  1.4E+00  9.5E-01  2.1994062E+00       3                              _  R i
+   3653    75      3            394  1.4E+00  9.5E-01  2.1994062E+00       3            3 1.4E+00         _  r i
 1
 
- SNOPTC EXIT   0 -- finished successfully
- SNOPTC INFO   1 -- optimality conditions satisfied
+ SNOPTC EXIT  40 -- terminated after numerical difficulties
+ SNOPTC INFO  41 -- current point cannot be improved
 
  Problem name                 Trajecto
- No. of iterations                 740   Objective            8.5947001965E-04
- No. of major iterations            39   Linear    obj. term  0.0000000000E+00
- Penalty parameter           3.277E-01   Nonlinear obj. term  8.5947001965E-04
- User function calls (total)        65
- No. of superbasics                  1   No. of basic nonlinears             2
- No. of degenerate steps             0   Percentage                       0.00
- Max x                     200 8.6E-01   Max pi                      2 1.2E-02
- Max Primal infeas         201 1.2E-07   Max Dual infeas            39 4.1E-10
- Nonlinear constraint violn    1.2E-07
+ No. of iterations                3653   Objective            1.9800000000E-02
+ No. of major iterations            75   Linear    obj. term  0.0000000000E+00
+ Penalty parameter           7.749E+05   Nonlinear obj. term  1.9800000000E-02
+ User function calls (total)       400
+ No. of superbasics                  3   No. of basic nonlinears             1
+ No. of degenerate steps             2   Percentage                       0.05
+ Max x                      69 5.2E-01   Max pi                      2 1.0E+06
+ Max Primal infeas         106 1.4E+00   Max Dual infeas            47 7.0E+03
+ Nonlinear constraint violn    1.4E+00
 1
 
- Name           Trajecto                 Objective Value      8.5947001965E-04
+ Name           Trajecto                 Objective Value      1.9800000000E-02
 
- Status         Optimal Soln             Iteration    740    Superbasics     1
+ Status         Optimal Soln             Iteration   3653    Superbasics     3
 
  Objective               (Min)
  RHS
@@ -193,217 +273,122 @@
 
   Number  ...Row.. State  ...Value......  Slack Value...  ..Lower Limit.  ..Upper Limit.  .Dual Variable    ..i
 
-     201  r      1    EQ        10.00000         0.00000        10.00000        10.00000         0.00169      1
-     202  r      2    EQ         0.63000        -0.00000         0.63000         0.63000         0.01168      2
+     106  r      1 I  EQ        21.39769         1.39769        20.00000        20.00000    -50974.03483      1
+     107  r      2 I  BS         1.36605         0.73605         0.63000         0.63000  -1000000.00000      2
 1
 
  Section 2 - Variables
 
   Number  .Column. State  ...Value......  .Obj Gradient.  ..Lower Limit.  ..Upper Limit.  .Dual Variable    m+j
 
-       1  x      1    UL         0.52360          .             -0.52360         0.52360        -0.00001      3
-       2  x      2    UL         0.52360          .             -0.52360         0.52360        -0.00003      4
-       3  x      3    UL         0.52360          .             -0.52360         0.52360        -0.00002      5
-       4  x      4    UL         0.52360          .             -0.52360         0.52360        -0.00002      6
-       5  x      5    UL         0.52360          .             -0.52360         0.52360        -0.00002      7
-       6  x      6    UL         0.52360          .             -0.52360         0.52360        -0.00002      8
-       7  x      7    UL         0.52360          .             -0.52360         0.52360        -0.00002      9
-       8  x      8    UL         0.52360          .             -0.52360         0.52360        -0.00002     10
-       9  x      9    UL         0.52360          .             -0.52360         0.52360        -0.00001     11
-      10  x     10    UL         0.52360          .             -0.52360         0.52360        -0.00001     12
-      11  x     11    UL         0.52360          .             -0.52360         0.52360        -0.00001     13
-      12  x     12    UL         0.52360          .             -0.52360         0.52360        -0.00001     14
-      13  x     13    UL         0.52360          .             -0.52360         0.52360        -0.00001     15
-      14  x     14    UL         0.52360          .             -0.52360         0.52360        -0.00001     16
-      15  x     15    UL         0.52360          .             -0.52360         0.52360        -0.00001     17
-      16  x     16    UL         0.52360          .             -0.52360         0.52360        -0.00001     18
-      17  x     17    UL         0.52360          .             -0.52360         0.52360        -0.00001     19
-      18  x     18    UL         0.52360          .             -0.52360         0.52360        -0.00001     20
-      19  x     19    UL         0.52360          .             -0.52360         0.52360        -0.00001     21
-      20  x     20    UL         0.52360          .             -0.52360         0.52360        -0.00000     22
-      21  x     21    UL         0.52360          .             -0.52360         0.52360        -0.00000     23
-      22  x     22    UL         0.52360          .             -0.52360         0.52360        -0.00000     24
-      23  x     23    UL         0.52360          .             -0.52360         0.52360        -0.00000     25
-      24  x     24    UL         0.52360          .             -0.52360         0.52360        -0.00000     26
-      25  x     25    UL         0.52360          .             -0.52360         0.52360        -0.00000     27
-      26  x     26    UL         0.52360          .             -0.52360         0.52360        -0.00000     28
-      27  x     27    UL         0.52360          .             -0.52360         0.52360        -0.00000     29
-      28  x     28    UL         0.52360          .             -0.52360         0.52360        -0.00000     30
-      29  x     29    UL         0.52360          .             -0.52360         0.52360        -0.00000     31
-      30  x     30    UL         0.52360          .             -0.52360         0.52360        -0.00000     32
-      31  x     31    UL         0.52360          .             -0.52360         0.52360        -0.00000     33
-      32  x     32 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     34
-      33  x     33    LL        -0.52360          .             -0.52360         0.52360         0.00000     35
-      34  x     34    LL        -0.52360          .             -0.52360         0.52360         0.00000     36
-      35  x     35 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     37
-      36  x     36 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     38
-      37  x     37 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     39
-      38  x     38 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     40
-      39  x     39   SBS        -0.38626          .             -0.52360         0.52360         0.00000     41
-      40  x     40    UL         0.52360          .             -0.52360         0.52360        -0.00000     42
-      41  x     41    UL         0.52360          .             -0.52360         0.52360        -0.00000     43
-      42  x     42    UL         0.52360          .             -0.52360         0.52360        -0.00000     44
-      43  x     43    UL         0.52360          .             -0.52360         0.52360        -0.00000     45
-      44  x     44    UL         0.52360          .             -0.52360         0.52360        -0.00000     46
-      45  x     45    UL         0.52360          .             -0.52360         0.52360        -0.00000     47
-      46  x     46 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     48
-      47  x     47    LL        -0.52360          .             -0.52360         0.52360         0.00000     49
-      48  x     48    LL        -0.52360          .             -0.52360         0.52360         0.00000     50
-      49  x     49    LL        -0.52360          .             -0.52360         0.52360         0.00000     51
-      50  x     50 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     52
-      51  x     51    UL         0.52360          .             -0.52360         0.52360        -0.00000     53
-      52  x     52    UL         0.52360          .             -0.52360         0.52360        -0.00000     54
-      53  x     53    UL         0.52360          .             -0.52360         0.52360        -0.00000     55
-      54  x     54    UL         0.52360          .             -0.52360         0.52360        -0.00000     56
-      55  x     55    UL         0.52360          .             -0.52360         0.52360        -0.00000     57
-      56  x     56    UL         0.52360          .             -0.52360         0.52360        -0.00000     58
-      57  x     57 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     59
-      58  x     58    LL        -0.52360          .             -0.52360         0.52360         0.00000     60
-      59  x     59    LL        -0.52360          .             -0.52360         0.52360         0.00000     61
-      60  x     60    LL        -0.52360          .             -0.52360         0.52360         0.00000     62
-      61  x     61 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     63
-      62  x     62    UL         0.52360          .             -0.52360         0.52360        -0.00000     64
-      63  x     63    UL         0.52360          .             -0.52360         0.52360        -0.00000     65
-      64  x     64    UL         0.52360          .             -0.52360         0.52360        -0.00000     66
-      65  x     65    UL         0.52360          .             -0.52360         0.52360        -0.00000     67
-      66  x     66    UL         0.52360          .             -0.52360         0.52360        -0.00000     68
-      67  x     67    UL         0.52360          .             -0.52360         0.52360        -0.00000     69
-      68  x     68 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     70
-      69  x     69 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     71
-      70  x     70 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     72
-      71  x     71 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     73
-      72  x     72 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     74
-      73  x     73    BS        -0.41050          .             -0.52360         0.52360         0.00000     75
-      74  x     74 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     76
-      75  x     75 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     77
-      76  x     76 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     78
-      77  x     77 A  LL        -0.52360          .             -0.52360         0.52360         0.00000     79
-      78  x     78    LL        -0.52360          .             -0.52360         0.52360         0.00000     80
-      79  x     79    LL        -0.52360          .             -0.52360         0.52360         0.00000     81
-      80  x     80    LL        -0.52360          .             -0.52360         0.52360         0.00000     82
-      81  x     81    LL        -0.52360          .             -0.52360         0.52360         0.00001     83
-      82  x     82    LL        -0.52360          .             -0.52360         0.52360         0.00001     84
-      83  x     83    LL        -0.52360          .             -0.52360         0.52360         0.00001     85
-      84  x     84    LL        -0.52360          .             -0.52360         0.52360         0.00001     86
-      85  x     85    LL        -0.52360          .             -0.52360         0.52360         0.00001     87
-      86  x     86    LL        -0.52360          .             -0.52360         0.52360         0.00001     88
-      87  x     87    LL        -0.52360          .             -0.52360         0.52360         0.00001     89
-      88  x     88    LL        -0.52360          .             -0.52360         0.52360         0.00001     90
-      89  x     89    LL        -0.52360          .             -0.52360         0.52360         0.00001     91
-      90  x     90    LL        -0.52360          .             -0.52360         0.52360         0.00002     92
-      91  x     91    LL        -0.52360          .             -0.52360         0.52360         0.00002     93
-      92  x     92    LL        -0.52360          .             -0.52360         0.52360         0.00002     94
-      93  x     93    LL        -0.52360          .             -0.52360         0.52360         0.00002     95
-      94  x     94    LL        -0.52360          .             -0.52360         0.52360         0.00002     96
-      95  x     95    LL        -0.52360          .             -0.52360         0.52360         0.00002     97
-      96  x     96    LL        -0.52360          .             -0.52360         0.52360         0.00003     98
-      97  x     97    LL        -0.52360          .             -0.52360         0.52360         0.00003     99
-      98  x     98    LL        -0.52360          .             -0.52360         0.52360         0.00003    100
-      99  x     99    LL        -0.52360          .             -0.52360         0.52360         0.00003    101
-     100  x    100    LL        -0.52360          .             -0.52360         0.52360         0.00001    102
-     101  x    101    LL          .              0.00100          .              1.0             0.00020    103
-     102  x    102    LL          .              0.00200          .              1.0             0.00042    104
-     103  x    103    LL          .              0.00200          .              1.0             0.00044    105
-     104  x    104    LL          .              0.00200          .              1.0             0.00047    106
-     105  x    105    LL          .              0.00200          .              1.0             0.00049    107
-     106  x    106    LL          .              0.00200          .              1.0             0.00052    108
-     107  x    107    LL          .              0.00200          .              1.0             0.00054    109
-     108  x    108    LL          .              0.00200          .              1.0             0.00056    110
-     109  x    109    LL          .              0.00200          .              1.0             0.00059    111
-     110  x    110    LL          .              0.00200          .              1.0             0.00061    112
-     111  x    111    LL          .              0.00200          .              1.0             0.00064    113
-     112  x    112    LL          .              0.00200          .              1.0             0.00066    114
-     113  x    113    LL          .              0.00200          .              1.0             0.00069    115
-     114  x    114    LL          .              0.00200          .              1.0             0.00071    116
-     115  x    115    LL          .              0.00200          .              1.0             0.00074    117
-     116  x    116    LL          .              0.00200          .              1.0             0.00077    118
-     117  x    117    LL          .              0.00200          .              1.0             0.00079    119
-     118  x    118    LL          .              0.00200          .              1.0             0.00082    120
-     119  x    119    LL          .              0.00200          .              1.0             0.00084    121
-     120  x    120    LL          .              0.00200          .              1.0             0.00087    122
-     121  x    121    LL          .              0.00200          .              1.0             0.00090    123
-     122  x    122    LL          .              0.00200          .              1.0             0.00092    124
-     123  x    123    LL          .              0.00200          .              1.0             0.00095    125
-     124  x    124    LL          .              0.00200          .              1.0             0.00098    126
-     125  x    125    LL          .              0.00200          .              1.0             0.00101    127
-     126  x    126    LL          .              0.00200          .              1.0             0.00103    128
-     127  x    127    LL          .              0.00200          .              1.0             0.00106    129
-     128  x    128    LL          .              0.00200          .              1.0             0.00109    130
-     129  x    129    LL          .              0.00200          .              1.0             0.00112    131
-     130  x    130    LL          .              0.00200          .              1.0             0.00115    132
-     131  x    131    LL          .              0.00200          .              1.0             0.00118    133
-     132  x    132    LL          .              0.00200          .              1.0             0.00118    134
-     133  x    133    LL          .              0.00200          .              1.0             0.00115    135
-     134  x    134    LL          .              0.00200          .              1.0             0.00112    136
-     135  x    135    LL          .              0.00200          .              1.0             0.00109    137
-     136  x    136    LL          .              0.00200          .              1.0             0.00106    138
-     137  x    137    LL          .              0.00200          .              1.0             0.00103    139
-     138  x    138    LL          .              0.00200          .              1.0             0.00099    140
-     139  x    139    LL          .              0.00200          .              1.0             0.00097    141
-     140  x    140    LL          .              0.00200          .              1.0             0.00097    142
-     141  x    141    LL          .              0.00200          .              1.0             0.00099    143
-     142  x    142    LL          .              0.00200          .              1.0             0.00102    144
-     143  x    143    LL          .              0.00200          .              1.0             0.00105    145
-     144  x    144    LL          .              0.00200          .              1.0             0.00108    146
-     145  x    145    LL          .              0.00200          .              1.0             0.00110    147
-     146  x    146    LL          .              0.00200          .              1.0             0.00110    148
-     147  x    147    LL          .              0.00200          .              1.0             0.00108    149
-     148  x    148    LL          .              0.00200          .              1.0             0.00105    150
-     149  x    149    LL          .              0.00200          .              1.0             0.00101    151
-     150  x    150    LL          .              0.00200          .              1.0             0.00099    152
-     151  x    151    LL          .              0.00200          .              1.0             0.00098    153
-     152  x    152    LL          .              0.00200          .              1.0             0.00101    154
-     153  x    153    LL          .              0.00200          .              1.0             0.00104    155
-     154  x    154    LL          .              0.00200          .              1.0             0.00107    156
-     155  x    155    LL          .              0.00200          .              1.0             0.00110    157
-     156  x    156    LL          .              0.00200          .              1.0             0.00112    158
-     157  x    157    LL          .              0.00200          .              1.0             0.00112    159
-     158  x    158    LL          .              0.00200          .              1.0             0.00110    160
-     159  x    159    LL          .              0.00200          .              1.0             0.00107    161
-     160  x    160    LL          .              0.00200          .              1.0             0.00104    162
-     161  x    161    LL          .              0.00200          .              1.0             0.00101    163
-     162  x    162    LL          .              0.00200          .              1.0             0.00101    164
-     163  x    163    LL          .              0.00200          .              1.0             0.00104    165
-     164  x    164    LL          .              0.00200          .              1.0             0.00106    166
-     165  x    165    LL          .              0.00200          .              1.0             0.00109    167
-     166  x    166    LL          .              0.00200          .              1.0             0.00112    168
-     167  x    167    LL          .              0.00200          .              1.0             0.00115    169
-     168  x    168    LL          .              0.00200          .              1.0             0.00115    170
-     169  x    169    LL          .              0.00200          .              1.0             0.00112    171
-     170  x    170    LL          .              0.00200          .              1.0             0.00109    172
-     171  x    171    LL          .              0.00200          .              1.0             0.00105    173
-     172  x    172    LL          .              0.00200          .              1.0             0.00102    174
-     173  x    173    LL          .              0.00200          .              1.0             0.00099    175
-     174  x    174    LL          .              0.00200          .              1.0             0.00096    176
-     175  x    175    LL          .              0.00200          .              1.0             0.00092    177
-     176  x    176    LL          .              0.00200          .              1.0             0.00088    178
-     177  x    177    LL          .              0.00200          .              1.0             0.00085    179
-     178  x    178    LL          .              0.00200          .              1.0             0.00081    180
-     179  x    179    LL          .              0.00200          .              1.0             0.00078    181
-     180  x    180    LL          .              0.00200          .              1.0             0.00074    182
-     181  x    181    LL          .              0.00200          .              1.0             0.00071    183
-     182  x    182    LL          .              0.00200          .              1.0             0.00067    184
-     183  x    183    LL          .              0.00200          .              1.0             0.00064    185
-     184  x    184    LL          .              0.00200          .              1.0             0.00060    186
-     185  x    185    LL          .              0.00200          .              1.0             0.00056    187
-     186  x    186    LL          .              0.00200          .              1.0             0.00053    188
-     187  x    187    LL          .              0.00200          .              1.0             0.00049    189
-     188  x    188    LL          .              0.00200          .              1.0             0.00046    190
-     189  x    189    LL          .              0.00200          .              1.0             0.00042    191
-     190  x    190    LL          .              0.00200          .              1.0             0.00039    192
-     191  x    191    LL          .              0.00200          .              1.0             0.00035    193
-     192  x    192    LL          .              0.00200          .              1.0             0.00031    194
-     193  x    193    LL          .              0.00200          .              1.0             0.00028    195
-     194  x    194    LL          .              0.00200          .              1.0             0.00024    196
-     195  x    195    LL          .              0.00200          .              1.0             0.00020    197
-     196  x    196    LL          .              0.00200          .              1.0             0.00016    198
-     197  x    197    LL          .              0.00200          .              1.0             0.00012    199
-     198  x    198    LL          .              0.00200          .              1.0             0.00008    200
-     199  x    199    LL          .              0.00200          .              1.0             0.00003    201
-     200  x    200    BS         0.85947         0.00100          .              1.0            -0.00000    202
+       1  x      1 N  FR        -0.47935          .             -0.52360         0.52360      1332.87253      3
+       2  x      2 N  FR        -0.45001          .             -0.52360         0.52360      2815.62243      4
+       3  x      3 N  FR        -0.44789          .             -0.52360         0.52360      2998.21265      5
+       4  x      4 N  FR        -0.44607          .             -0.52360         0.52360      3156.60367      6
+       5  x      5 N  FR        -0.44451          .             -0.52360         0.52360      3299.79995      7
+       6  x      6 N  FR        -0.44313          .             -0.52360         0.52360      3431.02454      8
+       7  x      7 N  FR        -0.44185          .             -0.52360         0.52360      3553.83555      9
+       8  x      8 N  FR        -0.44061          .             -0.52360         0.52360      3670.47682     10
+       9  x      9 N  FR        -0.43940          .             -0.52360         0.52360      3781.97691     11
+      10  x     10 N  FR        -0.43820          .             -0.52360         0.52360      3888.72149     12
+      11  x     11 N  FR        -0.43701          .             -0.52360         0.52360      3990.82198     13
+      12  x     12 N  FR        -0.43582          .             -0.52360         0.52360      4088.28109     14
+      13  x     13 N  FR        -0.43464          .             -0.52360         0.52360      4181.05777     15
+      14  x     14 N  FR        -0.43347          .             -0.52360         0.52360      4269.09145     16
+      15  x     15 N  FR        -0.43231          .             -0.52360         0.52360      4352.31123     17
+      16  x     16 N  FR        -0.43116          .             -0.52360         0.52360      4430.63963     18
+      17  x     17 N  FR        -0.43001          .             -0.52360         0.52360      4503.99438     19
+      18  x     18 N  FR        -0.42887          .             -0.52360         0.52360      4572.28965     20
+      19  x     19 N  FR        -0.42774          .             -0.52360         0.52360      4635.43664     21
+      20  x     20 N  FR        -0.42662          .             -0.52360         0.52360      4693.34438     22
+      21  x     21 N  FR        -0.42552          .             -0.52360         0.52360      4745.92031     23
+      22  x     22 N  FR        -0.42442          .             -0.52360         0.52360      4793.07130     24
+      23  x     23 N  FR        -0.42334          .             -0.52360         0.52360      4834.70467     25
+      24  x     24 N  FR        -0.42227          .             -0.52360         0.52360      4870.72909     26
+      25  x     25 N  FR        -0.42122          .             -0.52360         0.52360      4901.05225     27
+      26  x     26 N  FR        -0.42024          .             -0.52360         0.52360      4925.57691     28
+      27  x     27 N  FR        -0.41939          .             -0.52360         0.52360      4944.31292     29
+      28  x     28 N  FR        -0.41846          .             -0.52360         0.52360      4957.57937     30
+      29  x     29 N  FR        -0.41789          .             -0.52360         0.52360      4965.44372     31
+      30  x     30 N  FR        -0.41770          .             -0.52360         0.52360      4968.85558     32
+      31  x     31 N  FR        -0.41769          .             -0.52360         0.52360      4969.85353     33
+      32  x     32 N  FR        -0.41774          .             -0.52360         0.52360      4971.45877     34
+      33  x     33 N  FR        -0.41783          .             -0.52360         0.52360      4977.74135     35
+      34  x     34 N  FR        -0.41790          .             -0.52360         0.52360      4993.58854     36
+      35  x     35 N  FR        -0.41784          .             -0.52360         0.52360      5023.68070     37
+      36  x     36 N  FR        -0.41747          .             -0.52360         0.52360      5070.48325     38
+      37  x     37 N  FR        -0.41658          .             -0.52360         0.52360      5131.04087     39
+      38  x     38 N  FR        -0.41488          .             -0.52360         0.52360      5068.86860     40
+      39  x     39 N  FR        -0.39316          .             -0.52360         0.52360      4559.21389     41
+      40  x     40 N  FR        -0.31329          .             -0.52360         0.52360      5933.69919     42
+      41  x     41 N  FR        -0.30099          .             -0.52360         0.52360      5859.48190     43
+      42  x     42 N  FR        -0.31730          .             -0.52360         0.52360      5167.36988     44
+      43  x     43 N  FR        -0.32747          .             -0.52360         0.52360      4652.52914     45
+      44  x     44 N  FR        -0.32569          .             -0.52360         0.52360      4349.51516     46
+      45  x     45 N  FR        -0.31604          .             -0.52360         0.52360      4311.73212     47
+      46  x     46 N  FR        -0.30521          .             -0.52360         0.52360      5083.81953     48
+      47  x     47 N  FR        -0.30547          .             -0.52360         0.52360      7040.46455     49
+      48  x     48 N  FR        -0.33464          .             -0.52360         0.52360      5175.07307     50
+      49  x     49 N  FR        -0.37721          .             -0.52360         0.52360     -2901.75867     51
+      50  x     50 N  FR        -0.38111          .             -0.52360         0.52360      2046.15329     52
+      51  x     51 N  FR        -0.38889          .             -0.52360         0.52360      2347.76397     53
+      52  x     52 N  FR        -0.40528          .             -0.52360         0.52360     -1350.07070     54
+      53  x     53 N  FR        -0.40757          .             -0.52360         0.52360       536.83526     55
+      54  x     54 N  FR        -0.40739          .             -0.52360         0.52360      1214.83128     56
+      55  x     55 N  FR        -0.40695          .             -0.52360         0.52360      1673.71068     57
+      56  x     56 N  FR        -0.40649          .             -0.52360         0.52360      2094.46035     58
+      57  x     57 N  FR        -0.40610          .             -0.52360         0.52360      2359.62467     59
+      58  x     58 N  FR        -0.40505          .             -0.52360         0.52360      2595.37377     60
+      59  x     59 N  FR        -0.40381          .             -0.52360         0.52360      2629.23854     61
+      60  x     60 N  FR        -0.40217          .             -0.52360         0.52360      2500.48554     62
+      61  x     61 N  FR        -0.39912          .             -0.52360         0.52360      1523.29163     63
+      62  x     62 N  FR        -0.36240          .             -0.52360         0.52360      2270.36565     64
+      63  x     63 N  FR        -0.32793          .             -0.52360         0.52360     -3498.80719     65
+      64  x     64 N  FR         0.14746          .             -0.52360         0.52360      5676.48312     66
+      65  x     65 N  FR         0.20440          .             -0.52360         0.52360      -854.87521     67
+      66  x     66    LL         0.52360          .             -0.52360         0.52360      1516.67453     68
+      67  x     67 D  BS         0.52360          .             -0.52360         0.52360        45.99380     69
+      68  x     68 N SBS         0.52360          .             -0.52360         0.52360        61.63878     70
+      69  x     69 N SBS         0.52360          .             -0.52360         0.52360        25.99032     71
+      70  x     70    UL         0.52360          .             -0.52360         0.52360       -39.32579     72
+      71  x     71    LL         0.52360          .             -0.52360         0.52360       603.71288     73
+      72  x     72 N  FR        -0.31792          .             -0.52360         0.52360     -1061.93469     74
+      73  x     73 N  FR        -0.26651          .             -0.52360         0.52360      -785.31742     75
+      74  x     74 N SBS         0.52360          .             -0.52360         0.52360        20.77176     76
+      75  x     75    UL         0.52360          .             -0.52360         0.52360      -499.75697     77
+      76  x     76    UL         0.52360          .             -0.52360         0.52360      -589.98867     78
+      77  x     77    UL         0.52360          .             -0.52360         0.52360      -678.53813     79
+      78  x     78    UL         0.52360          .             -0.52360         0.52360      -766.85642     80
+      79  x     79    UL         0.52360          .             -0.52360         0.52360      -857.57164     81
+      80  x     80    UL         0.52360          .             -0.52360         0.52360      -953.73958     82
+      81  x     81    UL         0.52360          .             -0.52360         0.52360     -1058.31593     83
+      82  x     82    UL         0.52360          .             -0.52360         0.52360     -1173.76408     84
+      83  x     83    UL         0.52360          .             -0.52360         0.52360     -1301.75979     85
+      84  x     84    UL         0.52360          .             -0.52360         0.52360     -1443.01115     86
+      85  x     85    UL         0.52360          .             -0.52360         0.52360     -1597.23409     87
+      86  x     86    UL         0.52360          .             -0.52360         0.52360     -1763.28984     88
+      87  x     87    UL         0.52360          .             -0.52360         0.52360     -1939.44566     89
+      88  x     88    UL         0.52360          .             -0.52360         0.52360     -2123.69173     90
+      89  x     89    UL         0.52360          .             -0.52360         0.52360     -2314.03740     91
+      90  x     90    UL         0.52360          .             -0.52360         0.52360     -2508.73141     92
+      91  x     91    UL         0.52360          .             -0.52360         0.52360     -2706.38530     93
+      92  x     92    UL         0.52360          .             -0.52360         0.52360     -2906.00354     94
+      93  x     93    UL         0.52360          .             -0.52360         0.52360     -3106.95385     95
+      94  x     94    UL         0.52360          .             -0.52360         0.52360     -3308.90861     96
+      95  x     95    UL         0.52360          .             -0.52360         0.52360     -3511.78997     97
+      96  x     96    UL         0.52360          .             -0.52360         0.52360     -3715.74455     98
+      97  x     97    UL         0.52360          .             -0.52360         0.52360     -3921.16490     99
+      98  x     98    UL         0.52360          .             -0.52360         0.52360     -4128.78616    100
+      99  x     99    UL         0.52360          .             -0.52360         0.52360     -4339.89647    101
+     100  x    100    UL         0.52360          .             -0.52360         0.52360     -2625.71858    102
+     101  x    101 A  FR         0.10000          .               .              1.0              .         103
+     102  x    102 A  FR         0.10000          .               .              1.0              .         104
+     103  x    103 A  FR         0.10000          .               .              1.0              .         105
+     104  x    104 A  FR         0.10000          .               .              1.0              .         106
+     105  x    105 A  FR         0.10000          .               .              1.0              .         107
 
  Time for MPS input                             0.00 seconds
- Time for solving problem                      72.47 seconds
+ Time for solving problem                     453.67 seconds
  Time for solution output                       0.00 seconds
- Time for constraint functions                 73.55 seconds
+ Time for constraint functions                454.79 seconds
  Time for objective function                    0.00 seconds

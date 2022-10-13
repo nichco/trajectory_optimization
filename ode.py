@@ -43,7 +43,7 @@ class ODESystemModel(csdl.Model):
         drag = self.declare_variable('drag')
 
         # compute load factor    
-        load_factor = lift/(1000*g)
+        load_factor = lift/(m*g)
         self.register_output('load_factor',load_factor)
         
         # transform aerodynamic forces to body axis system

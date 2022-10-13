@@ -22,7 +22,7 @@ class aero(csdl.Model):
         density = self.declare_variable('density')
         velocity = self.declare_variable('velocity')
 
-        q = 0.5*density*velocity**2 # compute dynamic pressure
+        q = 0.5*density*(velocity**2) # compute dynamic pressure
 
         cd_0 = 0.02 # zero lift drag coefficient
         cd_total = cd_0 + cd_i # total drag coefficient
