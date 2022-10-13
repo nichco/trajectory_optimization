@@ -41,10 +41,6 @@ class ODESystemModel(csdl.Model):
         # define outputs from aero model
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')
-
-        # compute load factor    
-        load_factor = lift/(m*g)
-        self.register_output('load_factor',load_factor)
         
         # transform aerodynamic forces to body axis system
         fax = -drag*csdl.cos(alpha) + lift*csdl.sin(alpha)

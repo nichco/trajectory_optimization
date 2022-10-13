@@ -8,6 +8,7 @@ from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from spline_explicit import spline
+from theta_explicit import theta_exp
 
 
 # The CSDL Model containing the ODE integrator
@@ -55,12 +56,17 @@ class RunModel(csdl.Model):
         # power = np.ones(num)*0.1 # power fraction (0-1)
         # self.create_input('interp',power)
         N = 5
+
         control = np.ones(N)*0.1
         self.create_input('control',control)
         self.add(spline(N=N,num_nodes=num,dt=dt))
         
-        theta = np.ones(num)*np.deg2rad(0.0)
+        theta = np.ones(num)*np.deg2rad(0)
         self.create_input('theta',theta)
+
+        theta_control = np.ones(N)*0.1
+        self.create_input('theta_control',theta_control)
+        self.add(theta_exp(N=N,num_nodes=num,dt=dt))
 
         # initial conditions for states
         self.create_input('u_0', u_0)
@@ -91,7 +97,6 @@ class RunModel(csdl.Model):
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
         self.add_design_variable('control',lower=0, upper=1.0)
-        # self.add_design_variable('interp',lower=0, upper=1.0)
 
         # add objective
         energy = e[-1]

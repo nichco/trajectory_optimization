@@ -36,4 +36,3 @@ class ODEProblemTest(ODEProblem):
         self.add_profile_output('alpha')
         self.add_profile_output('cl')
         self.add_profile_output('cd')
-        self.add_profile_output('load_factor')
