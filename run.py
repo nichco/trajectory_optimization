@@ -99,7 +99,7 @@ class RunModel(csdl.Model):
         slope = self.create_output('slope',shape=(num,), val=0)
         for i in range(1,num):
             slope[i] = (theta_out[i] - theta_out[i-1])/dt
-        self.add_constraint('slope', lower=-0.005, upper=0.005)
+        self.add_constraint('slope', lower=-0.003, upper=0.003)
 
         pwr_out = self.declare_variable('interp',shape=(num,))
         slope_pwr = self.create_output('slope_pwr',shape=(num,), val=0)
