@@ -21,13 +21,15 @@ class aero(csdl.Model):
         pressure = self.declare_variable('pressure')
         density = self.declare_variable('density')
         velocity = self.declare_variable('velocity')
+        oswald = self.declare_variable('oswald')
+        AR = self.declare_variable('aspect_ratio',val=7.52)
 
         q = 0.5*density*(velocity**2) # compute dynamic pressure
 
-        cd_0 = 0.02 # zero lift drag coefficient
-        cd_total = cd_0 + cd_i # total drag coefficient
+        cd_0 = 0.025 # zero lift drag coefficient
+        cd_total = cd_0 + (cl**2)/(np.pi*oswald*AR) # total drag coefficient
 
-        self.register_output('lift',q*s*cl)
+        self.register_output('lift',q*s*oswald*cl)
         self.register_output('drag',q*s*cd_total)
         
 
