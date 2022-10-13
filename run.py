@@ -20,6 +20,10 @@ class RunModel(csdl.Model):
         self.parameters.declare('max_power')
         self.parameters.declare('propeller_efficiency')
         self.parameters.declare('gravity')
+        self.parameters.declare('u_0')
+        self.parameters.declare('w_0')
+        self.parameters.declare('x_0')
+        self.parameters.declare('z_0')
 
     def define(self):
         mass = self.parameters['mass']
@@ -28,7 +32,12 @@ class RunModel(csdl.Model):
         max_power = self.parameters['max_power']
         propeller_efficiency = self.parameters['propeller_efficiency']
         gravity = self.parameters['gravity']
+        u_0 = self.parameters['u_0']
+        w_0 = self.parameters['w_0']
+        x_0 = self.parameters['x_0']
+        z_0 = self.parameters['z_0']
         dt = self.parameters['dt']
+        
         
         # add the time vector to the csdl model
         self.create_input('dt', dt)
@@ -54,10 +63,10 @@ class RunModel(csdl.Model):
         self.create_input('theta',theta)
 
         # initial conditions for states
-        self.create_input('u_0', 0.1)
-        self.create_input('w_0', 0)
-        self.create_input('x_0', 0)
-        self.create_input('z_0', 0)
+        self.create_input('u_0', u_0)
+        self.create_input('w_0', w_0)
+        self.create_input('x_0', x_0)
+        self.create_input('z_0', z_0)
         self.create_input('e_0', 0)
 
         # create model containing the integrator
@@ -100,6 +109,10 @@ max_power = 120000 # maximum engine power (w)
 propeller_efficiency = 0.8 # propeller efficiency factor
 # mission parameters
 gravity = 9.81 # acceleration due to gravity (m/s^2)
+u_0 = 63 # (m/s)
+w_0 = 0 # (m/s)
+x_0 = 0 # (m)
+z_0 = 1000 # (m)
 
 # ode problem instance
 dt = 0.1
@@ -110,7 +123,11 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 wing_set_angle=wing_set_angle,
                                                 max_power=max_power,
                                                 propeller_efficiency=propeller_efficiency,
-                                                gravity=gravity))
+                                                gravity=gravity,
+                                                u_0=u_0,
+                                                w_0=w_0,
+                                                x_0=x_0,
+                                                z_0=z_0))
 sim.run()
 """
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)

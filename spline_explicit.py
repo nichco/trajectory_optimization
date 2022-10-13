@@ -60,7 +60,7 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         sm = RMTB(
             xlimits=xlimits,
             order=3,
-            num_ctrl_pts=10,
+            num_ctrl_pts=N,
             energy_weight=1e-15,
             regularization_weight=0.0,
             print_global=False,

@@ -55,10 +55,8 @@ class ODESystemModel(csdl.Model):
         fpz = 0
         
         # system of ODE's
-        # du = -g*csdl.sin(theta) + (fax + fpx)/m
-        # dw = g*csdl.cos(theta) + (faz + fpz)/m
-        du = (fax + fpx)/m
-        dw = (faz + fpz)/m
+        du = -g*csdl.sin(theta) + (fax + fpx)/m
+        dw = g*csdl.cos(theta) + (faz + fpz)/m
         dx = u*csdl.cos(theta) + w*csdl.sin(theta)
         dz = u*csdl.sin(theta) - w*csdl.cos(theta)
         de = 1*power
