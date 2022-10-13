@@ -4,11 +4,10 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
-from spline_explicit import spline
-from theta_explicit import theta_exp
+from slope import slope
 
 
 # The CSDL Model containing the ODE integrator
@@ -86,26 +85,20 @@ class RunModel(csdl.Model):
         z = self.declare_variable('z', shape=(num,))
         e = self.declare_variable('e', shape=(num,))
 
-        # add constraints
+        # add final altitude constraint
         final_z = z[-1]
         self.register_output('final_z', final_z)
         self.add_constraint('final_z', equals=z_0, scaler=0.01)
 
+        # final u constraint
         final_u = u[-1]
         self.register_output('final_u', final_u)
         self.add_constraint('final_u', equals=u_0, scaler=0.01)
 
-        theta_out = self.declare_variable('theta',shape=(num,))
-        slope = self.create_output('slope',shape=(num,), val=0)
-        for i in range(1,num):
-            slope[i] = (theta_out[i] - theta_out[i-1])/dt
-        self.add_constraint('slope', lower=-0.003, upper=0.003)
-
-        pwr_out = self.declare_variable('interp',shape=(num,))
-        slope_pwr = self.create_output('slope_pwr',shape=(num,), val=0)
-        for i in range(1,num):
-            slope_pwr[i] = (pwr_out[i] - pwr_out[i-1])/dt
-        self.add_constraint('slope_pwr', lower=-0.005, upper=0.005)
+        # control slope constraint
+        self.add(slope(dt=dt,num=num))
+        self.add_constraint('dtheta', lower=-0.003, upper=0.003)
+        self.add_constraint('dpwr', lower=-0.005, upper=0.005)
 
 
         # add design variables
@@ -130,9 +123,10 @@ max_power = 120000 # maximum engine power (w)
 propeller_efficiency = 0.7 # propeller efficiency factor
 oswald = 0.8 # finite wing correction
 cd_0 = 0.025 # zero-lift drag coefficient
+
 # mission parameters
 gravity = 9.81 # acceleration due to gravity (m/s^2)
-u_0 = 53 # 63 (m/s)
+u_0 = 63 # 63 (m/s)
 w_0 = 0 # (m/s)
 x_0 = 0 # (m)
 z_0 = 2000 # (m)
@@ -156,8 +150,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
+optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+# optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
 # optimizer.print_results()
 
@@ -177,7 +171,8 @@ cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
 power = sim['interp']
-slope = sim['slope']
+dtheta = sim['dtheta']
+dpwr = sim['dpwr']
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4)
@@ -208,7 +203,7 @@ ax6.set_title('power')
 ax7.plot(theta,color='c')
 ax7.set_title('theta')
 
-ax8.plot(slope,color='k')
-ax8.set_title('slope')
+ax8.plot(dtheta,color='k')
+ax8.set_title('dtheta')
 
 plt.show()
