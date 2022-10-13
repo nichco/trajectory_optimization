@@ -1,7 +1,7 @@
 import csdl
 import python_csdl_backend
 import numpy as np
-from smt.surrogate_models import RMTB, RBF, RMTC, KRG
+from smt.surrogate_models import RMTB, RBF
 import matplotlib.pyplot as plt
 
 class spline(csdl.Model):
@@ -55,8 +55,8 @@ class SplineExplicit(csdl.CustomExplicitOperation):
 
         xlimits = np.array([[0.0, num_nodes*dt]])
 
-        sm = RBF(d0=0.1,print_global=False,print_solver=False,)
-        """
+        # sm = RBF(d0=100,print_global=False,print_solver=False,)
+        
         sm = RMTB(
             xlimits=xlimits,
             order=3,
@@ -65,10 +65,10 @@ class SplineExplicit(csdl.CustomExplicitOperation):
             regularization_weight=0.0,
             print_global=False,
             print_solver=False,)
-        """
+        
         sm.set_training_values(xt, yt)
         sm.train()
-
+        
         self.sm = sm
 
         # vector for spline interpolation
