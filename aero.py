@@ -1,6 +1,7 @@
 import csdl
 from aero_explicit import airfoil
 from atm_explicit import Atm
+import numpy as np
 
 class aero(csdl.Model):
     def initialize(self):
@@ -9,7 +10,7 @@ class aero(csdl.Model):
 
         wing_set_angle = self.declare_variable('wing_set_angle')
         alpha = self.declare_variable('alpha')
-        self.register_output('alpha_w',alpha + wing_set_angle) # add wing set angle to aoa as an input to the aero model
+        self.register_output('alpha_w',alpha + wing_set_angle*2*np.pi/360) # add wing set angle to aoa as an input to the aero model
         
         self.add(airfoil())
         self.add(Atm())
