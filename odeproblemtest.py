@@ -6,7 +6,7 @@ class ODEProblemTest(ODEProblem):
     def setup(self):
         # If dynamic == True, The parameter must have shape = (self.num_times, ... shape of parameter @ every timestep ...)
         # The ODE function will use the parameter value at timestep 't': parameter@ODEfunction[shape_p] = fullparameter[t, shape_p]
-        self.add_parameter('power', dynamic=True, shape=(self.num_times))
+        self.add_parameter('interp', dynamic=True, shape=(self.num_times))
         self.add_parameter('theta', dynamic=True, shape=(self.num_times))
         # If dynamic != True, it is a static parameter. i.e, the parameter used in the ODE is constant through time.
         # Therefore, the shape does not depend on the number of timesteps

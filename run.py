@@ -4,9 +4,10 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
+from spline_explicit import spline
 
 
 # The CSDL Model containing the ODE integrator
@@ -42,8 +43,12 @@ class RunModel(csdl.Model):
         self.create_input('gravity',gravity)
 
         # add dynamic inputs to the csdl model
-        power = np.ones(num)*0 # power fraction (0-1)
-        self.create_input('power',power)
+        # power = np.ones(num)*0 # power fraction (0-1)
+        # self.create_input('power',power)
+        N = 5
+        control = np.ones(N)*1
+        self.create_input('control',control)
+        self.add(spline(N=N,num_nodes=num,dt=dt))
         
         theta = np.ones(num)*np.deg2rad(0.0)
         self.create_input('theta',theta)
@@ -74,7 +79,7 @@ class RunModel(csdl.Model):
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/4,upper=np.pi/4)
-        self.add_design_variable('power',lower=0, upper=1.0)
+        self.add_design_variable('control',lower=0, upper=1.0)
         self.add_design_variable('dt',lower=0.1,upper=10)
 
         # add objective
@@ -129,7 +134,7 @@ cl = sim['cl']
 cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
-power = sim['power']
+power = sim['interp']
 load_factor = sim['load_factor']
 
 # post-processing

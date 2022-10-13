@@ -55,8 +55,8 @@ class SplineExplicit(csdl.CustomExplicitOperation):
 
         xlimits = np.array([[0.0, num_nodes*dt]])
 
-        # sm = RBF(d0=0.1,print_global=False,print_solver=False,)
-
+        sm = RBF(d0=0.1,print_global=False,print_solver=False,)
+        """
         sm = RMTB(
             xlimits=xlimits,
             order=3,
@@ -65,6 +65,7 @@ class SplineExplicit(csdl.CustomExplicitOperation):
             regularization_weight=0.0,
             print_global=False,
             print_solver=False,)
+        """
         sm.set_training_values(xt, yt)
         sm.train()
 
@@ -94,7 +95,7 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         derivatives['interp', 'control'] = array
 
 
-# run model
+"""
 sim = python_csdl_backend.Simulator(spline(N=10,num_nodes=100,dt=0.1))
 sim.run()
 
@@ -104,7 +105,7 @@ plt.plot(interp)
 plt.show()
 # print partials
 sim.check_partials(compact_print=True)
-
+"""
 """
 # test code
 N=5
