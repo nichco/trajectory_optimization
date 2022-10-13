@@ -53,13 +53,12 @@ class RunModel(csdl.Model):
         self.create_input('gravity',gravity)
 
         # add dynamic inputs to the csdl model
-        # power = np.ones(num)*0.1 # power fraction (0-1)
-        # self.create_input('interp',power)
-        N = 5
-
-        control = np.ones(N)*0.1
-        self.create_input('control',control)
-        self.add(spline(N=N,num_nodes=num,dt=dt))
+        power = np.ones(num)*0.1 # power fraction (0-1)
+        self.create_input('interp',power)
+        # N = 5
+        # control = np.ones(N)*0.1
+        # self.create_input('control',control)
+        # self.add(spline(N=N,num_nodes=num,dt=dt))
         
         theta = np.ones(num)*np.deg2rad(0)
         self.create_input('theta',theta)
@@ -86,13 +85,27 @@ class RunModel(csdl.Model):
         self.register_output('final_z', final_z)
         self.add_constraint('final_z', equals=z_0, scaler=0.01)
 
-        #final_u = u[-1]
-        #self.register_output('final_u', final_u)
-        #self.add_constraint('final_u', equals=u_0, scaler=0.01)
+        final_u = u[-1]
+        self.register_output('final_u', final_u)
+        self.add_constraint('final_u', equals=u_0, scaler=0.01)
+
+        theta_out = self.declare_variable('theta',shape=(num,))
+        slope = self.create_output('slope',shape=(num,), val=0)
+        for i in range(1,num):
+            slope[i] = (theta_out[i] - theta_out[i-1])/dt
+        self.add_constraint('slope', lower=-0.005, upper=0.005)
+
+        pwr_out = self.declare_variable('interp',shape=(num,))
+        slope_pwr = self.create_output('slope_pwr',shape=(num,), val=0)
+        for i in range(1,num):
+            slope_pwr[i] = (pwr_out[i] - pwr_out[i-1])/dt
+        self.add_constraint('slope_pwr', lower=-0.005, upper=0.005)
+
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
-        self.add_design_variable('control',lower=0, upper=1.0)
+        # self.add_design_variable('control',lower=0, upper=1.0)
+        self.add_design_variable('interp',lower=0, upper=1.0)
 
         # add objective
         energy = e[-1]
@@ -106,12 +119,12 @@ class RunModel(csdl.Model):
 # aircraft data
 mass = 1111 # mass (kg)
 wing_area = 16.2 # wing area (m^2)
-wing_set_angle = 4 # (deg)
+wing_set_angle = 2 # (deg)
 max_power = 120000 # maximum engine power (w)
-propeller_efficiency = 0.8 # propeller efficiency factor
+propeller_efficiency = 0.7 # propeller efficiency factor
 # mission parameters
 gravity = 9.81 # acceleration due to gravity (m/s^2)
-u_0 = 63 # (m/s)
+u_0 = 53 # 63 (m/s)
 w_0 = 0 # (m/s)
 x_0 = 0 # (m)
 z_0 = 2000 # (m)
@@ -154,6 +167,7 @@ cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
 power = sim['interp']
+slope = sim['slope']
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4)
@@ -183,5 +197,8 @@ ax6.set_title('power')
 
 ax7.plot(theta,color='c')
 ax7.set_title('theta')
+
+ax8.plot(slope,color='k')
+ax8.set_title('slope')
 
 plt.show()
