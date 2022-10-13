@@ -21,6 +21,7 @@ class RunModel(csdl.Model):
         self.parameters.declare('max_power')
         self.parameters.declare('propeller_efficiency')
         self.parameters.declare('oswald')
+        self.parameters.declare('cd_0')
         self.parameters.declare('gravity')
         self.parameters.declare('u_0')
         self.parameters.declare('w_0')
@@ -34,6 +35,7 @@ class RunModel(csdl.Model):
         max_power = self.parameters['max_power']
         propeller_efficiency = self.parameters['propeller_efficiency']
         oswald = self.parameters['oswald']
+        cd_0 = self.parameters['cd_0']
         gravity = self.parameters['gravity']
         u_0 = self.parameters['u_0']
         w_0 = self.parameters['w_0']
@@ -53,6 +55,7 @@ class RunModel(csdl.Model):
         self.create_input('max_power',max_power)
         self.create_input('propeller_efficiency',propeller_efficiency)
         self.create_input('oswald',oswald)
+        self.create_input('cd_0',cd_0)
         self.create_input('gravity',gravity)
 
         # add dynamic inputs to the csdl model
@@ -126,6 +129,7 @@ wing_set_angle = 2 # (deg)
 max_power = 120000 # maximum engine power (w)
 propeller_efficiency = 0.7 # propeller efficiency factor
 oswald = 0.8 # finite wing correction
+cd_0 = 0.025 # zero-lift drag coefficient
 # mission parameters
 gravity = 9.81 # acceleration due to gravity (m/s^2)
 u_0 = 53 # 63 (m/s)
@@ -143,6 +147,7 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 max_power=max_power,
                                                 propeller_efficiency=propeller_efficiency,
                                                 oswald=oswald,
+                                                cd_0=cd_0,
                                                 gravity=gravity,
                                                 u_0=u_0,
                                                 w_0=w_0,
