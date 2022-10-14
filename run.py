@@ -118,6 +118,8 @@ class RunModel(csdl.Model):
 
         # control curvature constraint
         self.add(curve(dt=dt,num=num))
+        self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
+        self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
