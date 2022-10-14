@@ -1,5 +1,4 @@
 import csdl
-import numpy as np
 
 class slope(csdl.Model):
     def initialize(self):

@@ -8,6 +8,7 @@ from modopt.scipy_library import SLSQP
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
+from curvature import curve
 
 
 # The CSDL Model containing the ODE integrator
@@ -115,6 +116,8 @@ class RunModel(csdl.Model):
         self.add_constraint('dtheta', lower=-0.05, upper=0.05)
         self.add_constraint('dpwr', lower=-0.006, upper=0.006)
 
+        # control curvature constraint
+        self.add(curve(dt=dt,num=num))
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
@@ -194,9 +197,11 @@ drag = sim['drag']
 power = sim['interp']
 dtheta = sim['dtheta']
 dpwr = sim['dpwr']
+d_dtheta = sim['d_dtheta']
+d_dpwr = sim['d_dpwr']
 
 # post-processing
-fig, ((ax1, ax2, ax3, ax4), (ax5, ax6, ax7, ax8)) = plt.subplots(2, 4)
+fig, ((ax1, ax2, ax3, ax4, ax5), (ax6, ax7, ax8, ax9, ax10)) = plt.subplots(2, 5)
 fig.suptitle('trajectory optimization')
 ax1.plot(u,color='b')
 ax1.plot(w,color='g')
@@ -227,5 +232,9 @@ ax7.set_title('theta')
 ax8.plot(dtheta,color='k')
 ax8.plot(dpwr,color='g')
 ax8.set_title('dtheta')
+
+ax9.plot(d_dtheta,color='k')
+ax9.plot(d_dpwr,color='g')
+ax9.set_title('dtheta')
 
 plt.show()
