@@ -30,6 +30,7 @@ class RunModel(csdl.Model):
         self.parameters.declare('theta_0')
         self.parameters.declare('theta_f')
         self.parameters.declare('z_f')
+        self.parameters.declare('dx_f')
 
     def define(self):
         mass = self.parameters['mass']
@@ -47,6 +48,7 @@ class RunModel(csdl.Model):
         theta_0 = self.parameters['theta_0']
         theta_f = self.parameters['theta_f']
         z_f = self.parameters['z_f']
+        dx_f = self.parameters['dx_f']
         dt = self.parameters['dt']
         
         
@@ -99,17 +101,19 @@ class RunModel(csdl.Model):
         self.add_constraint('final_z', equals=z_f, scaler=0.01)
 
         # final u constraint
-        final_u = u[-1]
-        self.register_output('final_u', final_u)
-        self.add_constraint('final_u', equals=u_0, scaler=0.01)
+        #final_u = u[-1]
+        #self.register_output('final_u', final_u)
+        #self.add_constraint('final_u', equals=dx_f, scaler=0.01)
+
+        # horizontal velocity constraint
+        final_dx = u[-1]*csdl.cos(theta[-1]) + w[-1]*csdl.sin(theta[-1])
+        self.register_output('final_dx',final_dx)
+        self.add_constraint('final_dx',equals=dx_f,scaler=0.1)
 
         # theta constraints
         initial_theta = theta[0]
         self.register_output('initial_theta', initial_theta)
         self.add_constraint('initial_theta', equals=theta_0)
-        final_theta = theta[-1]
-        self.register_output('final_theta', final_theta)
-        self.add_constraint('final_theta', equals=theta_f)
 
         # control slope constraint
         self.add(slope(dt=dt,num=num))
@@ -153,6 +157,7 @@ z_0 = 2000 # (m)
 theta_0 = 0 # (rad)
 theta_f = 0 # (rad)
 z_f = 2200 # (m)
+dx_f = 63 # (m/s)
 
 # ode problem instance
 dt = 0.3
@@ -172,7 +177,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 z_0=z_0,
                                                 theta_0=theta_0,
                                                 theta_f=theta_f,
-                                                z_f=z_f))
+                                                z_f=z_f,
+                                                dx_f=dx_f))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
