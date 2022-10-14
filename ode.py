@@ -27,7 +27,7 @@ class ODESystemModel(csdl.Model):
         g = self.declare_variable('gravity')
         
         # compute angle of attack
-        alpha = csdl.arctan(-w/u)
+        alpha = csdl.arctan(w/u)
 
         # compute velocity
         velocity = (u**2 + w**2)**0.5
