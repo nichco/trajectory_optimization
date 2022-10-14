@@ -152,7 +152,7 @@ x_0 = 0 # (m)
 z_0 = 2000 # (m)
 theta_0 = 0 # (rad)
 theta_f = 0 # (rad)
-z_f = 2500 # (m)
+z_f = 2100 # (m)
 
 # ode problem instance
 dt = 0.3
