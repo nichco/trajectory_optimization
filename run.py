@@ -26,6 +26,8 @@ class RunModel(csdl.Model):
         self.parameters.declare('w_0')
         self.parameters.declare('x_0')
         self.parameters.declare('z_0')
+        self.parameters.declare('theta_0')
+        self.parameters.declare('theta_f')
         self.parameters.declare('z_f')
 
     def define(self):
@@ -41,6 +43,8 @@ class RunModel(csdl.Model):
         w_0 = self.parameters['w_0']
         x_0 = self.parameters['x_0']
         z_0 = self.parameters['z_0']
+        theta_0 = self.parameters['theta_0']
+        theta_f = self.parameters['theta_f']
         z_f = self.parameters['z_f']
         dt = self.parameters['dt']
         
@@ -67,8 +71,8 @@ class RunModel(csdl.Model):
         # self.create_input('control',control)
         # self.add(spline(N=N,num_nodes=num,dt=dt))
         
-        theta = np.ones(num)*np.deg2rad(0)
-        self.create_input('theta',theta)
+        theta_control = np.ones(num)*np.deg2rad(0)
+        self.create_input('theta',theta_control)
 
         # initial conditions for states
         self.create_input('u_0', u_0)
@@ -86,6 +90,7 @@ class RunModel(csdl.Model):
         x = self.declare_variable('x', shape=(num,))
         z = self.declare_variable('z', shape=(num,))
         e = self.declare_variable('e', shape=(num,))
+        theta = self.declare_variable('theta', shape=(num,))
 
         # add final altitude constraint
         final_z = z[-1]
@@ -97,10 +102,18 @@ class RunModel(csdl.Model):
         self.register_output('final_u', final_u)
         self.add_constraint('final_u', equals=u_0, scaler=0.01)
 
+        # theta constraints
+        initial_theta = theta[0]
+        self.register_output('initial_theta', initial_theta)
+        self.add_constraint('initial_theta', equals=theta_0)
+        final_theta = theta[-1]
+        self.register_output('final_theta', final_theta)
+        self.add_constraint('final_theta', equals=theta_f)
+
         # control slope constraint
         self.add(slope(dt=dt,num=num))
-        self.add_constraint('dtheta', lower=-0.005, upper=0.005)
-        self.add_constraint('dpwr', lower=-0.005, upper=0.005)
+        self.add_constraint('dtheta', lower=-0.05, upper=0.05)
+        self.add_constraint('dpwr', lower=-0.006, upper=0.006)
 
 
         # add design variables
@@ -122,7 +135,7 @@ mass = 1111 # mass (kg)
 wing_area = 16.2 # wing area (m^2)
 wing_set_angle = 3 # (deg)
 max_power = 120000 # maximum engine power (w)
-propeller_efficiency = 0.7 # propeller efficiency factor
+propeller_efficiency = 0.8 # propeller efficiency factor
 oswald = 0.8 # finite wing correction
 cd_0 = 0.025 # zero-lift drag coefficient
 
@@ -132,10 +145,12 @@ u_0 = 63 # (m/s)
 w_0 = 0 # (m/s)
 x_0 = 0 # (m)
 z_0 = 2000 # (m)
+theta_0 = 0 # (rad)
+theta_f = 0 # (rad)
 z_f = 2500 # (m)
 
 # ode problem instance
-dt = 0.2
+dt = 0.3
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
@@ -150,6 +165,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 w_0=w_0,
                                                 x_0=x_0,
                                                 z_0=z_0,
+                                                theta_0=theta_0,
+                                                theta_f=theta_f,
                                                 z_f=z_f))
 # sim.run()
 
@@ -208,6 +225,7 @@ ax7.plot(theta,color='c')
 ax7.set_title('theta')
 
 ax8.plot(dtheta,color='k')
+ax8.plot(dpwr,color='g')
 ax8.set_title('dtheta')
 
 plt.show()
