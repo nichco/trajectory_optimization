@@ -4,7 +4,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-# from modopt.snopt_library import SNOPT
+from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
@@ -112,12 +112,12 @@ class RunModel(csdl.Model):
         self.add_constraint('final_theta', equals=theta_f)
 
         # control slope constraint
-        #self.add(slope(dt=dt,num=num))
-        #self.add_constraint('dtheta', lower=-0.05, upper=0.05)
-        #self.add_constraint('dpwr', lower=-0.006, upper=0.006)
+        self.add(slope(dt=dt,num=num))
+        self.add_constraint('dtheta', lower=-0.1, upper=0.1)
+        self.add_constraint('dpwr', lower=-0.1, upper=0.1)
 
         # control curvature constraint
-        #self.add(curve(dt=dt,num=num))
+        self.add(curve(dt=dt,num=num))
         #self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
@@ -152,7 +152,7 @@ x_0 = 0 # (m)
 z_0 = 2000 # (m)
 theta_0 = 0 # (rad)
 theta_f = 0 # (rad)
-z_f = 2100 # (m)
+z_f = 2200 # (m)
 
 # ode problem instance
 dt = 0.3
@@ -176,8 +176,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-# optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
+# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
 optimizer.print_results()
 
