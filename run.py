@@ -112,14 +112,14 @@ class RunModel(csdl.Model):
         self.add_constraint('final_theta', equals=theta_f)
 
         # control slope constraint
-        self.add(slope(dt=dt,num=num))
-        self.add_constraint('dtheta', lower=-0.05, upper=0.05)
-        self.add_constraint('dpwr', lower=-0.006, upper=0.006)
+        #self.add(slope(dt=dt,num=num))
+        #self.add_constraint('dtheta', lower=-0.05, upper=0.05)
+        #self.add_constraint('dpwr', lower=-0.006, upper=0.006)
 
         # control curvature constraint
-        self.add(curve(dt=dt,num=num))
-        self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
-        self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
+        #self.add(curve(dt=dt,num=num))
+        #self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
+        #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
@@ -203,42 +203,46 @@ d_dtheta = sim['d_dtheta']
 d_dpwr = sim['d_dpwr']
 
 # post-processing
-fig, ((ax1, ax2, ax3, ax4, ax5), (ax6, ax7, ax8, ax9, ax10)) = plt.subplots(2, 5)
+fig, ((ax1, ax2, ax3, ax4, ax5, ax6), (ax7, ax8, ax9, ax10, ax11, ax12)) = plt.subplots(2, 6)
 fig.suptitle('trajectory optimization')
 ax1.plot(u,color='b')
-ax1.plot(w,color='g')
-ax1.legend(['u','w'])
+ax1.legend(['u'])
 
-ax2.plot(x,color='r')
-ax2.plot(z,color='c')
-ax2.legend(['x','z'])
+ax2.plot(w,color='g')
+ax2.legend(['w'])
 
-ax3.plot(lift,color='m')
-ax3.plot(drag,color='y')
-ax3.legend(['lift','drag'])
+ax3.plot(x,color='r')
+ax3.legend(['x'])
 
-ax4.plot(cl)
-ax4.plot(cd)
-ax4.legend(['cl','cd'])
+ax4.plot(z,color='c')
+ax4.legend(['z'])
 
-ax5.plot(alpha,color='k')
-ax5.set_title('alpha')
-ax5.set_ylabel('rad')
+ax5.plot(lift,color='m')
+ax5.plot(drag,color='y')
+ax5.legend(['lift','drag'])
 
-ax6.plot(power,color='k')
-ax6.set_title('power')
+ax6.plot(cl)
+ax6.plot(cd)
+ax6.legend(['cl','cd'])
 
-ax7.plot(theta,color='c')
-ax7.set_title('theta')
+ax7.plot(alpha,color='k')
+ax7.set_title('alpha')
+ax7.set_ylabel('rad')
 
-ax8.plot(dtheta,color='k')
-ax8.plot(dpwr,color='m')
-ax8.legend(['dtheta','dpwr'])
-ax8.set_title('slope')
+ax8.plot(power,color='k')
+ax8.set_title('power')
 
-ax9.plot(d_dtheta,color='k')
-ax9.plot(d_dpwr,color='c')
-ax9.legend(['d_dtheta','d_dpwr'])
-ax9.set_title('curvature')
+ax9.plot(theta,color='c')
+ax9.set_title('theta')
+
+ax10.plot(dtheta,color='k')
+ax10.plot(dpwr,color='m')
+ax10.legend(['dtheta','dpwr'])
+ax10.set_title('slope')
+
+ax11.plot(d_dtheta,color='k')
+ax11.plot(d_dpwr,color='c')
+ax11.legend(['d_dtheta','d_dpwr'])
+ax11.set_title('curvature')
 
 plt.show()
