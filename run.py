@@ -117,8 +117,8 @@ class RunModel(csdl.Model):
 
         # control slope constraint
         self.add(slope(dt=dt,num=num))
-        self.add_constraint('dtheta', lower=-0.1, upper=0.1)
-        self.add_constraint('dpwr', lower=-0.1, upper=0.1)
+        self.add_constraint('dtheta', lower=-0.05, upper=0.05)
+        self.add_constraint('dpwr', lower=-0.05, upper=0.05)
 
         # control curvature constraint
         self.add(curve(dt=dt,num=num))
@@ -129,6 +129,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
         # self.add_design_variable('control',lower=0, upper=1.0)
         self.add_design_variable('interp',lower=0, upper=1.0)
+        self.add_design_variable('dt',lower=0, upper=1.0)
 
         # add objective
         energy = e[-1]
@@ -185,7 +186,7 @@ prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 # optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
 optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
-optimizer.print_results()
+# optimizer.print_results()
 
 # plot states from integrator
 plt.show()
@@ -207,6 +208,8 @@ dtheta = sim['dtheta']
 dpwr = sim['dpwr']
 d_dtheta = sim['d_dtheta']
 d_dpwr = sim['d_dpwr']
+
+print(sim['dt'])
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4, ax5, ax6), (ax7, ax8, ax9, ax10, ax11, ax12)) = plt.subplots(2, 6)
