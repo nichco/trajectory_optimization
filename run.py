@@ -230,11 +230,13 @@ ax7.plot(theta,color='c')
 ax7.set_title('theta')
 
 ax8.plot(dtheta,color='k')
-ax8.plot(dpwr,color='g')
-ax8.set_title('dtheta')
+ax8.plot(dpwr,color='m')
+ax8.legend(['dtheta','dpwr'])
+ax8.set_title('slope')
 
 ax9.plot(d_dtheta,color='k')
-ax9.plot(d_dpwr,color='g')
-ax9.set_title('dtheta')
+ax9.plot(d_dpwr,color='c')
+ax9.legend(['d_dtheta','d_dpwr'])
+ax9.set_title('curvature')
 
 plt.show()
