@@ -14,45 +14,29 @@ from curvature import curve
 class RunModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('dt')
-        self.parameters.declare('mass')
-        self.parameters.declare('wing_area')
-        self.parameters.declare('wing_set_angle')
-        self.parameters.declare('max_power')
-        self.parameters.declare('max_rpm')
-        self.parameters.declare('propeller_efficiency')
-        self.parameters.declare('oswald')
-        self.parameters.declare('cd_0')
-        self.parameters.declare('gravity')
-        self.parameters.declare('u_0')
-        self.parameters.declare('w_0')
-        self.parameters.declare('x_0')
-        self.parameters.declare('z_0')
-        self.parameters.declare('theta_0')
-        self.parameters.declare('theta_f')
-        self.parameters.declare('z_f')
-        self.parameters.declare('dx_f')
-
+        self.parameters.declare('options')
     def define(self):
-        mass = self.parameters['mass']
-        wing_area = self.parameters['wing_area']
-        wing_set_angle = self.parameters['wing_set_angle']
-        max_power = self.parameters['max_power']
-        max_rpm = self.parameters['max_rpm']
-        propeller_efficiency = self.parameters['propeller_efficiency']
-        oswald = self.parameters['oswald']
-        cd_0 = self.parameters['cd_0']
-        gravity = self.parameters['gravity']
-        u_0 = self.parameters['u_0']
-        w_0 = self.parameters['w_0']
-        x_0 = self.parameters['x_0']
-        z_0 = self.parameters['z_0']
-        theta_0 = self.parameters['theta_0']
-        theta_f = self.parameters['theta_f']
-        z_f = self.parameters['z_f']
-        dx_f = self.parameters['dx_f']
+        options = self.parameters['options']
         dt = self.parameters['dt']
-        
-        
+
+        mass = options['mass']
+        wing_area = options['wing_area']
+        wing_set_angle = options['wing_set_angle']
+        max_power = options['max_power']
+        max_rpm = options['max_rpm']
+        propeller_efficiency = options['propeller_efficiency']
+        oswald = options['oswald']
+        cd_0 = options['cd_0']
+        gravity = options['gravity']
+        u_0 = options['u_0']
+        w_0 = options['w_0']
+        x_0 = options['x_0']
+        z_0 = options['z_0']
+        theta_0 = options['theta_0']
+        theta_f = options['theta_f']
+        z_f = options['z_f']
+        dx_f = options['dx_f']
+
         # add the time vector to the csdl model
         self.create_input('dt', dt)
         self.add(timestep(num=num))
@@ -137,48 +121,32 @@ class RunModel(csdl.Model):
 
 
 
+options = {} # aircraft and mission parameter dictionary
 # aircraft data
-mass = 1111 # mass (kg)
-wing_area = 16.2 # wing area (m^2)
-wing_set_angle = 3 # (deg)
-max_power = 120000 # maximum engine power (w)
-max_rpm = 6000 # maximum rotor rpm
-propeller_efficiency = 0.8 # propeller efficiency factor
-oswald = 0.8 # finite wing correction
-cd_0 = 0.025 # zero-lift drag coefficient
-
+options['mass'] = 1111 # (kg)
+options['wing_area'] = 16.2 # wing area (m^2)
+options['wing_set_angle'] = 3 # (deg)
+options['max_power'] = 120000 # maximum engine power (w)
+options['max_rpm'] = 6000 # maximum rotor speed (rpm)
+options['propeller_efficiency'] = 0.8 # propeller efficiency factor
+options['oswald'] = 0.8 # finite wing correction
+options['cd_0'] = 0.025 # zero-lift drag coefficient
 # mission parameters
-gravity = 9.81 # acceleration due to gravity (m/s^2)
-u_0 = 63 # (m/s)
-w_0 = 0 # (m/s)
-x_0 = 0 # (m)
-z_0 = 2000 # (m)
-theta_0 = 0 # (rad)
-theta_f = 0 # (rad)
-z_f = 2200 # (m)
-dx_f = 63 # (m/s)
+options['gravity'] = 9.81 # acceleration due to gravity (m/s^2)
+options['u_0'] = 63 # (m/s)
+options['w_0'] = 0 # (m/s)
+options['x_0'] = 0 # (m)
+options['z_0'] = 2000 # (m)
+options['theta_0'] = 0 # (rad)
+options['theta_f'] = 0 # (rad)
+options['z_f'] = 2200 # (m)
+options['dx_f'] = 63 # (m/s)
 
 # ode problem instance
 dt = 0.3
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
-sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
-                                                wing_area=wing_area,
-                                                wing_set_angle=wing_set_angle,
-                                                max_power=max_power,
-                                                max_rpm=max_rpm,
-                                                propeller_efficiency=propeller_efficiency,
-                                                oswald=oswald,
-                                                cd_0=cd_0,
-                                                gravity=gravity,
-                                                u_0=u_0,
-                                                w_0=w_0,
-                                                x_0=x_0,
-                                                z_0=z_0,
-                                                theta_0=theta_0,
-                                                theta_f=theta_f,
-                                                z_f=z_f,
-                                                dx_f=dx_f))
+sim = python_csdl_backend.Simulator(RunModel(dt=dt,options=options))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
@@ -252,5 +220,4 @@ ax11.plot(d_dtheta,color='k')
 ax11.plot(d_dpwr,color='c')
 ax11.legend(['d_dtheta','d_dpwr'])
 ax11.set_title('curvature')
-
 plt.show()
