@@ -1,6 +1,6 @@
 import csdl
 from aero import aero
-from prop import prop
+from rotor import rotor
 
 
 class ODESystemModel(csdl.Model):
@@ -23,7 +23,7 @@ class ODESystemModel(csdl.Model):
         m = self.declare_variable('mass')
         wing_area = self.declare_variable('wing_area')
         max_power = self.declare_variable('max_power')
-        # max_rpm = self.declare_variable('max_rpm')
+        max_rpm = self.declare_variable('max_rpm')
         propeller_efficiency = self.declare_variable('propeller_efficiency')
         g = self.declare_variable('gravity')
         
@@ -48,6 +48,9 @@ class ODESystemModel(csdl.Model):
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
 
         # compute thrust
+        rpm = power*max_rpm
+        self.register_output('omega',rpm)
+
         fpx = propeller_efficiency*power*max_power
         fpz = 0
         
