@@ -23,6 +23,7 @@ class ODESystemModel(csdl.Model):
         m = self.declare_variable('mass')
         wing_area = self.declare_variable('wing_area')
         max_power = self.declare_variable('max_power')
+        # max_rpm = self.declare_variable('max_rpm')
         propeller_efficiency = self.declare_variable('propeller_efficiency')
         g = self.declare_variable('gravity')
         

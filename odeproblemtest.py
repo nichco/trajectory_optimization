@@ -14,6 +14,7 @@ class ODEProblemTest(ODEProblem):
         self.add_parameter('wing_area')
         self.add_parameter('wing_set_angle')
         self.add_parameter('max_power')
+        self.add_parameter('max_rpm')
         self.add_parameter('propeller_efficiency')
         self.add_parameter('oswald')
         self.add_parameter('cd_0')

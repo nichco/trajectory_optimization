@@ -4,14 +4,13 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
 from curvature import curve
 
 
-# The CSDL Model containing the ODE integrator
 class RunModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('dt')
@@ -19,6 +18,7 @@ class RunModel(csdl.Model):
         self.parameters.declare('wing_area')
         self.parameters.declare('wing_set_angle')
         self.parameters.declare('max_power')
+        self.parameters.declare('max_rpm')
         self.parameters.declare('propeller_efficiency')
         self.parameters.declare('oswald')
         self.parameters.declare('cd_0')
@@ -37,6 +37,7 @@ class RunModel(csdl.Model):
         wing_area = self.parameters['wing_area']
         wing_set_angle = self.parameters['wing_set_angle']
         max_power = self.parameters['max_power']
+        max_rpm = self.parameters['max_rpm']
         propeller_efficiency = self.parameters['propeller_efficiency']
         oswald = self.parameters['oswald']
         cd_0 = self.parameters['cd_0']
@@ -61,6 +62,7 @@ class RunModel(csdl.Model):
         self.create_input('wing_area',wing_area)
         self.create_input('wing_set_angle',wing_set_angle)
         self.create_input('max_power',max_power)
+        self.create_input('max_rpm',max_rpm)
         self.create_input('propeller_efficiency',propeller_efficiency)
         self.create_input('oswald',oswald)
         self.create_input('cd_0',cd_0)
@@ -140,6 +142,7 @@ mass = 1111 # mass (kg)
 wing_area = 16.2 # wing area (m^2)
 wing_set_angle = 3 # (deg)
 max_power = 120000 # maximum engine power (w)
+max_rpm = 6000 # maximum rotor rpm
 propeller_efficiency = 0.8 # propeller efficiency factor
 oswald = 0.8 # finite wing correction
 cd_0 = 0.025 # zero-lift drag coefficient
@@ -163,6 +166,7 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
                                                 wing_area=wing_area,
                                                 wing_set_angle=wing_set_angle,
                                                 max_power=max_power,
+                                                max_rpm=max_rpm,
                                                 propeller_efficiency=propeller_efficiency,
                                                 oswald=oswald,
                                                 cd_0=cd_0,
@@ -178,8 +182,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
+optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+# optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
 # optimizer.print_results()
 
