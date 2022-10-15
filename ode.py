@@ -1,6 +1,5 @@
 import csdl
 from aero import aero
-from rotor import rotor
 
 
 class ODESystemModel(csdl.Model):
@@ -50,7 +49,6 @@ class ODESystemModel(csdl.Model):
         # compute thrust
         rpm = power*max_rpm
         self.register_output('omega',rpm)
-        # self.add(rotor())
 
         fpx = propeller_efficiency*power*max_power
         fpz = 0
