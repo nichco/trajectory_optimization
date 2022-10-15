@@ -182,7 +182,7 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,mass=mass,
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+optimizer = SLSQP(prob, maxiter=800, ftol=1e-9)
 # optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
 # optimizer.print_results()
