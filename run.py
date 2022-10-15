@@ -100,11 +100,6 @@ class RunModel(csdl.Model):
         self.register_output('final_z', final_z)
         self.add_constraint('final_z', equals=z_f, scaler=0.01)
 
-        # final u constraint
-        #final_u = u[-1]
-        #self.register_output('final_u', final_u)
-        #self.add_constraint('final_u', equals=dx_f, scaler=0.01)
-
         # horizontal velocity constraint
         final_dx = u[-1]*csdl.cos(theta[-1]) + w[-1]*csdl.sin(theta[-1])
         self.register_output('final_dx',final_dx)
