@@ -22,20 +22,20 @@ class rotor(csdl.Model):
         chord_cp = self.create_input(name='chord_cp', shape=(2,), units='rad', val=np.array([0.3,0.1]))
         self.add_design_variable('pitch_cp', lower=5*np.pi/180,upper=60*np.pi/180)
         # Inputs changing across conditions (segments)
-        self.create_input('omega', shape=(num_nodes, 1), units='rpm/1000', val=3000)
+        # self.create_input('omega', shape=(num_nodes, 1), units='rpm/1000', val=3000)
 
-        self.create_input(name='u', shape=(num_nodes, 1), units='m/s', val=0)
+        # self.create_input(name='u', shape=(num_nodes, 1), units='m/s', val=0)
         self.create_input(name='v', shape=(num_nodes, 1), units='m/s', val=0)
-        self.create_input(name='w', shape=(num_nodes, 1), units='m/s', val=0)
+        # self.create_input(name='w', shape=(num_nodes, 1), units='m/s', val=0)
         self.create_input(name='p', shape=(num_nodes, 1), units='rad/s', val=0)
         self.create_input(name='q', shape=(num_nodes, 1), units='rad/s', val=0)
         self.create_input(name='r', shape=(num_nodes, 1), units='rad/s', val=0)
         self.create_input(name='Phi', shape=(num_nodes, 1), units='rad', val=0)
         self.create_input(name='Theta', shape=(num_nodes, 1), units='rad', val=0)
         self.create_input(name='Psi', shape=(num_nodes, 1), units='rad', val=0)
-        self.create_input(name='x', shape=(num_nodes,  1), units='m', val=0)
+        # self.create_input(name='x', shape=(num_nodes,  1), units='m', val=0)
         self.create_input(name='y', shape=(num_nodes,  1), units='m', val=0)
-        self.create_input(name='z', shape=(num_nodes,  1), units='m', val=0)
+        # self.create_input(name='z', shape=(num_nodes,  1), units='m', val=0)
 
         self.create_input(name='thrust_vector', shape=(num_nodes,3), val=np.tile(thrust_vector,(num_nodes,1)))
         self.create_input(name='thrust_origin', shape=(num_nodes,3), val=np.tile(thrust_origin,(num_nodes,1)))
@@ -54,8 +54,9 @@ class rotor(csdl.Model):
 
 
 
-
+"""
 sim = python_csdl_backend.Simulator(rotor())
 sim.run()
 
 print(sim['T'])
+"""

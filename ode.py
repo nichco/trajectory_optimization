@@ -29,17 +29,17 @@ class ODESystemModel(csdl.Model):
         
         # compute angle of attack
         alpha = csdl.arctan(w/u)
+        self.register_output('alpha',alpha)
 
         # compute velocity
         velocity = (u**2 + w**2)**0.5
+        self.register_output('velocity',velocity)
 
         # add aerodynamic model
-        self.register_output('alpha',alpha)
-        self.register_output('velocity',velocity)
         self.register_output('altitude',1*z)
         self.register_output('ref_area',1*wing_area)
         self.add(aero())
-        # define outputs from aero model
+        # define outputs from aerodynamic model
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')
         
@@ -50,6 +50,7 @@ class ODESystemModel(csdl.Model):
         # compute thrust
         rpm = power*max_rpm
         self.register_output('omega',rpm)
+        # self.add(rotor())
 
         fpx = propeller_efficiency*power*max_power
         fpz = 0
