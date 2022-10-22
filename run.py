@@ -4,7 +4,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
@@ -55,13 +55,14 @@ class RunModel(csdl.Model):
         # add dynamic inputs to the csdl model
         power = np.ones(num)*0.1 # power fraction (0-1)
         self.create_input('interp',power)
-        # N = 5
-        # control = np.ones(N)*0.1
-        # self.create_input('control',control)
-        # self.add(spline(N=N,num_nodes=num,dt=dt))
         
-        theta_control = np.ones(num)*np.deg2rad(0)
-        self.create_input('theta',theta_control)
+        control_x = np.ones(num)*0 # cruise rotor speed input control
+        control_z = np.ones(num)*0 # lift rotor speed input control
+        self.create_input('control_x',control_x)
+        self.create_input('control_z',control_z)
+        
+        control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
+        self.create_input('theta',control_theta)
 
         # initial conditions for states
         self.create_input('u_0', u_0)
@@ -150,8 +151,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,options=options))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
+optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+# optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
 # optimizer.print_results()
 
