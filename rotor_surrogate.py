@@ -1,5 +1,6 @@
 import numpy as np
 from smt.surrogate_models import RMTB, RBF
+import matplotlib.pyplot as plt
 
 
 ctarr = np.array([[0.44378727, 0.39780505, 0.36492063, 0.34594835, 0.3396722,  0.34594835, 0.36492063, 0.39780505, 0.44378727],
@@ -36,7 +37,27 @@ xlimits = np.array([[-100.0, 100.0], [-100.0, 100.0]])
 #sm = RMTB(
 #    num_ctrl_pts=4, xlimits=xlimits, nonlinear_maxiter=100, energy_weight=1e-12
 #)
+"""
+sm = RMTB(
+            xlimits=xlimits,
+            order=3,
+            num_ctrl_pts=N,
+            energy_weight=1e-15,
+            regularization_weight=0.0,
+            print_global=False,
+            print_solver=False,)
+"""
 
 sm = RBF(d0=0.1,print_global=False,print_solver=False,)
 sm.set_training_values(xt, ctarr)
 sm.train()
+
+
+x = np.linspace(-100,100,9)
+y = np.linspace(-100,100,9)
+X, Y = np.meshgrid(x, y)
+Z = sm.predict_values(xt)
+print(Z)
+
+plt.contour(X, Y, Z)
+plt.show()
