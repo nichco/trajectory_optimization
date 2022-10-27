@@ -56,8 +56,19 @@ sm.train()
 x = np.linspace(-100,100,9)
 y = np.linspace(-100,100,9)
 X, Y = np.meshgrid(x, y)
+
+"""
+Z = np.zeros((9,9))
+for i in range(9):
+    for j in range(9):
+        coord = np.array([x[i],y[j]])
+        Z[i,j] = sm.predict_values(coord)
+"""
+
+
+print(xt)
 Z = sm.predict_values(xt)
 print(Z)
 
-plt.contour(X, Y, Z)
+plt.contour(X, Y, ctarr)
 plt.show()
