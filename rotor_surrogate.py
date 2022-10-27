@@ -1,5 +1,5 @@
 import numpy as np
-from smt.surrogate_models import RBF
+from smt.surrogate_models import RMTB, RBF
 
 
 ctarr = np.array([[0.44378727, 0.39780505, 0.36492063, 0.34594835, 0.3396722,  0.34594835, 0.36492063, 0.39780505, 0.44378727],
@@ -21,3 +21,22 @@ cparr = np.array([[0.38916783, 0.33762982, 0.30071029, 0.2787971,  0.27156899, 0
     [0.31348364, 0.26504093, 0.2249794,  0.20161817, 0.1945959,  0.20161817, 0.2249794,  0.26504093, 0.31348364],
     [0.34827829, 0.29825734, 0.2633885,  0.23960818, 0.23134359, 0.23960818, 0.2633885,  0.29825734, 0.34827829],
     [0.39757264, 0.34663548, 0.31036403, 0.28914374, 0.2822016,  0.28914374, 0.31036403, 0.34663548, 0.39757264]])
+
+xta = np.linspace(-100,100,9)
+xtb = np.linspace(-100,100,9)
+xt = np.zeros((9,9))
+
+for i in range(9):
+    for j in range(9):
+        xt[j,i] = xta[i]
+
+
+xlimits = np.array([[-100.0, 100.0], [-100.0, 100.0]])
+
+#sm = RMTB(
+#    num_ctrl_pts=4, xlimits=xlimits, nonlinear_maxiter=100, energy_weight=1e-12
+#)
+
+sm = RBF(d0=0.1,print_global=False,print_solver=False,)
+sm.set_training_values(xt, ctarr)
+sm.train()
