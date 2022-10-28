@@ -121,3 +121,9 @@ if __name__ == '__main__':
     ax1.set_xlabel('Edgewise Inflow Velocity (m/s)')
     ax2.set_xlabel('Edgewise Inflow Velocity (m/s)')
     plt.show()
+
+
+    # test predict vals
+    tt = np.array([[0,0]])
+    val = sm_ct.predict_values(tt)
+    print(val)
