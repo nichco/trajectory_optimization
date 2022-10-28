@@ -1,5 +1,5 @@
 import numpy as np
-from smt.surrogate_models import RMTB, RBF
+from smt.surrogate_models import RMTB
 import matplotlib.pyplot as plt
 
 ctarr = np.array([[ 0.50845263,  0.48114841,  0.46048069,  0.45263168,  0.44918747,  0.45263168, 0.46048069,  0.48114841,  0.50845263],
@@ -76,51 +76,48 @@ sm_cp.set_training_values(xt, yt_cp)
 sm_cp.train()
 
 
-# interpolate surrogate model and plot it
-num = 100
-x = np.linspace(-100,100,num)
-y = np.linspace(-100,100,num)
-X, Y = np.meshgrid(x, y)
+if __name__ == '__main__':
+    # interpolate surrogate model and plot it
+    num = 100
+    x = np.linspace(-100,100,num)
+    y = np.linspace(-100,100,num)
+    X, Y = np.meshgrid(x, y)
 
-xint = np.zeros((num*num,2))
-index = 0
-for i in range(num):
-    for j in range(num):
-        xint[index,:] = [x[i],y[j]]
-        index += 1
+    xint = np.zeros((num*num,2))
+    index = 0
+    for i in range(num):
+        for j in range(num):
+            xint[index,:] = [x[i],y[j]]
+            index += 1
 
-zint_ct = sm_ct.predict_values(xint)
-ZCT = np.zeros((num,num))
-index = 0
-for i in range(num):
-    for j in range(num):
-        ZCT[i,j] = zint_ct[index]
-        index += 1
+    zint_ct = sm_ct.predict_values(xint)
+    ZCT = np.zeros((num,num))
+    index = 0
+    for i in range(num):
+        for j in range(num):
+            ZCT[i,j] = zint_ct[index]
+            index += 1
 
-zint_cp = sm_cp.predict_values(xint)
-ZCP = np.zeros((num,num))
-index = 0
-for i in range(num):
-    for j in range(num):
-        ZCP[i,j] = zint_cp[index]
-        index += 1
+    zint_cp = sm_cp.predict_values(xint)
+    ZCP = np.zeros((num,num))
+    index = 0
+    for i in range(num):
+        for j in range(num):
+            ZCP[i,j] = zint_cp[index]
+            index += 1
 
-fig, ((ax1), (ax2)) = plt.subplots(1, 2)
+    levelsct = np.arange(-0.1, 0.6, 0.02)
+    levelscp = np.arange(0, 0.6, 0.02)
+    fig, ((ax1), (ax2)) = plt.subplots(1, 2)
 
-plot_ct = ax1.contourf(X, Y, ZCT, cmap='plasma')
-plot_cp = ax2.contourf(X, Y, ZCP, cmap='viridis')
-plt.colorbar(plot_ct, shrink=1, ax=ax1)
-plt.colorbar(plot_cp, shrink=1, ax=ax2)
-ax1.set_title('$C_t$')
-ax2.set_title('$C_p$')
-ax1.set_ylabel('Axial Inflow Velocity (m/s)')
-ax2.set_ylabel('Axial Inflow Velocity (m/s)')
-ax1.set_xlabel('Edgewise Inflow Velocity (m/s)')
-ax2.set_xlabel('Edgewise Inflow Velocity (m/s)')
-plt.show()
-
-"""
-sm = RBF(d0=0.1,print_global=False,print_solver=False,)
-sm.set_training_values(xt, ctarr)
-sm.train()
-"""
+    plot_ct = ax1.contourf(X, Y, ZCT, cmap='plasma', levels=levelsct)
+    plot_cp = ax2.contourf(X, Y, ZCP, cmap='rainbow', levels=levelscp)
+    plt.colorbar(plot_ct, shrink=1, ax=ax1)
+    plt.colorbar(plot_cp, shrink=1, ax=ax2)
+    ax1.set_title('$C_t$')
+    ax2.set_title('$C_p$')
+    ax1.set_ylabel('Axial Inflow Velocity (m/s)')
+    ax2.set_ylabel('Axial Inflow Velocity (m/s)')
+    ax1.set_xlabel('Edgewise Inflow Velocity (m/s)')
+    ax2.set_xlabel('Edgewise Inflow Velocity (m/s)')
+    plt.show()
