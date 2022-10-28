@@ -1,5 +1,6 @@
 import csdl
 from aero import aero
+from rotor import rotor
 
 
 class ODESystemModel(csdl.Model):

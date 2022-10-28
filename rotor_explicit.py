@@ -3,7 +3,7 @@ import csdl
 import python_csdl_backend
 import numpy as np
 
-class rotor(csdl.Model):
+class rotorModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('name',types=str)
     def define(self):
@@ -68,7 +68,7 @@ class rotorExplicit(csdl.CustomExplicitOperation):
 
 if __name__ == '__main__':
     name = 'cruise'
-    sim = python_csdl_backend.Simulator(rotor(name=name))
+    sim = python_csdl_backend.Simulator(rotorModel(name=name))
     sim.run()
 
     ct = sim[name+'ct']

@@ -52,24 +52,28 @@ sm_cd = RBF(d0=0.25,print_global=False,print_solver=False,)
 sm_cd.set_training_values(xt, yt_cd)
 sm_cd.train()
 
-"""
-num = 1000
-x = np.deg2rad(np.linspace(-90, 90, num))
 
-ycl = sm_cl.predict_values(x)
-ycd = sm_cd.predict_values(x)
 
-fig, (ax1, ax2) = plt.subplots(1, 2)
-fig.suptitle('Aerodynamic Surrogate Models for NACA 2412')
-ax1.plot(xt, yt_cl,'o',color='c')
-ax1.plot(x, ycl,color='k')
-ax1.set_ylabel('Cl')
-ax1.set_xlabel('Alpha (rad)')
-ax1.set_title('Lift')
-ax2.plot(xt, yt_cd,'o',color='c')
-ax2.plot(x, ycd,color='k')
-ax2.set_ylabel('Cd')
-ax2.set_xlabel('Alpha (rad)')
-ax2.set_title('Drag')
-plt.show()
-"""
+
+
+
+if __name__ == '__main__':
+    num = 1000
+    x = np.deg2rad(np.linspace(-90, 90, num))
+
+    ycl = sm_cl.predict_values(x)
+    ycd = sm_cd.predict_values(x)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.suptitle('Aerodynamic Surrogate Models for NACA 2412')
+    ax1.plot(xt, yt_cl,'o',color='c')
+    ax1.plot(x, ycl,color='k')
+    ax1.set_ylabel('Cl')
+    ax1.set_xlabel('Alpha (rad)')
+    ax1.set_title('Lift')
+    ax2.plot(xt, yt_cd,'o',color='c')
+    ax2.plot(x, ycd,color='k')
+    ax2.set_ylabel('Cd')
+    ax2.set_xlabel('Alpha (rad)')
+    ax2.set_title('Drag')
+    plt.show()
