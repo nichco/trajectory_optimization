@@ -23,52 +23,71 @@ cparr = np.array([[0.38916783, 0.33762982, 0.30071029, 0.2787971,  0.27156899, 0
     [0.34827829, 0.29825734, 0.2633885,  0.23960818, 0.23134359, 0.23960818, 0.2633885,  0.29825734, 0.34827829],
     [0.39757264, 0.34663548, 0.31036403, 0.28914374, 0.2822016,  0.28914374, 0.31036403, 0.34663548, 0.39757264]])
 
-xta = np.linspace(-100,100,9)
-xtb = np.linspace(-100,100,9)
-xt = np.zeros((9,9))
+# construct training data in a form smt can use
+N = 9
+xta = np.linspace(-100,100,N)
+xtb = np.linspace(-100,100,N)
+xt = np.zeros((N*N,2))
+index = 0
+for i in range(N):
+    for j in range(N):
+        xt[index,:] = [xta[i],xtb[j]]
+        index += 1
 
-for i in range(9):
-    for j in range(9):
-        xt[j,i] = xta[i]
-
+yt = np.zeros((N*N,1))
+index = 0
+for i in range(N):
+    for j in range(N):
+        yt[index,:] = ctarr[i,j]
+        index += 1
 
 xlimits = np.array([[-100.0, 100.0], [-100.0, 100.0]])
 
-#sm = RMTB(
-#    num_ctrl_pts=4, xlimits=xlimits, nonlinear_maxiter=100, energy_weight=1e-12
-#)
-"""
+# construct surrogate model
 sm = RMTB(
             xlimits=xlimits,
             order=3,
-            num_ctrl_pts=N,
-            energy_weight=1e-15,
+            num_ctrl_pts=4,
+            energy_weight=1e-8,
             regularization_weight=0.0,
             print_global=False,
             print_solver=False,)
-"""
 
-sm = RBF(d0=0.1,print_global=False,print_solver=False,)
-sm.set_training_values(xt, ctarr)
+# train model
+sm.set_training_values(xt, yt)
 sm.train()
 
 
-x = np.linspace(-100,100,9)
-y = np.linspace(-100,100,9)
+# interpolate surrogate model and plot it
+num = 100
+x = np.linspace(-100,100,num)
+y = np.linspace(-100,100,num)
 X, Y = np.meshgrid(x, y)
 
-"""
-Z = np.zeros((9,9))
-for i in range(9):
-    for j in range(9):
-        coord = np.array([x[i],y[j]])
-        Z[i,j] = sm.predict_values(coord)
-"""
+xint = np.zeros((num*num,2))
+index = 0
+for i in range(num):
+    for j in range(num):
+        xint[index,:] = [x[i],y[j]]
+        index += 1
 
+zint = sm.predict_values(xint)
+Z = np.zeros((num,num))
+index = 0
+for i in range(num):
+    for j in range(num):
+        Z[i,j] = zint[index]
+        index += 1
 
-print(xt)
-Z = sm.predict_values(xt)
-print(Z)
-
-plt.contour(X, Y, ctarr)
+plot = plt.contourf(X, Y, Z, cmap='plasma')
+plt.colorbar(plot, shrink=1)
+plt.title('Thrust Coefficient')
+plt.xlabel('Axial Inflow Velocity (m/s)')
+plt.ylabel('Edgewise Inflow Velocity (m/s)')
 plt.show()
+
+"""
+sm = RBF(d0=0.1,print_global=False,print_solver=False,)
+sm.set_training_values(xt, ctarr)
+sm.train()
+"""
