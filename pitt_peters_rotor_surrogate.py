@@ -33,17 +33,33 @@ for i in range(N):
         xt[index,:] = [xta[i],xtb[j]]
         index += 1
 
-yt = np.zeros((N*N,1))
+yt_ct = np.zeros((N*N,1))
 index = 0
 for i in range(N):
     for j in range(N):
-        yt[index,:] = ctarr[i,j]
+        yt_ct[index,:] = ctarr[i,j]
+        index += 1
+
+yt_cp = np.zeros((N*N,1))
+index = 0
+for i in range(N):
+    for j in range(N):
+        yt_cp[index,:] = cparr[i,j]
         index += 1
 
 xlimits = np.array([[-100.0, 100.0], [-100.0, 100.0]])
 
 # construct surrogate model
-sm = RMTB(
+sm_ct = RMTB(
+            xlimits=xlimits,
+            order=4,
+            num_ctrl_pts=4,
+            energy_weight=1e-10,
+            regularization_weight=0.0,
+            print_global=False,
+            print_solver=False,)
+
+sm_cp = RMTB(
             xlimits=xlimits,
             order=4,
             num_ctrl_pts=4,
@@ -53,8 +69,11 @@ sm = RMTB(
             print_solver=False,)
 
 # train model
-sm.set_training_values(xt, yt)
-sm.train()
+sm_ct.set_training_values(xt, yt_ct)
+sm_ct.train()
+
+sm_cp.set_training_values(xt, yt_cp)
+sm_cp.train()
 
 
 # interpolate surrogate model and plot it
@@ -70,19 +89,34 @@ for i in range(num):
         xint[index,:] = [x[i],y[j]]
         index += 1
 
-zint = sm.predict_values(xint)
-Z = np.zeros((num,num))
+zint_ct = sm_ct.predict_values(xint)
+ZCT = np.zeros((num,num))
 index = 0
 for i in range(num):
     for j in range(num):
-        Z[i,j] = zint[index]
+        ZCT[i,j] = zint_ct[index]
         index += 1
 
-plot = plt.contourf(X, Y, Z, cmap='plasma')
-plt.colorbar(plot, shrink=1)
-plt.title('Thrust Coefficient')
-plt.ylabel('Axial Inflow Velocity (m/s)')
-plt.xlabel('Edgewise Inflow Velocity (m/s)')
+zint_cp = sm_cp.predict_values(xint)
+ZCP = np.zeros((num,num))
+index = 0
+for i in range(num):
+    for j in range(num):
+        ZCP[i,j] = zint_cp[index]
+        index += 1
+
+fig, ((ax1), (ax2)) = plt.subplots(1, 2)
+
+plot_ct = ax1.contourf(X, Y, ZCT, cmap='plasma')
+plot_cp = ax2.contourf(X, Y, ZCP, cmap='viridis')
+plt.colorbar(plot_ct, shrink=1, ax=ax1)
+plt.colorbar(plot_cp, shrink=1, ax=ax2)
+ax1.set_title('$C_t$')
+ax2.set_title('$C_p$')
+ax1.set_ylabel('Axial Inflow Velocity (m/s)')
+ax2.set_ylabel('Axial Inflow Velocity (m/s)')
+ax1.set_xlabel('Edgewise Inflow Velocity (m/s)')
+ax2.set_xlabel('Edgewise Inflow Velocity (m/s)')
 plt.show()
 
 """
