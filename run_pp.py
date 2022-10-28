@@ -37,9 +37,9 @@ class RunModel(Model):
         #   - If the quantities are vectors (numpy arrays), they must be specified s.t. they have shape (num_nodes,1)
         self.create_input('omega', shape=(num_nodes, 1), units='rpm/1000', val=1500)
 
-        self.create_input(name='u', shape=(num_nodes, 1), units='m/s', val=u)#np.linspace(0,100,num_nodes).reshape(num_nodes,1))
+        self.create_input(name='u', shape=(num_nodes, 1), units='m/s', val=0)#np.linspace(0,100,num_nodes).reshape(num_nodes,1))
         self.create_input(name='v', shape=(num_nodes, 1), units='m/s', val=v)
-        self.create_input(name='w', shape=(num_nodes, 1), units='m/s', val=0)
+        self.create_input(name='w', shape=(num_nodes, 1), units='m/s', val=u)
 
         self.create_input(name='p', shape=(num_nodes, 1), units='rad/s', val=0)
         self.create_input(name='q', shape=(num_nodes, 1), units='rad/s', val=0)
@@ -65,12 +65,10 @@ class RunModel(Model):
             num_blades=4,
         ),name='pitt_peters_model')
 
-# sim = Simulator(RunModel())
-
+# sim = Simulator(RunModel(u=75,v=0))
 # sim.run()
 cparr = np.zeros((9,9))
 ctarr = np.zeros((9,9))
-
 ii = 0
 for i in range(-100,101,25):
     jj = 0
