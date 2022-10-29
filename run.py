@@ -61,7 +61,7 @@ class RunModel(csdl.Model):
         # self.create_input('interp',power)
         
         control_x = np.ones(num)*1000 # cruise rotor speed input control
-        control_z = np.ones(num)*0 # lift rotor speed input control
+        control_z = np.ones(num)*1000 # lift rotor speed input control
         self.create_input('control_x',control_x)
         self.create_input('control_z',control_z)
         
@@ -105,6 +105,7 @@ class RunModel(csdl.Model):
         self.add(slope(dt=dt,num=num))
         self.add_constraint('dtheta', lower=-0.05, upper=0.05)
         self.add_constraint('dcx', lower=-0.08, upper=0.08)
+        self.add_constraint('dcz', lower=-0.08, upper=0.08)
 
         # control curvature constraint
         self.add(curve(dt=dt,num=num))
@@ -114,13 +115,14 @@ class RunModel(csdl.Model):
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
         self.add_design_variable('control_x',lower=0, upper=3000, scaler=0.001)
+        self.add_design_variable('control_z',lower=0, upper=3000, scaler=0.001)
         # self.add_design_variable('interp',lower=0, upper=1.0)
         self.add_design_variable('dt',lower=0.1, upper=1.0)
 
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
-        self.add_objective('energy', scaler=0.001)
+        self.add_objective('energy', scaler=0.01)
 
 
 
@@ -140,7 +142,7 @@ options['cruise_rotor_diameter'] = 2.0 # (m)
 options['lift_rotor_diameter'] = 1.2 # (m)
 # mission parameters
 options['gravity'] = 9.81 # acceleration due to gravity (m/s^2)
-options['u_0'] = 53#63 # (m/s)
+options['u_0'] = 43#63 # (m/s)
 options['w_0'] = 0 # (m/s)
 options['x_0'] = 0 # (m)
 options['z_0'] = 2000 # (m)
@@ -181,8 +183,10 @@ control_x = sim['control_x']
 control_z = sim['control_z']
 dtheta = sim['dtheta']
 dcx = sim['dcx']
+dcz = sim['dcz']
 d_dtheta = sim['d_dtheta']
-d_dpwr = sim['d_dpwr']
+d_dcx = sim['d_dcx']
+d_dcz = sim['d_dcz']
 cruisepower = sim['cruisepower']
 liftpower = sim['liftpower']
 e = sim['e']
@@ -229,12 +233,14 @@ ax9.set_title('theta')
 
 ax10.plot(dtheta,color='k')
 ax10.plot(dcx,color='m')
-ax10.legend(['dtheta','dcx'])
+ax10.plot(dcz,color='c')
+ax10.legend(['dtheta','dcx', 'dcz'])
 ax10.set_title('slope')
 
 ax11.plot(d_dtheta,color='k')
-ax11.plot(d_dpwr,color='c')
-ax11.legend(['d_dtheta','d_dpwr'])
+ax11.plot(d_dcx,color='c')
+ax11.plot(d_dcz,color='r')
+ax11.legend(['d_dtheta','d_dcx', 'd_dcz'])
 ax11.set_title('curvature')
 
 ax12.plot(cruisepower,color='k')

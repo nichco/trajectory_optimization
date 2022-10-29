@@ -15,7 +15,12 @@ class curve(csdl.Model):
         for i in range(1,num):
             d_dtheta[i] = (dtheta[i] - dtheta[i-1])/dt
 
-        dpwr = self.declare_variable('dpwr',shape=(num,))
-        d_dpwr = self.create_output('d_dpwr',shape=(num,), val=0)
+        dcx = self.declare_variable('dcx',shape=(num,))
+        d_dcx = self.create_output('d_dcx',shape=(num,), val=0)
         for i in range(1,num):
-            d_dpwr[i] = (dpwr[i] - dpwr[i-1])/dt
+            d_dcx[i] = (dcx[i] - dcx[i-1])/dt
+
+        dcz = self.declare_variable('dcz',shape=(num,))
+        d_dcz = self.create_output('d_dcz',shape=(num,), val=0)
+        for i in range(1,num):
+            d_dcz[i] = (dcz[i] - dcz[i-1])/dt

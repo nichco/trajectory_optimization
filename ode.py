@@ -81,15 +81,15 @@ class ODESystemModel(csdl.Model):
         # fpx = propeller_efficiency*power*max_power
         # fpz = 0
         fpx = 1*cruisethrust
-        fpz = 1*liftthrust
-        power = 1*cruisepower + 1*liftpower
+        fpz = -1*liftthrust*2
+        power = 1*cruisepower + 2*liftpower
         
         # system of ODE's
         du = -g*csdl.sin(theta) + (fax + fpx)/m
         dw = g*csdl.cos(theta) + (faz + fpz)/m
         dx = u*csdl.cos(theta) + w*csdl.sin(theta)
         dz = u*csdl.sin(theta) - w*csdl.cos(theta)
-        de = 0.01*power
+        de = 0.001*power
         
         # register outputs
         self.register_output('du', du)

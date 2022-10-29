@@ -19,4 +19,9 @@ class slope(csdl.Model):
         dcx = self.create_output('dcx',shape=(num,), val=0)
         for i in range(1,num):
             dcx[i] = (control_x[i] - control_x[i-1])/dt
+
+        control_z = self.declare_variable('control_z',shape=(num,))
+        dcz = self.create_output('dcz',shape=(num,), val=0)
+        for i in range(1,num):
+            dcz[i] = (control_z[i] - control_z[i-1])/dt
         
