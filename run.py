@@ -178,6 +178,7 @@ cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
 control_x = sim['control_x']
+control_z = sim['control_z']
 dtheta = sim['dtheta']
 dcx = sim['dcx']
 d_dtheta = sim['d_dtheta']
@@ -218,8 +219,10 @@ ax7.set_title('alpha')
 ax7.set_ylabel('rad')
 
 ax8.plot(control_x,color='k')
-ax8.set_title('cruise rotor speed')
-ax7.set_ylabel('rotor speed (rpm)')
+ax8.plot(control_z,color='r')
+ax8.set_title('rotor speed')
+ax8.legend(['cruise rotor speed','lift rotor speed'])
+ax8.set_ylabel('rotor speed (rpm)')
 
 ax9.plot(theta,color='c')
 ax9.set_title('theta')
