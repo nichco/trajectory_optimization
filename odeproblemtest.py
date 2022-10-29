@@ -6,9 +6,9 @@ class ODEProblemTest(ODEProblem):
     def setup(self):
         # If dynamic == True, The parameter must have shape = (self.num_times, ... shape of parameter @ every timestep ...)
         # The ODE function will use the parameter value at timestep 't': parameter@ODEfunction[shape_p] = fullparameter[t, shape_p]
-        self.add_parameter('interp', dynamic=True, shape=(self.num_times))
+        # self.add_parameter('interp', dynamic=True, shape=(self.num_times))
         self.add_parameter('theta', dynamic=True, shape=(self.num_times))
-        # self.add_parameter('control_x', dynamic=True, shape=(self.num_times))
+        self.add_parameter('control_x', dynamic=True, shape=(self.num_times))
         # self.add_parameter('control_z', dynamic=True, shape=(self.num_times))
         # If dynamic != True, it is a static parameter. i.e, the parameter used in the ODE is constant through time.
         # Therefore, the shape does not depend on the number of timesteps
@@ -20,6 +20,8 @@ class ODEProblemTest(ODEProblem):
         self.add_parameter('propeller_efficiency')
         self.add_parameter('oswald')
         self.add_parameter('cd_0')
+        self.add_parameter('cruise_rotor_diameter')
+        # self.add_parameter('lift_rotor_diameter')
         self.add_parameter('gravity')
 
         # inputs names correspond to respective upstream CSDL variables

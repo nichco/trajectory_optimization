@@ -27,6 +27,8 @@ class RunModel(csdl.Model):
         propeller_efficiency = options['propeller_efficiency']
         oswald = options['oswald']
         cd_0 = options['cd_0']
+        cruise_rotor_diameter = options['cruise_rotor_diameter']
+        lift_rotor_diameter = options['lift_rotor_diameter']
         gravity = options['gravity']
         u_0 = options['u_0']
         w_0 = options['w_0']
@@ -50,11 +52,13 @@ class RunModel(csdl.Model):
         self.create_input('propeller_efficiency',propeller_efficiency)
         self.create_input('oswald',oswald)
         self.create_input('cd_0',cd_0)
+        self.create_input('cruise_rotor_diameter',cruise_rotor_diameter)
+        self.create_input('lift_rotor_diameter',lift_rotor_diameter)
         self.create_input('gravity',gravity)
 
         # add dynamic inputs to the csdl model
-        power = np.ones(num)*0.1 # power fraction (0-1)
-        self.create_input('interp',power)
+        # power = np.ones(num)*0.1 # power fraction (0-1)
+        # self.create_input('interp',power)
         
         control_x = np.ones(num)*0 # cruise rotor speed input control
         control_z = np.ones(num)*0 # lift rotor speed input control
@@ -109,8 +113,8 @@ class RunModel(csdl.Model):
 
         # add design variables
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
-        # self.add_design_variable('control',lower=0, upper=1.0)
-        self.add_design_variable('interp',lower=0, upper=1.0)
+        self.add_design_variable('control_x',lower=0, upper=3000, scaler=0.001)
+        # self.add_design_variable('interp',lower=0, upper=1.0)
         self.add_design_variable('dt',lower=0, upper=1.0)
 
         # add objective
@@ -132,6 +136,8 @@ options['max_rpm'] = 6000 # maximum rotor speed (rpm)
 options['propeller_efficiency'] = 0.8 # propeller efficiency factor
 options['oswald'] = 0.8 # finite wing correction
 options['cd_0'] = 0.025 # zero-lift drag coefficient
+options['cruise_rotor_diameter'] = 2.0 # (m)
+options['lift_rotor_diameter'] = 1.2 # (m)
 # mission parameters
 options['gravity'] = 9.81 # acceleration due to gravity (m/s^2)
 options['u_0'] = 63 # (m/s)

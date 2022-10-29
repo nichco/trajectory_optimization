@@ -18,13 +18,16 @@ class ODESystemModel(csdl.Model):
         z = self.create_input('z', shape=n)
         e = self.create_input('e', shape=n)
         # parameters are inputs
-        power = self.declare_variable('interp', shape=(n)) # thrust (0-1)
+        # power = self.declare_variable('interp', shape=(n)) # thrust (0-1)
+        control_x = self.declare_variable('control_x', shape=(n))
         theta = self.declare_variable('theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
         wing_area = self.declare_variable('wing_area')
         max_power = self.declare_variable('max_power')
         max_rpm = self.declare_variable('max_rpm')
         propeller_efficiency = self.declare_variable('propeller_efficiency')
+        cruise_rotor_diameter = self.declare_variable('cruise_rotor_diameter')
+        # lift_rotor_diameter = self.declare_variable('lift_rotor_diameter')
         g = self.declare_variable('gravity')
         
         # compute angle of attack
@@ -48,11 +51,27 @@ class ODESystemModel(csdl.Model):
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
 
         # compute thrust
-        rpm = power*max_rpm
-        self.register_output('omega',rpm)
+        # rpm = power*max_rpm
+        # self.register_output('omega',rpm)
 
-        fpx = propeller_efficiency*power*max_power
+
+        # cruise rotor model
+        self.register_output('cruisevAxial',1*u)
+        self.register_output('cruisevTan',1*w)
+        self.register_output('cruisen',1*control_x)
+        self.register_output('cruised',1*cruise_rotor_diameter)
+        self.add(rotor(name='cruise'))
+        cruisethrust = self.declare_variable('cruisethrust')
+        cruisepower = self.declare_variable('cruisepower')
+
+
+
+        # summations
+        # fpx = propeller_efficiency*power*max_power
+        # fpz = 0
+        fpx = 1*cruisethrust
         fpz = 0
+        power = 1*cruisepower
         
         # system of ODE's
         du = -g*csdl.sin(theta) + (fax + fpx)/m
