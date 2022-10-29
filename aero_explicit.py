@@ -47,14 +47,17 @@ class AeroExplicit(csdl.CustomExplicitOperation):
         derivatives['cl', 'alpha_w'] = dcl_dalpha
         derivatives['cd', 'alpha_w'] = dcd_dalpha
 
-"""
-# run model
-sim = python_csdl_backend.Simulator(airfoil())
-sim.run()
 
-print(sim['cl'])
-print(sim['cd'])
 
-# print partials
-# sim.check_partials(compact_print=True)
-"""
+
+
+if __name__ == '__main__':
+    # run model
+    sim = python_csdl_backend.Simulator(airfoil())
+    sim.run()
+
+    print(sim['cl'])
+    print(sim['cd'])
+
+    # print partials
+    sim.check_partials(compact_print=True)
