@@ -61,9 +61,9 @@ class RunModel(csdl.Model):
         # self.create_input('interp',power)
         
         control_x = np.ones(num)*1000 # cruise rotor speed input control
-        # control_z = np.ones(num)*0 # lift rotor speed input control
+        control_z = np.ones(num)*0 # lift rotor speed input control
         self.create_input('control_x',control_x)
-        # self.create_input('control_z',control_z)
+        self.create_input('control_z',control_z)
         
         control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
         self.create_input('theta',control_theta)
@@ -140,7 +140,7 @@ options['cruise_rotor_diameter'] = 2.0 # (m)
 options['lift_rotor_diameter'] = 1.2 # (m)
 # mission parameters
 options['gravity'] = 9.81 # acceleration due to gravity (m/s^2)
-options['u_0'] = 63 # (m/s)
+options['u_0'] = 53#63 # (m/s)
 options['w_0'] = 0 # (m/s)
 options['x_0'] = 0 # (m)
 options['z_0'] = 2000 # (m)
@@ -183,6 +183,7 @@ dcx = sim['dcx']
 d_dtheta = sim['d_dtheta']
 d_dpwr = sim['d_dpwr']
 cruisepower = sim['cruisepower']
+liftpower = sim['liftpower']
 e = sim['e']
 
 print(sim['dt'])
@@ -234,6 +235,8 @@ ax11.legend(['d_dtheta','d_dpwr'])
 ax11.set_title('curvature')
 
 ax12.plot(cruisepower,color='k')
-ax12.set_title('cruise rotor power')
+ax12.plot(liftpower,color='r')
+ax12.legend(['cruise power','lift power'])
+ax12.set_title('power')
 
 plt.show()

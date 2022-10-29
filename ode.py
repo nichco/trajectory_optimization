@@ -20,6 +20,7 @@ class ODESystemModel(csdl.Model):
         # parameters are inputs
         # power = self.declare_variable('interp', shape=(n)) # thrust (0-1)
         control_x = self.declare_variable('control_x', shape=(n))
+        control_z = self.declare_variable('control_z', shape=(n))
         theta = self.declare_variable('theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
         wing_area = self.declare_variable('wing_area')
@@ -27,7 +28,7 @@ class ODESystemModel(csdl.Model):
         # max_rpm = self.declare_variable('max_rpm')
         # propeller_efficiency = self.declare_variable('propeller_efficiency')
         cruise_rotor_diameter = self.declare_variable('cruise_rotor_diameter')
-        # lift_rotor_diameter = self.declare_variable('lift_rotor_diameter')
+        lift_rotor_diameter = self.declare_variable('lift_rotor_diameter')
         g = self.declare_variable('gravity')
         
         # compute angle of attack
@@ -54,24 +55,34 @@ class ODESystemModel(csdl.Model):
         # rpm = power*max_rpm
         # self.register_output('omega',rpm)
 
-
+        #region rotor models
         # cruise rotor model
-        self.register_output('cruisevAxial',1*u)
-        self.register_output('cruisevTan',1*w)
-        self.register_output('cruisen',1*control_x/60) # rotations per second
-        self.register_output('cruised',1*cruise_rotor_diameter)
-        self.add(rotor(name='cruise'))
-        cruisethrust = self.declare_variable('cruisethrust')
-        cruisepower = self.declare_variable('cruisepower')
-
+        cname = 'cruise'
+        self.register_output(cname+'vAxial',1*u)
+        self.register_output(cname+'vTan',1*w)
+        self.register_output(cname+'n',1*control_x/60) # rotations per second
+        self.register_output(cname+'d',1*cruise_rotor_diameter)
+        self.add(rotor(name=cname))
+        cruisethrust = self.declare_variable(cname+'thrust')
+        cruisepower = self.declare_variable(cname+'power')
+        # lift rotor model
+        lname = 'lift'
+        self.register_output(lname+'vAxial',1*w)
+        self.register_output(lname+'vTan',1*u)
+        self.register_output(lname+'n',1*control_z/60) # rotations per second
+        self.register_output(lname+'d',1*lift_rotor_diameter)
+        self.add(rotor(name=lname))
+        liftthrust = self.declare_variable(lname+'thrust')
+        liftpower = self.declare_variable(lname+'power')
+        #endregion
 
 
         # summations
         # fpx = propeller_efficiency*power*max_power
         # fpz = 0
         fpx = 1*cruisethrust
-        fpz = 0
-        power = 1*cruisepower
+        fpz = 1*liftthrust
+        power = 1*cruisepower + 1*liftpower
         
         # system of ODE's
         du = -g*csdl.sin(theta) + (fax + fpx)/m
@@ -86,6 +97,7 @@ class ODESystemModel(csdl.Model):
         self.register_output('dx', dx)
         self.register_output('dz', dz)
         self.register_output('de', de)
+
         
         
         
