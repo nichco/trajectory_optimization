@@ -15,8 +15,8 @@ class slope(csdl.Model):
         for i in range(1,num):
             dtheta[i] = (theta[i] - theta[i-1])/dt
 
-        pwr = self.declare_variable('interp',shape=(num,))
-        dpwr = self.create_output('dpwr',shape=(num,), val=0)
+        control_x = self.declare_variable('control_x',shape=(num,))
+        dcx = self.create_output('dcx',shape=(num,), val=0)
         for i in range(1,num):
-            dpwr[i] = (pwr[i] - pwr[i-1])/dt
+            dcx[i] = (control_x[i] - control_x[i-1])/dt
         

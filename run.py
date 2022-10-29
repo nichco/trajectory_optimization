@@ -4,7 +4,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-# from modopt.snopt_library import SNOPT
+from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
@@ -47,9 +47,9 @@ class RunModel(csdl.Model):
         self.create_input('mass',mass)
         self.create_input('wing_area',wing_area)
         self.create_input('wing_set_angle',wing_set_angle)
-        self.create_input('max_power',max_power)
-        self.create_input('max_rpm',max_rpm)
-        self.create_input('propeller_efficiency',propeller_efficiency)
+        # self.create_input('max_power',max_power)
+        # self.create_input('max_rpm',max_rpm)
+        # self.create_input('propeller_efficiency',propeller_efficiency)
         self.create_input('oswald',oswald)
         self.create_input('cd_0',cd_0)
         self.create_input('cruise_rotor_diameter',cruise_rotor_diameter)
@@ -60,10 +60,10 @@ class RunModel(csdl.Model):
         # power = np.ones(num)*0.1 # power fraction (0-1)
         # self.create_input('interp',power)
         
-        control_x = np.ones(num)*0 # cruise rotor speed input control
-        control_z = np.ones(num)*0 # lift rotor speed input control
+        control_x = np.ones(num)*1000 # cruise rotor speed input control
+        # control_z = np.ones(num)*0 # lift rotor speed input control
         self.create_input('control_x',control_x)
-        self.create_input('control_z',control_z)
+        # self.create_input('control_z',control_z)
         
         control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
         self.create_input('theta',control_theta)
@@ -104,7 +104,7 @@ class RunModel(csdl.Model):
         # control slope constraint
         self.add(slope(dt=dt,num=num))
         self.add_constraint('dtheta', lower=-0.05, upper=0.05)
-        self.add_constraint('dpwr', lower=-0.05, upper=0.05)
+        self.add_constraint('dcx', lower=-0.08, upper=0.08)
 
         # control curvature constraint
         self.add(curve(dt=dt,num=num))
@@ -115,12 +115,12 @@ class RunModel(csdl.Model):
         self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
         self.add_design_variable('control_x',lower=0, upper=3000, scaler=0.001)
         # self.add_design_variable('interp',lower=0, upper=1.0)
-        self.add_design_variable('dt',lower=0, upper=1.0)
+        self.add_design_variable('dt',lower=0.1, upper=1.0)
 
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
-        self.add_objective('energy', scaler=0.01)
+        self.add_objective('energy', scaler=0.001)
 
 
 
@@ -146,7 +146,7 @@ options['x_0'] = 0 # (m)
 options['z_0'] = 2000 # (m)
 options['theta_0'] = 0 # (rad)
 options['theta_f'] = 0 # (rad)
-options['z_f'] = 2200 # (m)
+options['z_f'] = 2500 # (m)
 options['dx_f'] = 63 # (m/s)
 
 # ode problem instance
@@ -157,8 +157,8 @@ sim = python_csdl_backend.Simulator(RunModel(dt=dt,options=options))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-# optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
+# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+optimizer = SNOPT(prob, Optimality_tolerance=1e-10)
 optimizer.solve()
 # optimizer.print_results()
 
@@ -177,11 +177,13 @@ cl = sim['cl']
 cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
-power = sim['interp']
+control_x = sim['control_x']
 dtheta = sim['dtheta']
-dpwr = sim['dpwr']
+dcx = sim['dcx']
 d_dtheta = sim['d_dtheta']
 d_dpwr = sim['d_dpwr']
+cruisepower = sim['cruisepower']
+e = sim['e']
 
 print(sim['dt'])
 
@@ -204,27 +206,34 @@ ax5.plot(lift,color='m')
 ax5.plot(drag,color='y')
 ax5.legend(['lift','drag'])
 
-ax6.plot(cl)
-ax6.plot(cd)
-ax6.legend(['cl','cd'])
+# ax6.plot(cl)
+# ax6.plot(cd)
+# ax6.legend(['cl','cd'])
+ax6.plot(e)
+ax6.set_title('energy')
 
 ax7.plot(alpha,color='k')
 ax7.set_title('alpha')
 ax7.set_ylabel('rad')
 
-ax8.plot(power,color='k')
-ax8.set_title('power')
+ax8.plot(control_x,color='k')
+ax8.set_title('cruise rotor speed')
+ax7.set_ylabel('rotor speed (rpm)')
 
 ax9.plot(theta,color='c')
 ax9.set_title('theta')
 
 ax10.plot(dtheta,color='k')
-ax10.plot(dpwr,color='m')
-ax10.legend(['dtheta','dpwr'])
+ax10.plot(dcx,color='m')
+ax10.legend(['dtheta','dcx'])
 ax10.set_title('slope')
 
 ax11.plot(d_dtheta,color='k')
 ax11.plot(d_dpwr,color='c')
 ax11.legend(['d_dtheta','d_dpwr'])
 ax11.set_title('curvature')
+
+ax12.plot(cruisepower,color='k')
+ax12.set_title('cruise rotor power')
+
 plt.show()
