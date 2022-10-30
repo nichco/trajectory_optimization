@@ -25,10 +25,9 @@ class RunModel(csdl.Model):
         # add dynamic inputs to the csdl model
         control_x = np.ones(num)*3000 # cruise rotor speed input control
         control_z = np.ones(num)*1800 # lift rotor speed input control
+        control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
         self.create_input('control_x',control_x)
         self.create_input('control_z',control_z)
-        
-        control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
         self.create_input('theta',control_theta)
 
         # initial conditions for states
