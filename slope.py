@@ -2,13 +2,12 @@ import csdl
 
 class slope(csdl.Model):
     def initialize(self):
-        self.parameters.declare('dt')
         self.parameters.declare('num')
 
     def define(self):
-        dt = self.parameters['dt']
         num = self.parameters['num']
 
+        dt = self.declare_variable('dt')
 
         theta = self.declare_variable('theta',shape=(num,))
         dtheta = self.create_output('dtheta',shape=(num,), val=0)

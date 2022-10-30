@@ -9,58 +9,20 @@ from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
 from curvature import curve
+from inputs import inputs
 
 
 class RunModel(csdl.Model):
     def initialize(self):
-        self.parameters.declare('dt')
         self.parameters.declare('options')
+
     def define(self):
         options = self.parameters['options']
-        dt = self.parameters['dt']
-
-        mass = options['mass']
-        wing_area = options['wing_area']
-        wing_set_angle = options['wing_set_angle']
-        max_power = options['max_power']
-        max_rpm = options['max_rpm']
-        propeller_efficiency = options['propeller_efficiency']
-        oswald = options['oswald']
-        cd_0 = options['cd_0']
-        cruise_rotor_diameter = options['cruise_rotor_diameter']
-        lift_rotor_diameter = options['lift_rotor_diameter']
-        gravity = options['gravity']
-        u_0 = options['u_0']
-        w_0 = options['w_0']
-        x_0 = options['x_0']
-        z_0 = options['z_0']
-        theta_0 = options['theta_0']
-        theta_f = options['theta_f']
-        z_f = options['z_f']
-        dx_f = options['dx_f']
-        dz_f = options['dz_f']
-
-        # add the time vector to the csdl model
-        self.create_input('dt', dt)
-        self.add(timestep(num=num))
-
-        # add constant inputs to the csdl model
-        self.create_input('mass',mass)
-        self.create_input('wing_area',wing_area)
-        self.create_input('wing_set_angle',wing_set_angle)
-        # self.create_input('max_power',max_power)
-        # self.create_input('max_rpm',max_rpm)
-        # self.create_input('propeller_efficiency',propeller_efficiency)
-        self.create_input('oswald',oswald)
-        self.create_input('cd_0',cd_0)
-        self.create_input('cruise_rotor_diameter',cruise_rotor_diameter)
-        self.create_input('lift_rotor_diameter',lift_rotor_diameter)
-        self.create_input('gravity',gravity)
+        self.add(inputs(options=options))
+        self.create_input('dt',options['dt'])
+        self.add(timestep(num=num)) # add the time vector to the csdl model
 
         # add dynamic inputs to the csdl model
-        # power = np.ones(num)*0.1 # power fraction (0-1)
-        # self.create_input('interp',power)
-        
         control_x = np.ones(num)*3000 # cruise rotor speed input control
         control_z = np.ones(num)*1800 # lift rotor speed input control
         self.create_input('control_x',control_x)
@@ -70,10 +32,10 @@ class RunModel(csdl.Model):
         self.create_input('theta',control_theta)
 
         # initial conditions for states
-        self.create_input('u_0', u_0)
-        self.create_input('w_0', w_0)
-        self.create_input('x_0', x_0)
-        self.create_input('z_0', z_0)
+        self.create_input('u_0', options['u_0'])
+        self.create_input('w_0', options['w_0'])
+        self.create_input('x_0', options['x_0'])
+        self.create_input('z_0', options['z_0'])
         self.create_input('e_0', 0)
 
         # create model containing the integrator
@@ -92,22 +54,22 @@ class RunModel(csdl.Model):
         # add final altitude constraint
         final_z = z[-1]
         self.register_output('final_z', final_z)
-        self.add_constraint('final_z', equals=z_f, scaler=0.01)
+        self.add_constraint('final_z', equals=options['z_f'], scaler=0.01)
 
         # horizontal velocity constraint
         final_dx = u[-1]*csdl.cos(theta[-1]) + w[-1]*csdl.sin(theta[-1])
         self.register_output('final_dx',final_dx)
-        self.add_constraint('final_dx',equals=dx_f,scaler=0.1)
+        self.add_constraint('final_dx',equals=options['dx_f'],scaler=0.1)
 
         # vertical velocity constraint
         final_dz = u[-1]*csdl.sin(theta[-1]) - w[-1]*csdl.cos(theta[-1])
         self.register_output('final_dz',final_dz)
-        self.add_constraint('final_dz',equals=dz_f,scaler=0.1)
+        self.add_constraint('final_dz',equals=options['dz_f'],scaler=0.1)
 
         # theta constraints
         initial_theta = theta[0]
         self.register_output('initial_theta', initial_theta)
-        self.add_constraint('initial_theta', equals=theta_0)
+        self.add_constraint('initial_theta', equals=options['theta_0'])
 
         # power constraints
         max_cruise_pwr = csdl.max(cruisepower)
@@ -118,13 +80,13 @@ class RunModel(csdl.Model):
         # self.add_constraint('final_lift_pwr', equals=0, scaler=0.00001)
 
         # control slope constraint
-        self.add(slope(dt=dt,num=num))
+        self.add(slope(num=num))
         # self.add_constraint('dtheta', lower=-0.3, upper=0.3)
         self.add_constraint('dcx', lower=-2, upper=2)
         self.add_constraint('dcz', lower=-2, upper=2)
 
         # control curvature constraint
-        self.add(curve(dt=dt,num=num))
+        self.add(curve(num=num))
         #self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
@@ -150,13 +112,15 @@ options = {} # aircraft and mission parameter dictionary
 options['mass'] = 1111 # (kg)
 options['wing_area'] = 16.2 # wing area (m^2)
 options['wing_set_angle'] = 3 # (deg)
-options['max_power'] = 120000 # maximum engine power (w)
-options['max_rpm'] = 6000 # maximum rotor speed (rpm)
-options['propeller_efficiency'] = 0.8 # propeller efficiency factor
+options['max_cruise_power'] = 600000 # maximum cruise power (w)
+options['max_lift_power'] = 120000 # maximum lift power (w)
 options['oswald'] = 0.8 # finite wing correction
 options['cd_0'] = 0.025 # zero-lift drag coefficient
 options['cruise_rotor_diameter'] = 2.0 # (m)
 options['lift_rotor_diameter'] = 1.2 # (m)
+options['num_cruise_blades'] = 4
+options['num_lift_blades'] = 2
+options['num_lift_rotors'] = 8
 # mission parameters
 options['gravity'] = 9.81 # acceleration due to gravity (m/s^2)
 options['u_0'] = 1 # (m/s)
@@ -170,10 +134,10 @@ options['dx_f'] = 63 # (m/s)
 options['dz_f'] = 0 # (m/s)
 
 # ode problem instance
-dt = 0.25
+options['dt'] = 0.25
 num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
-sim = python_csdl_backend.Simulator(RunModel(dt=dt,options=options))
+sim = python_csdl_backend.Simulator(RunModel(options=options))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
