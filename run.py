@@ -120,8 +120,8 @@ class RunModel(csdl.Model):
         # control slope constraint
         self.add(slope(dt=dt,num=num))
         # self.add_constraint('dtheta', lower=-0.3, upper=0.3)
-        # self.add_constraint('dcx', lower=-0.3, upper=0.3)
-        # self.add_constraint('dcz', lower=-0.3, upper=0.3)
+        self.add_constraint('dcx', lower=-2, upper=2)
+        self.add_constraint('dcz', lower=-2, upper=2)
 
         # control curvature constraint
         self.add(curve(dt=dt,num=num))
