@@ -15,8 +15,6 @@ class inputs(csdl.Model):
         cd_0 = options['cd_0']
         cruise_rotor_diameter = options['cruise_rotor_diameter']
         lift_rotor_diameter = options['lift_rotor_diameter']
-        num_cruise_blades = options['num_cruise_blades']
-        num_lift_blades = options['num_lift_blades']
         num_lift_rotors = options['num_lift_rotors']
         gravity = options['gravity']
         
@@ -29,7 +27,5 @@ class inputs(csdl.Model):
         self.create_input('cd_0',cd_0)
         self.create_input('cruise_rotor_diameter',cruise_rotor_diameter)
         self.create_input('lift_rotor_diameter',lift_rotor_diameter)
-        self.create_input('num_cruise_blades',num_cruise_blades)
-        self.create_input('num_lift_blades',num_lift_blades)
         self.create_input('num_lift_rotors',num_lift_rotors)
         self.create_input('gravity',gravity)

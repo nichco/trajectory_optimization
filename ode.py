@@ -5,7 +5,6 @@ from rotor import rotor
 
 class ODESystemModel(csdl.Model):
     def initialize(self):
-        # Required every time for ODE systems or Profile Output systems
         self.parameters.declare('num_nodes')
 
     def define(self):
@@ -21,14 +20,12 @@ class ODESystemModel(csdl.Model):
         # power = self.declare_variable('interp', shape=(n)) # thrust (0-1)
         control_x = self.declare_variable('control_x', shape=(n))
         control_z = self.declare_variable('control_z', shape=(n))
-        theta = self.declare_variable('theta', shape=(n)) # pitch angle
+        theta = self.declare_variable('control_theta', shape=(n)) # pitch angle
         m = self.declare_variable('mass')
         wing_area = self.declare_variable('wing_area')
-        # max_power = self.declare_variable('max_power')
-        # max_rpm = self.declare_variable('max_rpm')
-        # propeller_efficiency = self.declare_variable('propeller_efficiency')
         cruise_rotor_diameter = self.declare_variable('cruise_rotor_diameter')
         lift_rotor_diameter = self.declare_variable('lift_rotor_diameter')
+        num_lift_rotors = self.declare_variable('num_lift_rotors')
         g = self.declare_variable('gravity')
         
         # compute angle of attack
@@ -50,10 +47,6 @@ class ODESystemModel(csdl.Model):
         # transform aerodynamic forces to body axis system
         fax = -drag*csdl.cos(alpha) + lift*csdl.sin(alpha)
         faz = -drag*csdl.sin(alpha) - lift*csdl.cos(alpha)
-
-        # compute thrust
-        # rpm = power*max_rpm
-        # self.register_output('omega',rpm)
 
         #region rotor models
         # cruise rotor model
@@ -81,8 +74,8 @@ class ODESystemModel(csdl.Model):
         # fpx = propeller_efficiency*power*max_power
         # fpz = 0
         fpx = 1*cruisethrust
-        fpz = -1*liftthrust*8
-        power = 1*cruisepower + 8*liftpower
+        fpz = -1*liftthrust*num_lift_rotors
+        power = cruisepower + num_lift_rotors*liftpower
         
         # system of ODE's
         du = -g*csdl.sin(theta) + (fax + fpx)/m

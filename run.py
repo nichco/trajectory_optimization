@@ -18,9 +18,9 @@ class RunModel(csdl.Model):
 
     def define(self):
         options = self.parameters['options']
-        self.add(inputs(options=options))
         self.create_input('dt',options['dt'])
-        self.add(timestep(num=num)) # add the time vector to the csdl model
+        self.add(inputs(options=options))
+        self.add(timestep(num=num)) # add the time vector to the model
 
         # add dynamic inputs to the csdl model
         control_x = np.ones(num)*3000 # cruise rotor speed input control
@@ -28,7 +28,7 @@ class RunModel(csdl.Model):
         control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
         self.create_input('control_x',control_x)
         self.create_input('control_z',control_z)
-        self.create_input('theta',control_theta)
+        self.create_input('control_theta',control_theta)
 
         # initial conditions for states
         self.create_input('u_0', options['u_0'])
@@ -46,9 +46,11 @@ class RunModel(csdl.Model):
         x = self.declare_variable('x', shape=(num,))
         z = self.declare_variable('z', shape=(num,))
         e = self.declare_variable('e', shape=(num,))
-        theta = self.declare_variable('theta', shape=(num,))
+        theta = self.declare_variable('control_theta', shape=(num,))
         cruisepower = self.declare_variable('cruisepower', shape=(num,))
         liftpower = self.declare_variable('liftpower', shape=(num,))
+
+        self.register_output('test',1*cruisepower)
 
         # add final altitude constraint
         final_z = z[-1]
@@ -72,8 +74,10 @@ class RunModel(csdl.Model):
 
         # power constraints
         max_cruise_pwr = csdl.max(cruisepower)
+        max_lift_pwr = csdl.max(liftpower)
         self.register_output('max_cruise_pwr', max_cruise_pwr)
-        # self.add_constraint('max_cruise_pwr', upper=600000, scaler=0.00001)
+        self.register_output('max_lift_pwr', max_lift_pwr)
+        self.add_constraint('max_cruise_pwr', upper=options['max_cruise_power'], scaler=0.00001)
         final_lift_pwr = liftpower[-1]
         self.register_output('final_lift_pwr', final_lift_pwr)
         # self.add_constraint('final_lift_pwr', equals=0, scaler=0.00001)
@@ -90,7 +94,7 @@ class RunModel(csdl.Model):
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
         # add design variables
-        self.add_design_variable('theta',lower=-1*np.pi/5,upper=np.pi/5)
+        self.add_design_variable('control_theta',lower=-1*np.pi/5,upper=np.pi/5)
         # self.add_design_variable('control_x',lower=0, upper=5000, scaler=0.001)
         # self.add_design_variable('control_z',lower=0, upper=5000, scaler=0.001)
         self.add_design_variable('control_x',lower=0, scaler=0.001)
@@ -111,17 +115,15 @@ options = {} # aircraft and mission parameter dictionary
 options['mass'] = 1111 # (kg)
 options['wing_area'] = 16.2 # wing area (m^2)
 options['wing_set_angle'] = 3 # (deg)
-options['max_cruise_power'] = 600000 # maximum cruise power (w)
+options['max_cruise_power'] = 500000 # maximum cruise power (w)
 options['max_lift_power'] = 120000 # maximum lift power (w)
 options['oswald'] = 0.8 # finite wing correction
 options['cd_0'] = 0.025 # zero-lift drag coefficient
 options['cruise_rotor_diameter'] = 2.0 # (m)
 options['lift_rotor_diameter'] = 1.2 # (m)
-options['num_cruise_blades'] = 4
-options['num_lift_blades'] = 2
 options['num_lift_rotors'] = 8
 # mission parameters
-options['gravity'] = 9.81 # acceleration due to gravity (m/s^2)
+options['gravity'] = 9.81 # (m/s^2)
 options['u_0'] = 1 # (m/s)
 options['w_0'] = 0 # (m/s)
 options['x_0'] = 0 # (m)
@@ -168,11 +170,13 @@ dcz = sim['dcz']
 d_dtheta = sim['d_dtheta']
 d_dcx = sim['d_dcx']
 d_dcz = sim['d_dcz']
-cruisepower = sim['cruisepower']
+# cruisepower = sim['cruisepower']
+cruisepower = sim['test']
 liftpower = 8*sim['liftpower']
 e = sim['e']
 
 print(sim['dt'])
+print(sim['energy'])
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4, ax5, ax6), (ax7, ax8, ax9, ax10, ax11, ax12)) = plt.subplots(2, 6)
