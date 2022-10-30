@@ -67,7 +67,7 @@ class ODESystemModel(csdl.Model):
         cruisepower = self.declare_variable(cname+'power')
         # lift rotor model
         lname = 'lift'
-        self.register_output(lname+'vAxial',1*w)
+        self.register_output(lname+'vAxial',-1*w)
         self.register_output(lname+'vTan',1*u)
         self.register_output(lname+'n',1*control_z/60) # rotations per second
         self.register_output(lname+'d',1*lift_rotor_diameter)
