@@ -112,13 +112,13 @@ class RunModel(csdl.Model):
         # power constraints
         max_cruise_pwr = csdl.max(cruisepower)
         self.register_output('max_cruise_pwr', max_cruise_pwr)
-        self.add_constraint('max_cruise_pwr', upper=600000, scaler=0.0001)
+        self.add_constraint('max_cruise_pwr', upper=600000, scaler=0.00001)
 
         # control slope constraint
         self.add(slope(dt=dt,num=num))
-        self.add_constraint('dtheta', lower=-0.5, upper=0.5)
-        # self.add_constraint('dcx', lower=-0.3, upper=0.3)
-        # self.add_constraint('dcz', lower=-0.3, upper=0.3)
+        self.add_constraint('dtheta', lower=-0.3, upper=0.3)
+        self.add_constraint('dcx', lower=-0.3, upper=0.3)
+        self.add_constraint('dcz', lower=-0.3, upper=0.3)
 
         # control curvature constraint
         self.add(curve(dt=dt,num=num))
@@ -126,9 +126,9 @@ class RunModel(csdl.Model):
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
         # add design variables
-        self.add_design_variable('theta',lower=-1*np.pi/6,upper=np.pi/6)
-        self.add_design_variable('control_x',lower=0, upper=6000, scaler=0.001)
-        self.add_design_variable('control_z',lower=0, upper=6000, scaler=0.001)
+        self.add_design_variable('theta',lower=-1*np.pi/5,upper=np.pi/5)
+        self.add_design_variable('control_x',lower=0, upper=5000, scaler=0.001)
+        self.add_design_variable('control_z',lower=0, upper=5000, scaler=0.001)
         # self.add_design_variable('interp',lower=0, upper=1.0)
         self.add_design_variable('dt',lower=0.1, upper=1.0)
 
@@ -167,7 +167,7 @@ options['dz_f'] = 0 # (m/s)
 
 # ode problem instance
 dt = 0.25
-num = 120
+num = 100
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(dt=dt,options=options))
 # sim.run()
