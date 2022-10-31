@@ -46,20 +46,20 @@ class RunModel(Model):
         self.add_design_variable('thickness_to_chord_ratio')
         # pitch_cp = self.create_input(name='pitch_cp', shape=(4,), units='rad', val=np.array([8.60773973e-01,6.18472835e-01,3.76150609e-01,1.88136239e-01]))#np.linspace(35,10,4)*np.pi/180)
         # self.add_design_variable('pitch_cp', lower=5*np.pi/180,upper=60*np.pi/180)
-        self.create_input(name='thrust_origin', shape=(num_nodes,3), val=np.tile(thrust_origin,(num_nodes,1)))
-        self.create_input(name='thrust_vector', shape=(num_nodes,3), val=np.tile(thrust_vector,(num_nodes,1)))
+        # self.create_input(name='thrust_origin', shape=(num_nodes,3), val=np.tile(thrust_origin,(num_nodes,1)))
+        # self.create_input(name='thrust_vector', shape=(num_nodes,3), val=np.tile(thrust_vector,(num_nodes,1)))
 
         self.create_input('omega', shape=(num_nodes, 1), units='rpm', val=2150)
-        self.add_design_variable('omega')
+        # self.add_design_variable('omega')
         self.create_input('M_inf',shape=(num_nodes), val=0)
-        self.add_design_variable('M_inf')
+        # self.add_design_variable('M_inf')
         self.create_input('dT', shape=(num_nodes,num_radial,num_azimuthal), val=np.tile(dT_dr,(num_nodes,num_azimuthal)))
-        self.add_design_variable('dT')
+        # self.add_design_variable('dT')
         self.create_input('dQ', shape=(num_nodes,num_radial,num_azimuthal), val=np.tile(dQ_dr,(num_nodes,num_azimuthal)))
-        self.add_design_variable('dQ')
+        # self.add_design_variable('dQ')
 
         self.create_input(name='z', shape=(num_nodes,  1), units='m', val=76)
-        self.add_design_variable('z')
+        # self.add_design_variable('z')
         
         
         
