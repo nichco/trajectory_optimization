@@ -6,8 +6,10 @@ from rotor_explicit import rotorModel
 class rotor(csdl.Model):
     def initialize(self):
         self.parameters.declare('name',types=str)
+        self.parameters.declare('options')
     def define(self):
         name = self.parameters['name']
+        options = self.parameters['options']
 
         # add the explicit operation containing the surrogate model
         self.add(rotorModel(name=name))
@@ -18,7 +20,8 @@ class rotor(csdl.Model):
 
         # declare necessary variables
         n = self.declare_variable(name+'n') # revolutions per SECOND
-        d = self.declare_variable(name+'d')
+        # d = self.declare_variable(name+'d')
+        d = options[name+'_rotor_diameter']
         rho = self.declare_variable('density')
 
         # compute thrust and power

@@ -6,10 +6,12 @@ from rotor import rotor
 class ODESystemModel(csdl.Model):
     def initialize(self):
         self.parameters.declare('num_nodes')
+        self.parameters.declare('options')
 
     def define(self):
         # Required every time for ODE systems or Profile Output systems
         n = self.parameters['num_nodes']
+        options = self.parameters['options']
         # states
         u = self.create_input('u', shape=n)
         w = self.create_input('w', shape=n)
@@ -21,12 +23,18 @@ class ODESystemModel(csdl.Model):
         control_x = self.declare_variable('control_x', shape=(n))
         control_z = self.declare_variable('control_z', shape=(n))
         theta = self.declare_variable('control_theta', shape=(n)) # pitch angle
-        m = self.declare_variable('mass')
-        wing_area = self.declare_variable('wing_area')
-        cruise_rotor_diameter = self.declare_variable('cruise_rotor_diameter')
-        lift_rotor_diameter = self.declare_variable('lift_rotor_diameter')
-        num_lift_rotors = self.declare_variable('num_lift_rotors')
-        g = self.declare_variable('gravity')
+        # m = self.declare_variable('mass')
+        m = options['mass']
+        wing_area = options['wing_area']
+        cruise_rotor_diameter = options['cruise_rotor_diameter']
+        lift_rotor_diameter = options['lift_rotor_diameter']
+        num_lift_rotors = options['num_lift_rotors']
+        g = options['gravity']
+        #wing_area = self.declare_variable('wing_area')
+        #cruise_rotor_diameter = self.declare_variable('cruise_rotor_diameter')
+        #lift_rotor_diameter = self.declare_variable('lift_rotor_diameter')
+        # num_lift_rotors = self.declare_variable('num_lift_rotors')
+        # g = self.declare_variable('gravity')
         
         # compute angle of attack
         alpha = csdl.arctan(w/u)
@@ -38,8 +46,8 @@ class ODESystemModel(csdl.Model):
 
         # add aerodynamic model
         self.register_output('altitude',1*z)
-        self.register_output('ref_area',1*wing_area)
-        self.add(aero())
+        # self.register_output('ref_area',1*wing_area)
+        self.add(aero(options=options))
         # define outputs from aerodynamic model
         lift = self.declare_variable('lift')
         drag = self.declare_variable('drag')
@@ -54,8 +62,8 @@ class ODESystemModel(csdl.Model):
         self.register_output(cname+'vAxial',1*u)
         self.register_output(cname+'vTan',1*w)
         self.register_output(cname+'n',1*control_x/60) # rotations per second
-        self.register_output(cname+'d',1*cruise_rotor_diameter)
-        self.add(rotor(name=cname))
+        # self.register_output(cname+'d',1*cruise_rotor_diameter)
+        self.add(rotor(name=cname,options=options))
         cruisethrust = self.declare_variable(cname+'thrust')
         cruisepower = self.declare_variable(cname+'power')
         # lift rotor model
@@ -63,8 +71,8 @@ class ODESystemModel(csdl.Model):
         self.register_output(lname+'vAxial',-1*w)
         self.register_output(lname+'vTan',1*u)
         self.register_output(lname+'n',1*control_z/60) # rotations per second
-        self.register_output(lname+'d',1*lift_rotor_diameter)
-        self.add(rotor(name=lname))
+        # self.register_output(lname+'d',1*lift_rotor_diameter)
+        self.add(rotor(name=lname,options=options))
         liftthrust = self.declare_variable(lname+'thrust')
         liftpower = self.declare_variable(lname+'power')
         #endregion

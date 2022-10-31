@@ -47,36 +47,33 @@ class tonal(csdl.Model):
         cruise_rotor_speed = omega_x*cruise_rotor_radius
         lift_rotor_speed = omega_z*lift_rotor_radius
 
-        """
+
         # schlegel king and mull broadband noise model
-        cruise_spl_150 = 10*csdl.log(((cruise_rotor_speed)**6)*cruise_ab*((cruise_ct/cruise_sigma)**2)) - 42.9
-        lift_spl_150 = 10*csdl.log(((lift_rotor_speed)**6)*lift_ab*((lift_ct/lift_sigma)**2)) - 42.9
-        self.register_output('cruise_spl_150',cruise_spl_150)
-        self.register_output('lift_spl_150',lift_spl_150)
-
-        # propogate to ground level
-        cruise_elevation_angle = 0 # (rad)
-        lift_elevation_angle = np.pi/2 # (rad)
-
-        cruise_spl = cruise_spl_150 + 20*csdl.log(csdl.sin(cruise_elevation_angle)/(z/150))
-        lift_spl = lift_spl_150 + 20*csdl.log(csdl.sin(lift_elevation_angle)/(z/150))
-        self.register_output('cruise_spl',cruise_spl)
-        self.register_output('lift_spl',lift_spl)
-        """
-
-
         cruise_spl_150 = self.create_output('cruise_spl_150',shape=(num,))
+        lift_spl_150 = self.create_output('lift_spl_150',shape=(num,))
         for i in range(num):
-            cruise_spl_150[i,] = 10*csdl.log10(((cruise_rotor_speed[i])**6)*cruise_ab*((cruise_ct[i]/cruise_sigma)**2)) - 42.9
-
+            cval = (((cruise_rotor_speed[i]**6)*cruise_ab*((cruise_ct[i]/cruise_sigma)**2))**2)**0.5
+            lval = ((((lift_rotor_speed[i])**6)*lift_ab*((lift_ct[i]/lift_sigma)**2))**2)**0.5
+            cruise_spl_150[i,] = 10*csdl.log10(cval) - 42.9
+            lift_spl_150[i,] = 10*csdl.log10(lval) - 42.9
 
         # propogate to ground level
         cruise_spl = self.create_output('cruise_spl',shape=(num,))
+        lift_spl = self.create_output('lift_spl',shape=(num,))
         for i in range(num):
+            zval = ((z[i]/150)**2)**0.5
             # cruise_spl = cruise_spl_150[i] + 20*csdl.log(np.sin(cruise_elevation_angle)/(z[i]/150))
-            cruise_spl[i,] = cruise_spl_150[i] + 20*csdl.log10(1/(z[i]/150))
+            cruise_spl[i,] = cruise_spl_150[i] + 20*csdl.log10(1/zval)
+            lift_spl[i,] = lift_spl_150[i] + 20*csdl.log10(1/zval)
 
 
-        max_cruise_spl = csdl.max(cruise_spl)
-        # max_lift_spl = csdl.max(lift_spl)
+        # vectorized splsum
+        sum_spl = self.create_output('sum_spl',shape=(num,))
+        for i in range(num):
+            sum_spl[i] = 10*csdl.log10(csdl.exp(np.log(10)*cruise_spl[i]/10) + num_lift_rotors*csdl.exp(np.log(10)*lift_spl[i]/10))
+
+
+        # scalar spl sum
+        spl = csdl.max(sum_spl)
+        self.register_output('spl',spl)
 

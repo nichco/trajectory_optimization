@@ -4,7 +4,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-# from modopt.snopt_library import SNOPT
+from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
@@ -39,7 +39,8 @@ class RunModel(csdl.Model):
         self.create_input('e_0', 0)
 
         # create model containing the integrator
-        self.add(ODEProblem.create_solver_model(), 'subgroup')
+        optionsdict = {'options': options}
+        self.add(ODEProblem.create_solver_model(ODE_parameters=optionsdict, profile_parameters=optionsdict), 'subgroup')
 
         # declare variables from integrator
         u = self.declare_variable('u', shape=(num,))
@@ -83,7 +84,7 @@ class RunModel(csdl.Model):
 
         # control slope constraint
         self.add(slope(num=num))
-        # self.add_constraint('dtheta', lower=-0.3, upper=0.3)
+        self.add_constraint('dtheta', lower=-2, upper=2)
         self.add_constraint('dcx', lower=-2, upper=2)
         self.add_constraint('dcz', lower=-2, upper=2)
 
@@ -94,6 +95,7 @@ class RunModel(csdl.Model):
 
         # acoustics constraints
         self.add(tonal(options=options,num=num))
+        self.add_constraint('spl', upper=80, scaler=0.01)
 
         # add design variables
         self.add_design_variable('control_theta',lower=-1*np.pi/5,upper=np.pi/5)
@@ -106,7 +108,7 @@ class RunModel(csdl.Model):
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
-        self.add_objective('energy', scaler=0.1)
+        self.add_objective('energy', scaler=0.01)
 
 
 
@@ -146,10 +148,10 @@ sim = python_csdl_backend.Simulator(RunModel(options=options))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-# optimizer = SNOPT(prob, Major_optimality=1e-14)
+# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+optimizer = SNOPT(prob, Major_optimality=1e-14)
 optimizer.solve()
-optimizer.print_results()
+# optimizer.print_results()
 
 # plot states from integrator
 plt.show()
@@ -160,7 +162,7 @@ w = sim['w']
 x = sim['x']
 z = sim['z']
 dt = sim['dt']
-theta = sim['theta']
+theta = sim['control_theta']
 alpha = sim['alpha']
 cl = sim['cl']
 cd = sim['cd']
@@ -178,9 +180,14 @@ cruisepower = sim['cruisepower']
 liftpower = 8*sim['liftpower']
 e = sim['e']
 cruise_spl = sim['cruise_spl']
+lift_spl = sim['lift_spl']
+sum_spl = sim['sum_spl']
+spl = sim['spl']
 
 print(sim['dt'])
-print(cruise_spl)
+# print(cruise_spl)
+# print(lift_spl)
+print(spl)
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4, ax5, ax6), (ax7, ax8, ax9, ax10, ax11, ax12)) = plt.subplots(2, 6)
@@ -204,8 +211,10 @@ ax5.legend(['lift','drag'])
 # ax6.plot(cl)
 # ax6.plot(cd)
 # ax6.legend(['cl','cd'])
-ax6.plot(e)
-ax6.set_title('energy')
+# ax6.plot(e)
+# ax6.set_title('energy')
+ax6.plot(sum_spl)
+ax6.set_title('spl')
 
 ax7.plot(alpha,color='k')
 ax7.set_title('alpha')
