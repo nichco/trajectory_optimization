@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from slope import slope
 from curvature import curve
 from inputs import inputs
+from skm import tonal
 
 
 class RunModel(csdl.Model):
@@ -50,7 +51,8 @@ class RunModel(csdl.Model):
         cruisepower = self.declare_variable('cruisepower', shape=(num,))
         liftpower = self.declare_variable('liftpower', shape=(num,))
 
-        self.register_output('test',1*cruisepower)
+        # acoustics
+        self.add(tonal(options=options,num=num))
 
         # add final altitude constraint
         final_z = z[-1]
@@ -172,13 +174,13 @@ dcz = sim['dcz']
 d_dtheta = sim['d_dtheta']
 d_dcx = sim['d_dcx']
 d_dcz = sim['d_dcz']
-# cruisepower = sim['cruisepower']
-cruisepower = sim['test']
+cruisepower = sim['cruisepower']
 liftpower = 8*sim['liftpower']
 e = sim['e']
+cruise_spl = sim['cruise_spl']
 
 print(sim['dt'])
-print(sim['energy'])
+print(cruise_spl)
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4, ax5, ax6), (ax7, ax8, ax9, ax10, ax11, ax12)) = plt.subplots(2, 6)

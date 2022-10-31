@@ -40,14 +40,14 @@ class tonal(csdl.Model):
         lift_sigma = lift_ab/lift_ad
 
         # compute rotor speed
-        control_x = self.declare_variable('control_x')
-        control_z = self.declare_variable('control_z')
+        control_x = self.declare_variable('control_x', shape=(num,))
+        control_z = self.declare_variable('control_z', shape=(num,))
         omega_x = 2*np.pi*control_x/60 # (rad/s)
         omega_z = 2*np.pi*control_z/60 # (rad/s)
         cruise_rotor_speed = omega_x*cruise_rotor_radius
         lift_rotor_speed = omega_z*lift_rotor_radius
 
-
+        """
         # schlegel king and mull broadband noise model
         cruise_spl_150 = 10*csdl.log(((cruise_rotor_speed)**6)*cruise_ab*((cruise_ct/cruise_sigma)**2)) - 42.9
         lift_spl_150 = 10*csdl.log(((lift_rotor_speed)**6)*lift_ab*((lift_ct/lift_sigma)**2)) - 42.9
@@ -63,4 +63,20 @@ class tonal(csdl.Model):
         lift_spl = lift_spl_150 + 20*csdl.log(csdl.sin(lift_elevation_angle)/(z/150))
         self.register_output('cruise_spl',cruise_spl)
         self.register_output('lift_spl',lift_spl)
+        """
+
+
+        cruise_spl_150 = self.create_output('cruise_spl_150',shape=(num,))
+        for i in range(num-1):
+            cruise_spl_150[i,] = 10*csdl.log(((cruise_rotor_speed[i])**6)*cruise_ab*((cruise_ct[i]/cruise_sigma)**2)) - 42.9
+
+
+        # propogate to ground level
+        cruise_elevation_angle = 0 # (rad)
+        lift_elevation_angle = np.pi/2 # (rad)
+
+        cruise_spl = self.create_output('cruise_spl',shape=(num,))
+        for i in range(num-1):
+            # cruise_spl = cruise_spl_150[i] + 20*csdl.log(np.sin(cruise_elevation_angle)/(z[i]/150))
+            cruise_spl[i,] = cruise_spl_150[i] + 20*csdl.log(1/(z[i]/150))
 
