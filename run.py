@@ -122,6 +122,8 @@ options['cd_0'] = 0.025 # zero-lift drag coefficient
 options['cruise_rotor_diameter'] = 2.0 # (m)
 options['lift_rotor_diameter'] = 1.2 # (m)
 options['num_lift_rotors'] = 8
+options['num_cruise_blades'] = 4
+options['num_lift_blades'] = 2
 # mission parameters
 options['gravity'] = 9.81 # (m/s^2)
 options['u_0'] = 1 # (m/s)
