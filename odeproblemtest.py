@@ -42,3 +42,5 @@ class ODEProblemTest(ODEProblem):
         self.add_profile_output('cd')
         self.add_profile_output('cruisepower')
         self.add_profile_output('liftpower')
+        self.add_profile_output('liftct')
+        self.add_profile_output('cruisect')

@@ -54,7 +54,6 @@ class tonal(csdl.Model):
         self.register_output('cruise_spl_150',cruise_spl_150)
         self.register_output('lift_spl_150',lift_spl_150)
 
-
         # propogate to ground level
         cruise_elevation_angle = 0 # (rad)
         lift_elevation_angle = np.pi/2 # (rad)
@@ -67,16 +66,17 @@ class tonal(csdl.Model):
 
 
         cruise_spl_150 = self.create_output('cruise_spl_150',shape=(num,))
-        for i in range(num-1):
-            cruise_spl_150[i,] = 10*csdl.log(((cruise_rotor_speed[i])**6)*cruise_ab*((cruise_ct[i]/cruise_sigma)**2)) - 42.9
+        for i in range(num):
+            cruise_spl_150[i,] = 10*csdl.log10(((cruise_rotor_speed[i])**6)*cruise_ab*((cruise_ct[i]/cruise_sigma)**2)) - 42.9
 
 
         # propogate to ground level
-        cruise_elevation_angle = 0 # (rad)
-        lift_elevation_angle = np.pi/2 # (rad)
-
         cruise_spl = self.create_output('cruise_spl',shape=(num,))
-        for i in range(num-1):
+        for i in range(num):
             # cruise_spl = cruise_spl_150[i] + 20*csdl.log(np.sin(cruise_elevation_angle)/(z[i]/150))
-            cruise_spl[i,] = cruise_spl_150[i] + 20*csdl.log(1/(z[i]/150))
+            cruise_spl[i,] = cruise_spl_150[i] + 20*csdl.log10(1/(z[i]/150))
+
+
+        max_cruise_spl = csdl.max(cruise_spl)
+        # max_lift_spl = csdl.max(lift_spl)
 

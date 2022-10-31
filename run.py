@@ -51,9 +51,6 @@ class RunModel(csdl.Model):
         cruisepower = self.declare_variable('cruisepower', shape=(num,))
         liftpower = self.declare_variable('liftpower', shape=(num,))
 
-        # acoustics
-        self.add(tonal(options=options,num=num))
-
         # add final altitude constraint
         final_z = z[-1]
         self.register_output('final_z', final_z)
@@ -94,6 +91,9 @@ class RunModel(csdl.Model):
         self.add(curve(num=num))
         #self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
+
+        # acoustics constraints
+        self.add(tonal(options=options,num=num))
 
         # add design variables
         self.add_design_variable('control_theta',lower=-1*np.pi/5,upper=np.pi/5)
