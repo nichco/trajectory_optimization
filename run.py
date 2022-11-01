@@ -4,13 +4,14 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
 from curvature import curve
 from inputs import inputs
 from skm import tonal
+from spline_explicit import spline
 
 
 class RunModel(csdl.Model):
@@ -20,13 +21,13 @@ class RunModel(csdl.Model):
     def define(self):
         options = self.parameters['options']
         self.create_input('dt',options['dt'])
-        self.add(inputs(options=options))
+        self.add(inputs(num=num,options=options))
         self.add(timestep(num=num)) # add the time vector to the model
-
+        
         # add dynamic inputs to the csdl model
-        control_x = np.ones(num)*3000 # cruise rotor speed input control
-        control_z = np.ones(num)*1800 # lift rotor speed input control
-        control_theta = np.ones(num)*np.deg2rad(0) # pitch angle input control
+        control_x = np.ones(num)*options['control_x_i'] # cruise rotor speed input control
+        control_z = np.ones(num)*options['control_z_i'] # lift rotor speed input control
+        control_theta = np.ones(num)*np.deg2rad(options['control_theta_i']) # pitch angle input control
         self.create_input('control_x',control_x)
         self.create_input('control_z',control_z)
         self.create_input('control_theta',control_theta)
@@ -55,7 +56,8 @@ class RunModel(csdl.Model):
         # add final altitude constraint
         final_z = z[-1]
         self.register_output('final_z', final_z)
-        self.add_constraint('final_z', equals=options['z_f'], scaler=0.01)
+        # self.add_constraint('final_z', equals=options['z_f'], scaler=0.01)
+        self.add_constraint('final_z', lower=options['z_f'], scaler=0.01)
 
         # horizontal velocity constraint
         final_dx = u[-1]*csdl.cos(theta[-1]) + w[-1]*csdl.sin(theta[-1])
@@ -78,29 +80,28 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_pwr', max_cruise_pwr)
         self.register_output('max_lift_pwr', max_lift_pwr)
         self.add_constraint('max_cruise_pwr', upper=options['max_cruise_power'], scaler=0.00001)
+        # self.add_constraint('max_lift_pwr', upper=options['max_lift_power'], scaler=0.00001)
         final_lift_pwr = liftpower[-1]
         self.register_output('final_lift_pwr', final_lift_pwr)
         # self.add_constraint('final_lift_pwr', equals=0, scaler=0.00001)
 
         # control slope constraint
-        self.add(slope(num=num))
-        self.add_constraint('dtheta', lower=-2, upper=2)
-        self.add_constraint('dcx', lower=-2, upper=2)
-        self.add_constraint('dcz', lower=-2, upper=2)
+        #self.add(slope(num=num))
+        #self.add_constraint('dtheta', lower=-2, upper=2)
+        #self.add_constraint('dcx', lower=-2, upper=2)
+        #self.add_constraint('dcz', lower=-2, upper=2)
 
         # control curvature constraint
-        self.add(curve(num=num))
+        #self.add(curve(num=num))
         #self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
         # acoustics constraints
-        self.add(tonal(options=options,num=num))
-        #self.add_constraint('spl', upper=80, scaler=0.01)
+        #self.add(tonal(options=options,num=num))
+        # self.add_constraint('spl', upper=85, scaler=0.01)
 
         # add design variables
         self.add_design_variable('control_theta',lower=-1*np.pi/5,upper=np.pi/5)
-        # self.add_design_variable('control_x',lower=0, upper=5000, scaler=0.001)
-        # self.add_design_variable('control_z',lower=0, upper=5000, scaler=0.001)
         self.add_design_variable('control_x',lower=0, scaler=0.001)
         self.add_design_variable('control_z',lower=0, scaler=0.001)
         self.add_design_variable('dt',lower=0.1, upper=1.5)
@@ -139,6 +140,10 @@ options['theta_f'] = 0 # (rad)
 options['z_f'] = 2000 # (m)
 options['dx_f'] = 63 # (m/s)
 options['dz_f'] = 0 # (m/s)
+# initial control inputs
+options['control_x_i'] = 3000 # (rpm)
+options['control_z_i'] = 1500 # (rpm)
+options['control_theta_i'] = 0 # (deg)
 
 # ode problem instance
 options['dt'] = 0.25
@@ -148,11 +153,10 @@ sim = python_csdl_backend.Simulator(RunModel(options=options))
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-optimizer = SNOPT(prob, Major_optimality=1e-14)
+optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
+# optimizer = SNOPT(prob, Major_optimality=1e-14)
 optimizer.solve()
-# optimizer.print_results()
-
+optimizer.print_results()
 # plot states from integrator
 plt.show()
 
@@ -183,11 +187,6 @@ cruise_spl = sim['cruise_spl']
 lift_spl = sim['lift_spl']
 sum_spl = sim['sum_spl']
 spl = sim['spl']
-
-print(sim['dt'])
-# print(cruise_spl)
-# print(lift_spl)
-print(spl)
 
 # post-processing
 fig, ((ax1, ax2, ax3, ax4, ax5, ax6), (ax7, ax8, ax9, ax10, ax11, ax12)) = plt.subplots(2, 6)

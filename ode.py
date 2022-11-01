@@ -22,7 +22,7 @@ class ODESystemModel(csdl.Model):
         # parameters are inputs
         control_x = self.declare_variable('control_x', shape=(n))
         control_z = self.declare_variable('control_z', shape=(n))
-        theta = self.declare_variable('control_theta', shape=(n)) # pitch angle
+        theta = self.declare_variable('control_theta', shape=(n))
         m = options['mass']
         num_lift_rotors = options['num_lift_rotors']
         g = options['gravity']
