@@ -9,7 +9,6 @@ class aero(csdl.Model):
     def define(self):
         options = self.parameters['options']
 
-        # wing_set_angle = self.declare_variable('wing_set_angle')
         wing_set_angle = options['wing_set_angle']
 
         alpha = self.declare_variable('alpha')
@@ -18,15 +17,11 @@ class aero(csdl.Model):
         self.add(airfoil())
         self.add(Atm())
         
-        # s = self.declare_variable('ref_area')
         s = options['wing_area']
         cl = self.declare_variable('cl')
-        # cd_0 = self.declare_variable('cd_0')
         cd_0 = options['cd_0']
-        pressure = self.declare_variable('pressure')
         density = self.declare_variable('density')
         velocity = self.declare_variable('velocity')
-        # oswald = self.declare_variable('oswald')
         oswald = options['oswald']
         AR = self.declare_variable('aspect_ratio',val=7.52)
 

@@ -20,7 +20,6 @@ class rotor(csdl.Model):
 
         # declare necessary variables
         n = self.declare_variable(name+'n') # revolutions per SECOND
-        # d = self.declare_variable(name+'d')
         d = options[name+'_rotor_diameter']
         rho = self.declare_variable('density')
 

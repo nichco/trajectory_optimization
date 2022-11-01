@@ -95,7 +95,7 @@ class RunModel(csdl.Model):
 
         # acoustics constraints
         self.add(tonal(options=options,num=num))
-        self.add_constraint('spl', upper=80, scaler=0.01)
+        #self.add_constraint('spl', upper=80, scaler=0.01)
 
         # add design variables
         self.add_design_variable('control_theta',lower=-1*np.pi/5,upper=np.pi/5)
@@ -103,7 +103,7 @@ class RunModel(csdl.Model):
         # self.add_design_variable('control_z',lower=0, upper=5000, scaler=0.001)
         self.add_design_variable('control_x',lower=0, scaler=0.001)
         self.add_design_variable('control_z',lower=0, scaler=0.001)
-        self.add_design_variable('dt',lower=0.1, upper=1.0)
+        self.add_design_variable('dt',lower=0.1, upper=1.5)
 
         # add objective
         energy = e[-1]
