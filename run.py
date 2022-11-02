@@ -11,7 +11,7 @@ from slope import slope
 from curvature import curve
 from inputs import inputs
 from skm import tonal
-from spline_explicit import spline
+import time
 
 
 class RunModel(csdl.Model):
@@ -65,9 +65,11 @@ class RunModel(csdl.Model):
         self.add_constraint('final_dx',equals=options['dx_f'],scaler=0.1)
 
         # vertical velocity constraint
+        """
         final_dz = u[-1]*csdl.sin(theta[-1]) - w[-1]*csdl.cos(theta[-1])
         self.register_output('final_dz',final_dz)
         self.add_constraint('final_dz',equals=options['dz_f'],scaler=0.1)
+        """
 
         # theta constraints
         initial_theta = theta[0]
@@ -79,37 +81,40 @@ class RunModel(csdl.Model):
         max_lift_pwr = csdl.max(liftpower)
         self.register_output('max_cruise_pwr', max_cruise_pwr)
         self.register_output('max_lift_pwr', max_lift_pwr)
-        self.add_constraint('max_cruise_pwr', upper=options['max_cruise_power'], scaler=0.00001)
+        # self.add_constraint('max_cruise_pwr', upper=options['max_cruise_power'], scaler=0.00001)
         # self.add_constraint('max_lift_pwr', upper=options['max_lift_power'], scaler=0.00001)
-        final_lift_pwr = liftpower[-1]
-        self.register_output('final_lift_pwr', final_lift_pwr)
+        # final_lift_pwr = liftpower[-1]
+        # self.register_output('final_lift_pwr', final_lift_pwr)
         # self.add_constraint('final_lift_pwr', equals=0, scaler=0.00001)
 
         # control slope constraint
-        #self.add(slope(num=num))
-        #self.add_constraint('dtheta', lower=-2, upper=2)
-        #self.add_constraint('dcx', lower=-2, upper=2)
-        #self.add_constraint('dcz', lower=-2, upper=2)
+        self.add(slope(num=num))
+        self.add_constraint('dtheta', lower=-2, upper=2)
+        self.add_constraint('dcx', lower=-2, upper=2)
+        self.add_constraint('dcz', lower=-2, upper=2)
 
         # control curvature constraint
-        #self.add(curve(num=num))
+        self.add(curve(num=num))
         #self.add_constraint('d_dtheta', lower=-0.02, upper=0.02)
         #self.add_constraint('d_dpwr', lower=-0.02, upper=0.02)
 
         # acoustics constraints
-        #self.add(tonal(options=options,num=num))
+        self.add(tonal(options=options,num=num))
         # self.add_constraint('spl', upper=85, scaler=0.01)
 
         # add design variables
         self.add_design_variable('control_theta',lower=-1*np.pi/5,upper=np.pi/5)
-        self.add_design_variable('control_x',lower=0, scaler=0.001)
+        self.add_design_variable('control_x',lower=0, upper=4000, scaler=0.001)
         self.add_design_variable('control_z',lower=0, scaler=0.001)
-        self.add_design_variable('dt',lower=0.1, upper=1.5)
+        # self.add_design_variable('dt',lower=0.1, upper=3.0)
+        self.add_design_variable('dt',lower=0.1)
 
         # add objective
         energy = e[-1]
         self.register_output('energy',energy)
+        self.print_var(energy)
         self.add_objective('energy', scaler=0.01)
+        # self.add_objective('dt', scaler=0.1)
 
 
 
@@ -142,13 +147,14 @@ options['dx_f'] = 63 # (m/s)
 options['dz_f'] = 0 # (m/s)
 # initial control inputs
 options['control_x_i'] = 3000 # (rpm)
-options['control_z_i'] = 1500 # (rpm)
+options['control_z_i'] = 1800 # (rpm)
 options['control_theta_i'] = 0 # (deg)
 
 # ode problem instance
 options['dt'] = 0.25
-num = 100
-ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
+num = 80
+t1 = time.perf_counter()
+ODEProblem = ODEProblemTest('ExplicitMidpoint', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options))
 # sim.run()
 
@@ -159,6 +165,8 @@ optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
+t2 = time.perf_counter()
+print('time: ', t2-t1)
 
 # assign variables for post-processing
 u = sim['u']
