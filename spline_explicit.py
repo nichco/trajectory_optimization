@@ -1,8 +1,11 @@
 import csdl
 import python_csdl_backend
 import numpy as np
-from smt.surrogate_models import RMTB
+from smt.surrogate_models import RMTB, RBF
 import matplotlib.pyplot as plt
+from modopt.scipy_library import SLSQP
+from modopt.snopt_library import SNOPT
+from modopt.csdl_library import CSDLProblem
 
 class spline(csdl.Model):
     def initialize(self):
@@ -59,7 +62,9 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         yt = inputs['control_'+name]
 
         xlimits = np.array([[0.0, num_nodes*dt]])
-        
+
+        sm = RBF(d0=70,print_global=False,print_solver=False,)
+        """
         sm = RMTB(
             xlimits=xlimits,
             order=3,
@@ -67,8 +72,9 @@ class SplineExplicit(csdl.CustomExplicitOperation):
             energy_weight=1e-15,
             regularization_weight=0.0,
             print_global=False,
-            print_solver=False,)
-        
+            print_solver=False,
+            derivative_solver='lu')
+        """
         sm.set_training_values(xt, yt)
         sm.train()
         self.sm = sm
@@ -92,49 +98,75 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         yder_dict = self.sm.predict_output_derivatives(xnew)
 
         array = np.array(yder_dict[None])
+        # self.print_var(array)
 
         derivatives['interp_'+name, 'control_'+name] = array
 
 
-if __name__ == '__main__':
-    sim = python_csdl_backend.Simulator(spline(name='x',N=10,num_nodes=100,dt=0.1))
-    sim.run()
+class test(csdl.Model):
 
+    def define(self):
+        dt = 0.5
+        num=100
+        N = 5
+        control_x = np.ones((N))*100
+        self.create_input('control_x',control_x)
+        self.add(spline(name='x',N=N,num_nodes=num,dt=dt),name='spline')
+
+        self.add_design_variable('control_x',lower=0, scaler=0.01)
+
+        interp_x = self.declare_variable('interp_x',shape=(num))
+        obj = interp_x[-1]
+        self.register_output('obj',obj)
+        self.add_objective('obj', scaler=1)
+
+
+
+if __name__ == '__main__':
+    # sim = python_csdl_backend.Simulator(spline(name='x',N=10,num_nodes=100,dt=0.1))
+    sim = python_csdl_backend.Simulator(test())
+    # sim.run()
+    prob = CSDLProblem(problem_name='test', simulator=sim)
+    optimizer = SNOPT(prob, Major_optimality=1e-14)
+    optimizer.solve()
+    
     interp = sim['interp_x']
-    print(sim['interp_x'])
+    # print(sim['interp_x'])
     plt.plot(interp)
     plt.show()
 
     # print partials
-    sim.check_partials(compact_print=True)
-
+    # sim.check_partials(compact_print=True)
 
 
 """
-# test code
-N=5
-num_nodes=10
-dt=0.1
-xt = np.linspace(0,num_nodes*dt,N)
-yt = np.ones(N)
-yt = np.linspace(0,num_nodes*dt,N)
-xlimits = np.array([[0.0, num_nodes*dt]])
+if __name__ == '__main__':
+    # test code
+    N=5
+    num_nodes=10
+    dt=0.1
+    xt = np.linspace(0,num_nodes*dt,N)
+    yt = np.ones(N)*100
+    yt = np.linspace(0,num_nodes*dt,N)
+    xlimits = np.array([[0.0, num_nodes*dt]])
 
-sm = RMTB(
-            xlimits=xlimits,
-            order=4,
-            num_ctrl_pts=20,
-            energy_weight=1e-15,
-            regularization_weight=0.0,
-            print_global=False,
-            print_solver=False,)
-sm.set_training_values(xt, yt)
-sm.train()
-
-xnew = np.arange(0, num_nodes*dt, dt)
-ynew = sm.predict_values(xnew)
-dict = sm.predict_output_derivatives(xnew)
-array = np.array(dict[None])
-print(array)
-print(ynew)
+    sm = RMTB(
+                xlimits=xlimits,
+                order=4,
+                num_ctrl_pts=20,
+                energy_weight=1e-15,
+                regularization_weight=0.0,
+                print_global=False,
+                print_solver=False,
+                derivative_solver='krylov')
+    
+    # sm = RBF(d0=100)
+    sm.set_training_values(xt, yt)
+    sm.train()
+    xnew = np.arange(0, num_nodes*dt, dt)
+    ynew = sm.predict_values(xnew)
+    dict = sm.predict_output_derivatives(xnew)
+    array = np.array(dict[None])
+    print(array)
+    print(ynew)
 """

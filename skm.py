@@ -40,7 +40,7 @@ class tonal(csdl.Model):
         lift_sigma = lift_ab/lift_ad
 
         # compute rotor speed
-        control_x = self.declare_variable('control_x', shape=(num,))
+        control_x = self.declare_variable('interp_x', shape=(num,))
         control_z = self.declare_variable('control_z', shape=(num,))
         omega_x = 2*np.pi*control_x/60 # (rad/s)
         omega_z = 2*np.pi*control_z/60 # (rad/s)
