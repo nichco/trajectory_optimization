@@ -21,7 +21,7 @@ class ODESystemModel(csdl.Model):
         e = self.create_input('e', shape=n)
         # parameters are inputs
         # control_x = self.declare_variable('control_x', shape=(n))
-        control_x = self.declare_variable('interp_x', shape=(n))
+        control_x = self.declare_variable('control_x', shape=(n))
         control_z = self.declare_variable('control_z', shape=(n))
         theta = self.declare_variable('control_theta', shape=(n))
         m = options['mass']

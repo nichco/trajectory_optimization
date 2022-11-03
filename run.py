@@ -4,7 +4,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from slope import slope
@@ -26,19 +26,19 @@ class RunModel(csdl.Model):
         self.add(timestep(num=num), name = 'timestep') # add the time vector to the model
         
         # add dynamic inputs to the csdl model
-        # control_x = np.ones(num)*options['control_x_i'] # cruise rotor speed input control
+        control_x = np.ones(num)*options['control_x_i'] # cruise rotor speed input control
         control_z = np.ones(num)*options['control_z_i'] # lift rotor speed input control
         control_theta = np.ones(num)*np.deg2rad(options['control_theta_i']) # pitch angle input control
-        # self.create_input('control_x',control_x)
+        self.create_input('control_x',control_x)
         self.create_input('control_z',control_z)
         self.create_input('control_theta',control_theta)
 
 
 
-        N = 5
-        control_x = np.ones((N))*options['control_x_i']
-        self.create_input('control_x',control_x)
-        self.add(spline(name='x',N=N,num_nodes=num,dt=options['dt']))
+        #N = 5
+        #control_x = np.ones((N))*options['control_x_i']
+        #self.create_input('control_x',control_x)
+        #elf.add(spline(name='x',N=N,num_nodes=num,dt=options['dt']))
 
 
 
@@ -162,20 +162,17 @@ options['control_theta_i'] = 0 # (deg)
 # ode problem instance
 options['dt'] = 0.2
 num = 50
-t1 = time.perf_counter()
 ODEProblem = ODEProblemTest('ExplicitMidpoint', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 # sim.run()
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-# optimizer = SLSQP(prob, maxiter=800, ftol=1e-8)
-optimizer = SNOPT(prob, Major_optimality=1e-7)
+optimizer = SLSQP(prob, maxiter=800, ftol=1e-6)
+# optimizer = SNOPT(prob, Major_optimality=1e-7)
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-t2 = time.perf_counter()
-print('time: ', t2-t1)
 
 
 # assign variables for post-processing
@@ -190,7 +187,7 @@ cl = sim['cl']
 cd = sim['cd']
 lift = sim['lift']
 drag = sim['drag']
-control_x = sim['interp_x']
+control_x = sim['control_x']
 control_z = sim['control_z']
 dtheta = sim['dtheta']
 dcx = sim['dcx']

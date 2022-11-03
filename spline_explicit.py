@@ -4,7 +4,7 @@ import numpy as np
 from smt.surrogate_models import RMTB, RBF
 import matplotlib.pyplot as plt
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+# from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 
 class spline(csdl.Model):
@@ -98,7 +98,6 @@ class SplineExplicit(csdl.CustomExplicitOperation):
         yder_dict = self.sm.predict_output_derivatives(xnew)
 
         array = np.array(yder_dict[None])
-        # self.print_var(array)
 
         derivatives['interp_'+name, 'control_'+name] = array
 
