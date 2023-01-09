@@ -102,7 +102,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
         self.add_design_variable('dt',lower=0.5)
-        
+
         self.add_objective('dt', scaler=1)
         
 
@@ -194,7 +194,7 @@ options['control_alpha_i'] = np.array([0.87190034, 0.46127608, 0.19230684, 0.150
 
 
 # ode problem instance
-options['dt'] = 0.9095393 #1.21333051 #1.27790049 #2.70794719 # 3.5
+options['dt'] = 0.9095393 #1.21333051 #2.70794719 # 3.5
 num = 30
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
