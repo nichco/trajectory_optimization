@@ -59,11 +59,8 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         min_h = csdl.min(h)
-        max_h = csdl.max(h)
         self.register_output('min_h', min_h)
-        self.register_output('max_h', max_h)
-        self.add_constraint('min_h', lower=options['h_0'] - 0.01) #0.1
-        # self.add_constraint('max_h', upper=options['h_f'] + 10)
+        self.add_constraint('min_h', lower=options['h_0'] - 0.01)
 
         # final velocity constraint
         final_v = v[-1]
@@ -81,10 +78,13 @@ class RunModel(csdl.Model):
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
-        # self.add_constraint('max_spl_gl',upper=105,scaler=1E-2)
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
         # self.add_constraint('seg_ospl',upper=70,scaler=1E-2)
         
+        # compute total energy
+        energy = e[-1]
+        self.register_output('energy',energy)
+        self.print_var(energy)
        
         
         """
@@ -93,10 +93,6 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_x',lower=0, scaler=2E-3)
         self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1,num))
         self.add_design_variable('dt',lower=2.0)
-
-        energy = e[-1]
-        self.register_output('energy',energy)
-        self.print_var(energy)
         self.add_objective('energy', scaler=5E-3)
         """
         
@@ -111,9 +107,6 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
         self.add_design_variable('dt',lower=0.5)
         
-        energy = e[-1]
-        self.register_output('energy',energy)
-        self.print_var(energy)
         self.add_objective('dt', scaler=1)
         
 
@@ -214,7 +207,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=2000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=2000, ftol=1E-4)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
@@ -224,8 +217,6 @@ plt.show()
 # print total energy
 print('dt: ', sim['dt'])
 print('total energy: ', sim['energy']/options['energy_scale'])
-#print(sim['input_power'])
-#print(sim['test'])
 
 # assign variables for post-processing
 v = sim['v']
