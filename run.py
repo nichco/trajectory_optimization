@@ -62,12 +62,9 @@ class RunModel(csdl.Model):
         self.register_output('final_v',v[-1])
         self.add_constraint('final_v',lower=options['v_f'],scaler=0.01) #0.1
         
-
-        # pitch angle constraints
+        # pitch angle constraint
         self.register_output('theta',gamma + alpha)
-        self.register_output('min_theta',csdl.min(theta))
-        self.register_output('max_theta',csdl.max(theta))
-        #self.add_constraint('min_theta',lower=-np.deg2rad(15))
+        self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(15))
         
         # flight path angle constraints
