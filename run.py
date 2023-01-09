@@ -44,37 +44,35 @@ class RunModel(csdl.Model):
         liftpower = self.declare_variable('liftpower', shape=(num,))
 
         # max power constraints
-        max_cruise_power = csdl.max(cruisepower)
-        max_lift_power = csdl.max(liftpower)
-        self.register_output('max_cruise_power', max_cruise_power)
-        self.register_output('max_lift_power', max_lift_power)
+        self.register_output('max_cruise_power', csdl.max(cruisepower))
+        self.register_output('max_lift_power', csdl.max(liftpower))
         # only for min dt case
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
         self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
-        final_h = h[-1]
-        self.register_output('final_h', final_h)
+        self.register_output('final_h', h[-1])
         self.add_constraint('final_h', equals=options['h_f'], scaler=0.01)
 
         # min altitude constraint
-        min_h = csdl.min(h)
-        self.register_output('min_h', min_h)
+        self.register_output('min_h', csdl.min(h))
         self.add_constraint('min_h', lower=options['h_0'] - 0.01)
 
         # final velocity constraint
-        final_v = v[-1]
-        self.register_output('final_v',final_v)
+        self.register_output('final_v',v[-1])
         self.add_constraint('final_v',lower=options['v_f'],scaler=0.01) #0.1
         
 
-        # flight path angle constraints
-        theta = gamma + alpha
-        self.register_output('theta',theta)
+        # pitch angle constraints
+        self.register_output('theta',gamma + alpha)
         self.register_output('min_theta',csdl.min(theta))
         self.register_output('max_theta',csdl.max(theta))
         #self.add_constraint('min_theta',lower=-np.deg2rad(15))
         #self.add_constraint('max_theta',upper=np.deg2rad(15))
+        
+        # flight path angle constraints
+        self.register_output('final_gamma',gamma[-1])
+        #self.add_constraint('final_gamma',equals=0)
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -102,7 +100,8 @@ class RunModel(csdl.Model):
         #self.add_design_variable('control_z',lower=100, scaler=np.linspace(1E-3,1E-2,num))
         #self.add_design_variable('dt',lower=0.5)
         
-        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/options['control_alpha_i'])
+        self.add_design_variable('control_alpha',scaler=1)
+        #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/options['control_alpha_i'])
         self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
         self.add_design_variable('dt',lower=0.5)
@@ -144,7 +143,6 @@ options['alpha_0'] = 0 # (rad)
 options['h_f'] = 300 # (m)
 options['v_f'] = 43 # (m/s)
 options['gamma_f'] = 0 # (rad)
-options['max_spl'] = 100 # (db)
 # initial control inputs
 """
 options['control_x_i'] = np.ones(30)*2300
@@ -153,26 +151,26 @@ options['control_alpha_i'] = np.linspace(0.7, 0, 30)
 """
 
 # min dt seed (nominal)
-options['control_x_i'] = np.array([2104.7695022,  2115.4134416,  2153.00470178, 2213.72873331, 2243.58835329,
- 2265.31092023, 2280.0773581 , 2277.0607596 , 2305.60716744, 2322.78056034,
- 2335.96183508, 2360.01621271, 2378.15612254, 2399.29355443, 2413.2400634,
- 2406.85330201, 2441.97650291, 2438.0228724 , 2452.43674488, 2456.94948004,
- 2459.63063656, 2432.70304404, 2441.10719955, 2433.44848836, 2423.97212453,
- 2413.07552057, 2401.03752593, 2389.37685222, 2373.43758947, 2368.63876932])
-options['control_z_i'] = np.array([1385.9572475,  1378.98939011, 1352.12694977, 1153.93501213,  936.79757382,
-  763.80069359,  664.8801888 ,  596.09227073,  538.42229699,  493.78067537,
-  470.99409501,  444.99857618,  449.23781374,  458.06379036,  443.96877129,
-  428.0284761 ,  402.17005138,  366.89480855,  331.66057602,  297.94748818,
-  261.1913302 ,  229.43816243,  197.82240036,  168.18468783,  138.34289863,
-  112.30607352,  100.03654335,  100.04349879,  100.05216305,  100.01703125])
-options['control_alpha_i'] = np.array([6.14377795e-01, 8.60604153e-01, 9.85703418e-01, 4.43511814e-01,
- 3.53745726e-01, 2.49629804e-01, 1.67155793e-01, 4.33161417e-02,
- 8.75236776e-03, 5.54205951e-03, 1.73237101e-02, 1.65553491e-02,
- 1.65612931e-02, 1.04217025e-02, 3.32734549e-03, 2.31559127e-05,
- 3.83681218e-03, 3.88737050e-06, 1.67743048e-06, 5.77316785e-05,
- 4.79544581e-06, 4.84186801e-06, 6.75598944e-04, 1.21478833e-05,
- 5.90373745e-03, 3.13436882e-03, 5.28815936e-03, 3.92249315e-03,
- 1.28720498e-02, 7.33241619e-20])
+options['control_x_i'] = np.array([2124.13625581,2131.85137181,2173.32871553,2221.14842109,2211.97107647,
+ 2253.94998617,2283.94352147,2295.5992903 ,2316.90292026,2342.79358487,
+ 2371.42128359,2390.58872052,2409.09692677,2417.24569485,2431.01859621,
+ 2435.37545702,2433.47574519,2445.19160333,2444.59070292,2443.17137773,
+ 2438.93740276,2431.62005851,2422.94582173,2414.71572079,2406.74762457,
+ 2395.13693941,2379.00683575,2368.49732601,2360.80539598,2363.20423794])
+options['control_z_i'] = np.array([1391.03885706,1412.28184079,1412.88860698,  75.09129593,1415.95990782,
+ 1398.94466644, 162.73287255, 160.01535156, 446.44999321, 691.36592683,
+  814.3809006 , 684.99600039, 538.1194686 , 322.28483515, 178.86236356,
+   92.83576285,  89.98986905,  70.9233124 , 102.82238731, 113.09650619,
+  132.71345529, 146.66168001, 151.09341074, 145.44429626, 130.38432298,
+  110.05903573,  99.83456811, 100.76277145, 101.29060202, 100.30287394])
+options['control_alpha_i'] = np.array([ 6.05104362e-01, 9.17275848e-01, 6.28184348e-01, 8.18451160e-02,
+  5.70286893e-01, 3.71744776e-01,-6.27051734e-02, 1.26402913e-02,
+  8.65766877e-03, 5.87690705e-03, 2.09147476e-02, 1.84744231e-02,
+  1.56924716e-02, 8.11560687e-03, 2.85936566e-03, 2.31221376e-05,
+  2.65966992e-03, 3.88602372e-06, 1.67717346e-06, 5.74405904e-05,
+  4.79364564e-06, 4.84033968e-06, 6.52660577e-04, 1.21426324e-05,
+  5.07808276e-03, 3.01812672e-03, 5.17933611e-03, 3.92630144e-03,
+  1.27397383e-02, 7.33241619e-20])
 
 
 """
@@ -199,7 +197,7 @@ options['control_alpha_i'] = np.array([0.87190034, 0.46127608, 0.19230684, 0.150
 
 
 # ode problem instance
-options['dt'] = 0.9270615 #1.21333051 #1.27790049 #2.70794719 # 0.9270615 # 3.5
+options['dt'] = 0.9095393 #1.21333051 #1.27790049 #2.70794719 # 3.5
 num = 30
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
@@ -207,7 +205,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=2000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=2000, ftol=1E-5)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
