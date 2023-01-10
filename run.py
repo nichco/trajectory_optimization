@@ -64,12 +64,12 @@ class RunModel(csdl.Model):
         
         # pitch angle constraint
         self.register_output('theta',gamma + alpha)
-        self.register_output('max_theta',csdl.max((theta**2)**0.5))
+        self.register_output('max_theta',csdl.max(((gamma + alpha)**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(15))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
-        #self.add_constraint('final_gamma',equals=0)
+        self.add_constraint('final_gamma',equals=0)
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -92,18 +92,17 @@ class RunModel(csdl.Model):
         """
         
         # for the minimum time objective
-        #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=np.linspace(0.1,10,num))
-        #self.add_design_variable('control_x',lower=100, scaler=1E-2) # 1E-2
-        #self.add_design_variable('control_z',lower=100, scaler=np.linspace(1E-3,1E-2,num))
-        #self.add_design_variable('dt',lower=0.5)
+        self.add_design_variable('control_alpha',scaler=np.linspace(0.1,10,num))
+        self.add_design_variable('control_x',lower=0, scaler=1E-2)
+        self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1E-2,num))
+        self.add_design_variable('dt')
         
-        self.add_design_variable('control_alpha',scaler=1)
-        #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/options['control_alpha_i'])
-        self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
-        self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
-        self.add_design_variable('dt',lower=0.5)
+        #self.add_design_variable('control_alpha',scaler=1)
+        #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
+        #self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
+        #self.add_design_variable('dt',lower=0.5)
 
-        self.add_objective('dt', scaler=1)
+        self.add_objective('dt')
         
 
 
@@ -139,7 +138,6 @@ options['x_0'] = 0 # (m)
 options['alpha_0'] = 0 # (rad)
 options['h_f'] = 300 # (m)
 options['v_f'] = 43 # (m/s)
-options['gamma_f'] = 0 # (rad)
 # initial control inputs
 """
 options['control_x_i'] = np.ones(30)*2300
@@ -202,7 +200,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=2000, ftol=1E-5)
+optimizer = SLSQP(prob, maxiter=2000, ftol=1E-4)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
