@@ -1,5 +1,6 @@
 import numpy as np
 
+
 # aircraft and mission parameter definitions
 options = {} # aircraft and mission parameter dictionary
 
@@ -43,7 +44,6 @@ options['control_x_i'] = np.ones(30)*2300
 options['control_z_i'] = np.linspace(800, 100, 30)
 options['control_alpha_i'] = np.linspace(0.7, 0, 30)
 """
-
 """
 print(np.array2string(sim['control_x'],separator=','))
 print(np.array2string(sim['control_z'],separator=','))
