@@ -8,6 +8,7 @@ from modopt.scipy_library import SLSQP
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
 from skmd import tonal
+from parameters import options
 
 
 class RunModel(csdl.Model):
@@ -92,7 +93,7 @@ class RunModel(csdl.Model):
         """
         
         # for the minimum time objective
-        self.add_design_variable('control_alpha',scaler=np.linspace(0.1,10,num))
+        self.add_design_variable('control_alpha',scaler=np.linspace(1,10,num))
         self.add_design_variable('control_x',lower=0, scaler=1E-2)
         self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1E-2,num))
         self.add_design_variable('dt')
@@ -108,7 +109,7 @@ class RunModel(csdl.Model):
 
 
 
-
+"""
 options = {} # aircraft and mission parameter dictionary
 # aircraft data
 options['mass'] = 2000 # 3724 (kg)
@@ -139,34 +140,33 @@ options['alpha_0'] = 0 # (rad)
 options['h_f'] = 300 # (m)
 options['v_f'] = 43 # (m/s)
 # initial control inputs
-"""
-options['control_x_i'] = np.ones(30)*2300
-options['control_z_i'] = np.linspace(800, 100, 30)
-options['control_alpha_i'] = np.linspace(0.7, 0, 30)
-"""
+
+#options['control_x_i'] = np.ones(30)*2300
+#options['control_z_i'] = np.linspace(800, 100, 30)
+#options['control_alpha_i'] = np.linspace(0.7, 0, 30)
+
 
 # min dt seed (nominal)
-options['control_x_i'] = np.array([2124.13625581,2131.85137181,2173.32871553,2221.14842109,2211.97107647,
- 2253.94998617,2283.94352147,2295.5992903 ,2316.90292026,2342.79358487,
- 2371.42128359,2390.58872052,2409.09692677,2417.24569485,2431.01859621,
- 2435.37545702,2433.47574519,2445.19160333,2444.59070292,2443.17137773,
- 2438.93740276,2431.62005851,2422.94582173,2414.71572079,2406.74762457,
- 2395.13693941,2379.00683575,2368.49732601,2360.80539598,2363.20423794])
-options['control_z_i'] = np.array([1391.03885706,1412.28184079,1412.88860698,  75.09129593,1415.95990782,
- 1398.94466644, 162.73287255, 160.01535156, 446.44999321, 691.36592683,
-  814.3809006 , 684.99600039, 538.1194686 , 322.28483515, 178.86236356,
-   92.83576285,  89.98986905,  70.9233124 , 102.82238731, 113.09650619,
-  132.71345529, 146.66168001, 151.09341074, 145.44429626, 130.38432298,
-  110.05903573,  99.83456811, 100.76277145, 101.29060202, 100.30287394])
-options['control_alpha_i'] = np.array([ 6.05104362e-01, 9.17275848e-01, 6.28184348e-01, 8.18451160e-02,
-  5.70286893e-01, 3.71744776e-01,-6.27051734e-02, 1.26402913e-02,
-  8.65766877e-03, 5.87690705e-03, 2.09147476e-02, 1.84744231e-02,
-  1.56924716e-02, 8.11560687e-03, 2.85936566e-03, 2.31221376e-05,
-  2.65966992e-03, 3.88602372e-06, 1.67717346e-06, 5.74405904e-05,
-  4.79364564e-06, 4.84033968e-06, 6.52660577e-04, 1.21426324e-05,
-  5.07808276e-03, 3.01812672e-03, 5.17933611e-03, 3.92630144e-03,
-  1.27397383e-02, 7.33241619e-20])
-
+options['control_x_i'] = np.array([2124.99713301,2147.24162348,2115.99307639,2214.36883994,2235.05443852,
+ 2251.16923596,2262.83541486,2251.50139516,2280.69407357,2318.61481819,
+ 2372.73930726,2396.17291084,2402.23339706,2410.49323496,2416.40173985,
+ 2422.22593009,2427.72441213,2432.44080978,2435.91621419,2438.89892645,
+ 2445.35503282,2447.08162961,2442.22806877,2441.27106436,2434.52204514,
+ 2395.05870964,2383.57262964,2339.14905017,2326.76477643,2322.1561648 ])
+options['control_z_i'] = np.array([1.39186114e+03,1.40588527e+03,1.44174575e+03,1.40516985e+03,
+ 1.40707281e+03,1.40503301e+03,0.00000000e+00,0.00000000e+00,
+ 5.61818907e-11,1.39204212e+03,1.36908634e+03,1.36221795e+03,
+ 3.33518864e+01,9.49141118e-11,8.51545310e+01,1.79199693e+01,
+ 8.46641499e+01,3.23762380e+01,7.03650851e+01,1.92946223e-10,
+ 2.62559450e+01,1.77522523e+01,1.36160992e+03,1.36296269e+03,
+ 1.77442966e+02,7.71765306e+00,8.00610237e+00,2.92696133e+01,
+ 7.80277801e+00,1.79312794e-10])
+options['control_alpha_i'] = np.array([ 0.67217549, 0.73394818, 1.35204692, 0.44813604, 0.44881455, 0.4199771 ,
+ -0.2944446 ,-0.1687615 ,-0.37530761, 0.34098485, 0.22135739, 0.19954471,
+ -0.14085656, 0.0091387 ,-0.01820163,-0.00819797,-0.00176691,-0.00863974,
+ -0.01958483,-0.02096045,-0.01700367,-0.10227899, 0.20966134, 0.20845703,
+ -0.06247892,-0.01924573,-0.04494589,-0.18205321,-0.16431064,-0.17932383])
+"""
 
 """
 # min e seed (nominal)
@@ -192,7 +192,7 @@ options['control_alpha_i'] = np.array([0.87190034, 0.46127608, 0.19230684, 0.150
 
 
 # ode problem instance
-options['dt'] = 0.9095393 #1.21333051 #2.70794719 # 3.5
+#options['dt'] = 0.85585751 #1.21333051 #2.70794719 # 3.5
 num = 30
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
@@ -200,7 +200,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=2000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=2000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
