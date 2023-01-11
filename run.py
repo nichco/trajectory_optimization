@@ -99,18 +99,15 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_x',lower=0, scaler=1E-2)
         self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1E-2,num))
         self.add_design_variable('dt')
-        
+    
         #self.add_design_variable('control_alpha',scaler=1)
         #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
         #self.add_design_variable('dt',lower=0.5)
         
         dt = self.declare_variable('dt')
-        control_x = self.declare_variable('control_x',shape=(num,))
-        control_z = self.declare_variable('control_z',shape=(num,))
-        control_alpha = self.declare_variable('control_alpha',shape=(num,))
-        #obj = dt + energy*0.5E-3
-        obj = dt +  csdl.pnorm(control_z,pnorm_type=2)*1E-4 +  csdl.pnorm(control_alpha,pnorm_type=2)*1E-2
+        obj = dt + energy*1E-3
+        #obj = dt +  csdl.pnorm(control_z,pnorm_type=2)*1E-4 +  csdl.pnorm(control_alpha,pnorm_type=2)*1E-2
         self.register_output('obj',obj)
         
         self.add_objective('obj')
