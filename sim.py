@@ -61,7 +61,7 @@ thetat = at + gt
 
 
 # interpolate data
-n = 1000
+n = 500
 num = 30
 dte = 2.66245201
 dtt = 0.92450286
@@ -94,8 +94,8 @@ m1.c('blue').lighting('glossy').phong()
 m2 = m1.clone()
 m2.c('red').lighting('glossy').phong()
 
-m1.pos(0, 0, 0).add_trail(n=2000)
-m2.pos(0, 0, 0).add_trail(n=2000)
+m1.pos(0, 0, 0).add_trail(n=2000,lw=4,offset=(-50,0,50),c='blue')
+m2.pos(0, 0, 0).add_trail(n=2000,lw=4,offset=(-50,0,50),c='red')
 
 # Setup the scene
 cam = dict(
@@ -107,7 +107,7 @@ cam = dict(
 plt = Plotter(axes=0, interactive=False)
 
 
-video = Video('lpc.mp4', duration=None, fps=24, backend="cv")
+video = Video('lpc.mp4', duration=None, fps=50, backend="cv")
 
 
 index = 0
@@ -121,7 +121,7 @@ for t in np.arange(0, n, 1):
     m2.pos(xit[index], 0, hit[index])
     index += 1
 
-    plt.show(m1,m2, __doc__, axes=0, viewup="z",camera=cam,rate=700)
+    plt.show(m1,m2, __doc__, axes=0, viewup="z",camera=cam,rate=2000)
     video.add_frame()
 
 #video.action(cameras=cam)
