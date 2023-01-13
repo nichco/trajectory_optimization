@@ -57,6 +57,36 @@ gt = np.array([ 0.        , 0.00572257,-0.01459251, 0.02191502, 0.07812616, 0.12
   0.24466201, 0.29565867, 0.34678557, 0.39603557, 0.44244606, 0.4837827 ,
   0.52264046, 0.55553145, 0.57724748, 0.58723168, 0.58853005, 0.57147714])
 thetat = at + gt
+
+
+
+# interpolate data
+n = 1000
+num = 30
+dte = 2.66245201
+dtt = 0.92450286
+# linear time vector and interpolated time vector
+tvece = np.linspace(0,num*dte,num)
+tvect = np.linspace(0,num*dtt,num)
+tie = np.linspace(tvece.min(), tvece.max(), n)
+tit = np.linspace(tvect.min(), tvect.max(), int(n*dtt/dte))
+# data splines
+xse = make_interp_spline(tvece,xe)
+hse = make_interp_spline(tvece,he)
+tse = make_interp_spline(tvece,thetae)
+xst = make_interp_spline(tvect,xt)
+hst = make_interp_spline(tvect,ht)
+tst = make_interp_spline(tvect,thetat)
+# interpolated data splines
+pad = np.ones(len(tie)-len(tit))
+xie = xse(tie)
+hie = hse(tie)
+tie = tse(tie)
+xit = np.concatenate((xst(tit), pad*xt[-1]))
+hit = np.concatenate((hst(tit), pad*ht[-1]))
+tit = np.concatenate((tst(tit), pad*thetat[-1]))
+
+
 #endregion
 
 m1 = Mesh('lpc.stl').scale(20).rotate_z(180)
@@ -69,7 +99,7 @@ m2.pos(0, 0, 0).add_trail(n=2000)
 
 # Setup the scene
 cam = dict(
-    position=(1500, -9000, 0),
+    position=(1500, -8500, 0),
     focal_point=(1500, 0, 0),
     viewup=(0, 0, 1),
     distance=0,
@@ -77,32 +107,23 @@ cam = dict(
 plt = Plotter(axes=0, interactive=False)
 
 
-# interpolate data
-n = 1000
-num = 30
-dt = 2.66245201
-# linear time vector and interpolated time vector
-tvec = np.linspace(0,num*dt,num)
-ti = np.linspace(tvec.min(), tvec.max(), n)
-# data splines
-xs = make_interp_spline(tvec,xe)
-hs = make_interp_spline(tvec,he)
-ts = make_interp_spline(tvec,thetae)
-# interpolated data splines
-xie = xs(ti)
-hie = hs(ti)
-tie = ts(ti)
+video = Video('lpc.mp4', duration=None, fps=24, backend="cv")
 
 
 index = 0
-tref = 0
-for t in np.arange(0, num*dt, num*dt/n):
-    m1.rotate_y(-1*np.rad2deg(tie[index] - tref))
-    tref = tie[index]
-
+tref_e,tref_t = 0,0
+for t in np.arange(0, n, 1):
+    m1.rotate_y(-1*np.rad2deg(tie[index] - tref_e))
+    m2.rotate_y(-1*np.rad2deg(tit[index] - tref_t))
+    tref_e = tie[index]
+    tref_t = tit[index]
     m1.pos(xie[index], 0, hie[index])
+    m2.pos(xit[index], 0, hit[index])
     index += 1
-    plt.show(m1, m2 , __doc__, axes=0, viewup="z",camera=cam,rate=200)
 
+    plt.show(m1,m2, __doc__, axes=0, viewup="z",camera=cam,rate=700)
+    video.add_frame()
 
+#video.action(cameras=cam)
+video.close() 
 plt.interactive().close()
