@@ -96,22 +96,20 @@ class RunModel(csdl.Model):
         # for the minimum time objective
         # self.add_design_variable('control_alpha',scaler=np.linspace(1,10,num))
         self.add_design_variable('control_alpha',scaler=1)
-        self.add_design_variable('control_x',lower=0, scaler=1E-2)
+        #self.add_design_variable('control_x',lower=0, scaler=1E-3) # 1E-2
         self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1E-2,num))
         self.add_design_variable('dt')
     
         #self.add_design_variable('control_alpha',scaler=1)
-        #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
+        self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
         #self.add_design_variable('dt',lower=0.5)
         
-        dt = self.declare_variable('dt')
-        obj = dt + energy*1E-3
-        #obj = dt +  csdl.pnorm(control_z,pnorm_type=2)*1E-4 +  csdl.pnorm(control_alpha,pnorm_type=2)*1E-2
-        self.register_output('obj',obj)
-        
-        self.add_objective('obj')
-        #self.add_objective('dt')
+        #dt = self.declare_variable('dt')
+        #obj = dt + energy*1E-3
+        #self.register_output('obj',obj)
+        #self.add_objective('obj')
+        self.add_objective('dt')
         
 
 
@@ -119,13 +117,13 @@ class RunModel(csdl.Model):
 
 # ode problem instance
 num = 30
-ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
+ODEProblem = ODEProblemTest('GaussLegendre2', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=5000, ftol=1E-5)
+optimizer = SLSQP(prob, maxiter=5000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()

@@ -60,9 +60,9 @@ v054__005N = np.cos(v02_gamma)
 # REP:  v03_h --> v072_pressure, v073_density
 # LANG: h --> pressure, density
 # full namespace: aero.atmosphere
-temp = _006r_custom_explicit_func_pressure.solve(v03_h)
-v072_pressure = temp[0].copy()
-v073_density = temp[1].copy()
+temp = _006r_custom_explicit_func.solve(v03_h)
+v072_pressure = temp[0]
+v073_density = temp[1]
 
 # op _0049_cos_eval
 # REP:  v06_control_alpha --> v07__004a
@@ -213,9 +213,9 @@ v018_liftvTan = (v018_liftvTan*_004y_coeff).reshape((1,))
 # REP:  v061_alpha_w --> v070_cl, v071_cd
 # LANG: alpha_w --> cl, cd
 # full namespace: aero.airfoil
-temp = _006n_custom_explicit_func_cl.solve(v061_alpha_w)
-v070_cl = temp[0].copy()
-v071_cd = temp[1].copy()
+temp = _006n_custom_explicit_func.solve(v061_alpha_w)
+v070_cl = temp[0]
+v071_cd = temp[1]
 
 # op _004j_power_combination_eval
 # REP:  v012__004i --> v013_cruisen
@@ -249,17 +249,17 @@ v063__006b = (v063__006b*_006a_coeff).reshape((1,))
 # REP:  v08_cruisevAxial, v010_cruisevTan --> v086_cruisect, v087_cruisecp
 # LANG: cruisevAxial, cruisevTan --> cruisect, cruisecp
 # full namespace: cruiserotor.rotorModel
-temp = _006Z_custom_explicit_func_cruisect.solve(v08_cruisevAxial, v010_cruisevTan)
-v086_cruisect = temp[0].copy()
-v087_cruisecp = temp[1].copy()
+temp = _006Z_custom_explicit_func.solve(v08_cruisevAxial, v010_cruisevTan)
+v086_cruisect = temp[0]
+v087_cruisecp = temp[1]
 
 # op _007A_custom_explicit_eval
 # REP:  v016_liftvAxial, v018_liftvTan --> v0101_liftct, v0102_liftcp
 # LANG: liftvAxial, liftvTan --> liftct, liftcp
 # full namespace: liftrotor.rotorModel
-temp = _007A_custom_explicit_func_liftct.solve(v016_liftvAxial, v018_liftvTan)
-v0101_liftct = temp[0].copy()
-v0102_liftcp = temp[1].copy()
+temp = _007A_custom_explicit_func.solve(v016_liftvAxial, v018_liftvTan)
+v0101_liftct = temp[0]
+v0102_liftcp = temp[1]
 
 # op _006c_linear_combination_eval
 # REP:  v071_cd --> v069__006d
@@ -495,8 +495,8 @@ v037__005f = (v037__005f*_005e_coeff).reshape((1,))
 # REP:  v014_cruisem, v085_cruisetorque --> v088_cruiseeta
 # LANG: cruisem, cruisetorque --> cruiseeta
 # full namespace: cruisemotor
-temp = _0073_custom_explicit_func_cruiseeta.solve(v085_cruisetorque, v014_cruisem)
-v088_cruiseeta = temp[0].copy()
+temp = _0073_custom_explicit_func.solve(v085_cruisetorque, v014_cruisem)
+v088_cruiseeta = temp[0]
 
 # op _004K_power_combination_eval
 # REP:  v092_liftthrust --> v026__004L
@@ -516,8 +516,8 @@ v057__004O = (v057__004O*_004N_coeff).reshape((1,))
 # REP:  v022_liftm, v0100_lifttorque --> v0103_lifteta
 # LANG: liftm, lifttorque --> lifteta
 # full namespace: liftmotor
-temp = _007F_custom_explicit_func_lifteta.solve(v0100_lifttorque, v022_liftm)
-v0103_lifteta = temp[0].copy()
+temp = _007F_custom_explicit_func.solve(v0100_lifttorque, v022_liftm)
+v0103_lifteta = temp[0]
 
 # op _004T_power_combination_eval
 # REP:  v023__004Q, v024__004S --> v025__004U
