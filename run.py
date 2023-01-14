@@ -64,10 +64,13 @@ class RunModel(csdl.Model):
         self.register_output('final_v',v[-1])
         self.add_constraint('final_v',lower=options['v_f'],scaler=0.01) #0.1
         
-        # pitch angle constraint
-        self.register_output('theta',gamma + alpha)
-        self.register_output('max_theta',csdl.max(((gamma + alpha)**2)**0.5))
+        # pitch angle constraints
+        theta = gamma + alpha
+        self.register_output('theta',theta)
+        self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(15))
+        self.register_output('initial_theta',theta[0])
+        self.add_constraint('initial_theta',equals=0)
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -95,15 +98,15 @@ class RunModel(csdl.Model):
         
         # for the minimum time objective
         # self.add_design_variable('control_alpha',scaler=np.linspace(1,10,num))
-        self.add_design_variable('control_alpha',scaler=1)
-        #self.add_design_variable('control_x',lower=0, scaler=1E-3) # 1E-2
-        self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1E-2,num))
-        self.add_design_variable('dt')
-    
         #self.add_design_variable('control_alpha',scaler=1)
+        #self.add_design_variable('control_x',lower=0, scaler=1E-3) # 1E-2
+        self.add_design_variable('control_z',lower=0, scaler=1E-3)
+        #self.add_design_variable('dt')
+    
+        self.add_design_variable('control_alpha',lower=-np.pi/3,upper=np.pi/3,scaler=1)
         self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
-        #self.add_design_variable('dt',lower=0.5)
+        self.add_design_variable('dt',lower=0.5)
         
         #dt = self.declare_variable('dt')
         #obj = dt + energy*1E-3
@@ -117,13 +120,13 @@ class RunModel(csdl.Model):
 
 # ode problem instance
 num = 30
-ODEProblem = ODEProblemTest('GaussLegendre2', 'time-marching', num_times=num, display='default', visualization='end')
+ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=5000, ftol=1E-7)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-2)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
