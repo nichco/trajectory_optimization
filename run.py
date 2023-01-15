@@ -49,8 +49,8 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
         # only for min dt case
-        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -70,11 +70,11 @@ class RunModel(csdl.Model):
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(15))
         self.register_output('initial_theta',theta[0])
-        self.add_constraint('initial_theta',equals=0)
+        #self.add_constraint('initial_theta',equals=0)
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
-        self.add_constraint('final_gamma',equals=0)
+        #self.add_constraint('final_gamma',equals=0)
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -87,25 +87,26 @@ class RunModel(csdl.Model):
         self.print_var(energy)
        
         
-        """
+        
         # for the minimum energy objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=2E-3)
         self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1,num))
         self.add_design_variable('dt',lower=2.0)
         self.add_objective('energy', scaler=5E-3)
-        """
         
+        
+        """
         # for the minimum time objective
         # self.add_design_variable('control_alpha',scaler=np.linspace(1,10,num))
         #self.add_design_variable('control_alpha',scaler=1)
         #self.add_design_variable('control_x',lower=0, scaler=1E-3) # 1E-2
-        self.add_design_variable('control_z',lower=0, scaler=1E-3)
+        #self.add_design_variable('control_z',lower=0, scaler=1E-3)
         #self.add_design_variable('dt')
     
         self.add_design_variable('control_alpha',lower=-np.pi/3,upper=np.pi/3,scaler=1)
         self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
-        #self.add_design_variable('control_z',lower=0, scaler=1/options['control_z_i'])
+        self.add_design_variable('control_z',lower=0, scaler=1/(options['control_z_i'] + 0.01))
         self.add_design_variable('dt',lower=0.5)
         
         #dt = self.declare_variable('dt')
@@ -113,20 +114,20 @@ class RunModel(csdl.Model):
         #self.register_output('obj',obj)
         #self.add_objective('obj')
         self.add_objective('dt')
-        
+        """
 
 
 
 
 # ode problem instance
 num = 30
-ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
+ODEProblem = ODEProblemTest('RK4', 'collocation', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-2)
+optimizer = SLSQP(prob, maxiter=5000, ftol=1E-4)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
