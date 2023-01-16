@@ -20,8 +20,8 @@ class aero(csdl.Model):
         
         s = options['wing_area']
         cd_0 = options['cd_0']
-        #e = options['span_efficiency']
-        aspect_ratio = options['aspect_ratio']
+        e = options['span_efficiency']
+        #aspect_ratio = options['aspect_ratio']
 
         cl = self.declare_variable('cl', shape=n)
         cdi = self.declare_variable('cd', shape=n)

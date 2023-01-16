@@ -121,7 +121,7 @@ for t in np.arange(0, n, 1):
     m2.pos(xit[index], 0, hit[index])
     index += 1
 
-    plt.show(m1,m2, __doc__, axes=0, viewup="z",camera=cam,rate=2000)
+    plt.show(m1,m2, __doc__, axes=0, viewup="z",camera=cam,rate=2000,bg='white')
     video.add_frame()
 
 #video.action(cameras=cam)
