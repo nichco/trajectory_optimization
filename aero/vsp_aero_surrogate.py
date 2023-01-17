@@ -5,15 +5,16 @@ import matplotlib.pyplot as plt
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams.update({'font.size': 12})
 
-xt = np.deg2rad(np.linspace(-90, 90, 46))
-yt_cl = np.array([-0.033,-0.065,-0.097,-0.129,-0.161,-0.193,-0.225,-0.257,-0.289,-0.321,-0.353,-0.385,-0.417,-0.449,
-                    -0.481,-0.513,-0.545,-0.577,-0.609,-0.634,-0.642,-0.4854,0.0914,0.6101,0.9747,1.2206,1.25,1.19,1.13,
-                    1.07,1.01,0.95,0.89,0.83,0.77,0.71,0.65,0.59,0.53,0.47,0.41,0.35,0.29,0.23,0.17,0.11])
+#region data
+# data from vspaero
+xt = np.deg2rad(np.linspace(-90, 90, 37))
+yt_cl = np.array([0,-0.13,-0.26,-0.39,-0.52,-0.65,-0.78,-0.91,-1.04,-1.16,-1.29,-1.43,-1.55,-1.6,-1.440866479,-0.952207817,-0.458042874,0.042272219,0.537553614,
+1.030899101,1.4,1.45,1.4,1.31,1.21,1.11,1.01,0.91,0.81,0.71,0.61,0.51,0.41,0.31,0.21,0.11,0.01,])
 
-yt_cd = np.array([1.345,1.325,1.305,1.285,1.265,1.245,1.225,1.205,1.185,1.16,1.115,0.99,0.803131468,0.657798541,0.511489095,
-                    0.35,0.20285,0.13657,0.08653,0.05091,0.03576,0.02778,0.01702,0.01561,0.01837,0.03392,0.07,0.088,0.14493,
-                    0.20944,0.32,0.479306071,0.62122118,0.767530626,0.95,1.09,1.15,1.18,1.2,1.22,1.24,1.26,1.28,1.3,1.32,1.34])
-
+yt_cd = np.array([1.191308205,1.188,1.186033965,1.179762265,1.158815985,1.113876301,1.047947196,0.965115078,0.866730629,0.750070161,0.620489728,0.481112557,
+0.335140556,0.186836785,0.067410268,0.028389972,0.006013008,0.000950904,0.013505923,0.043538331,0.116663427,0.266083605,0.420373542,0.57145064,0.721261971,
+0.861188551,0.985827271,1.094205044,1.177593611,1.240456117,1.282483901,1.296,1.299,1.302,1.305,1.308,1.311,])
+#endregion
 
 sm_cl = RBF(d0=0.15,print_global=False,print_solver=False,)
 sm_cl.set_training_values(xt, yt_cl)
@@ -42,12 +43,11 @@ if __name__ == '__main__':
     ax1.plot(np.rad2deg(x), ycl,color='k',linewidth=2)
     ax1.set_ylabel('lift coefficient')
     ax1.set_xlabel('angle of attack '+r'$(^{\circ}$)')
-    ax1.legend(['training points','RBF surrogate'], frameon=False)
+    ax1.legend(['VLM training points','RBF surrogate'], frameon=False)
     ax2.plot(np.rad2deg(xt), yt_cd,'o',color='k')
     ax2.plot(np.rad2deg(x), ycd,color='k',linewidth=2)
     ax2.set_ylabel('drag coefficient')
     ax2.set_xlabel('angle of attack '+r'$(^{\circ}$)')
-    ax2.legend(['training points','RBF surrogate'], frameon=False)
-
-    plt.savefig('wing_model.png', dpi=1200, bbox_inches='tight')
+    ax2.legend(['VLM training points','RBF surrogate'], frameon=False)
+    plt.savefig('vsp_wing_model.png', dpi=1200, bbox_inches='tight')
     plt.show()

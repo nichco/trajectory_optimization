@@ -1,6 +1,6 @@
 import csdl
 import python_csdl_backend
-from aero.aero_surrogate import sm_cl, sm_cd
+from aero.vsp_aero_surrogate import sm_cl, sm_cd
 import numpy as np
 
 class airfoil(csdl.Model):

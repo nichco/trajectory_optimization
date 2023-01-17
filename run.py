@@ -38,6 +38,7 @@ class RunModel(csdl.Model):
 
         # declare variables from integrator
         v = self.declare_variable('v', shape=(num,))
+        x = self.declare_variable('x', shape=(num,))
         gamma = self.declare_variable('gamma', shape=(num,))
         h = self.declare_variable('h', shape=(num,))
         e = self.declare_variable('e', shape=(num,))
@@ -51,13 +52,16 @@ class RunModel(csdl.Model):
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        # only for min dt case
-        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
         self.add_constraint('final_h', equals=options['h_f'], scaler=0.01)
+        
+        # final horizontal displacement constraint
+        #self.register_output('final_x', x[-1])
+        #self.add_constraint('final_x', upper=6000, scaler=1E-4)
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
@@ -65,7 +69,7 @@ class RunModel(csdl.Model):
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
-        self.add_constraint('final_v',lower=options['v_f'],scaler=0.01) #0.1
+        self.add_constraint('final_v',lower=options['v_f'],scaler=0.01)
         
         # pitch angle constraints
         theta = gamma + alpha
@@ -95,12 +99,12 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=2E-3)
         self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1,num))
-        self.add_design_variable('dt',scaler=0.1)
-        #self.add_objective('energy', scaler=5E-3)
+        self.add_design_variable('dt',lower=0.5,scaler=0.1)
+        self.add_objective('energy', scaler=1E-3)
         
-        obj = energy + csdl.pnorm(control_x,pnorm_type=2)*5E-2 + csdl.pnorm(control_alpha,pnorm_type=2)*1E1 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
-        self.register_output('obj',obj)
-        self.add_objective('obj', scaler=1E-3)
+        #obj = energy + csdl.pnorm(control_x,pnorm_type=2)*5E-2 + csdl.pnorm(control_alpha,pnorm_type=2)*1E1 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
+        #self.register_output('obj',obj)
+        #self.add_objective('obj', scaler=1E-3)
         
         """
         # for the minimum time objective
@@ -133,7 +137,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_partials(compact_print=True)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=5000, ftol=1E-7)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-5)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
