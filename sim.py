@@ -117,8 +117,8 @@ for t in np.arange(0, n, 1):
     m2.rotate_y(-1*np.rad2deg(tit[index] - tref_t))
     tref_e = tie[index]
     tref_t = tit[index]
-    m1.pos(xie[index], 0, 2*hie[index])
-    m2.pos(xit[index], 0, 2*hit[index])
+    m1.pos(xie[index], 0, 1.5*hie[index])
+    m2.pos(xit[index], 0, 1.5*hit[index])
     index += 1
 
     plt.show(m1,m2, __doc__, axes=0, viewup="z",camera=cam,rate=2000,bg='white')
