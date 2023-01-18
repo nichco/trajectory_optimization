@@ -52,16 +52,16 @@ class RunModel(csdl.Model):
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
-        self.add_constraint('final_h', equals=options['h_f'], scaler=0.01)
+        self.add_constraint('final_h', equals=options['h_f'], scaler=1E-2)
         
         # final horizontal displacement constraint
         #self.register_output('final_x', x[-1])
-        #self.add_constraint('final_x', upper=6000, scaler=1E-4)
+        #self.add_constraint('final_x', upper=options['x_lim'], scaler=1E-4)
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
@@ -69,7 +69,11 @@ class RunModel(csdl.Model):
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
-        self.add_constraint('final_v',lower=options['v_f'],scaler=0.01)
+        self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
+        
+        # vne constraint
+        self.register_output('max_v',csdl.max(v))
+        self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
         
         # pitch angle constraints
         theta = gamma + alpha
@@ -77,11 +81,11 @@ class RunModel(csdl.Model):
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(15))
         self.register_output('initial_theta',theta[0])
-        self.add_constraint('initial_theta',equals=0)
+        self.add_constraint('initial_theta',equals=options['theta_0'])
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
-        self.add_constraint('final_gamma',equals=0)
+        self.add_constraint('final_gamma',equals=options['gamma_f'])
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -98,8 +102,8 @@ class RunModel(csdl.Model):
         # for the minimum energy objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=2E-3)
-        self.add_design_variable('control_z',lower=0, scaler=np.linspace(1E-3,1,num))
-        self.add_design_variable('dt',lower=0.5,scaler=0.1)
+        self.add_design_variable('control_z',lower=0, scaler=1E-3)
+        self.add_design_variable('dt',lower=1.5,scaler=1E-1)
         self.add_objective('energy', scaler=1E-3)
         
         #obj = energy + csdl.pnorm(control_x,pnorm_type=2)*5E-2 + csdl.pnorm(control_alpha,pnorm_type=2)*1E1 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
@@ -135,9 +139,10 @@ ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='defa
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
 #sim.check_partials(compact_print=True)
+#sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-5)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()

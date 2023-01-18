@@ -113,7 +113,7 @@ if __name__ == '__main__':
     plt.rcParams['figure.figsize'] = [12, 4]
 
 
-    levelsct = np.arange(0.15, 0.29, 0.005)
+    levelsct = np.arange(0.0, 0.5, 0.005)
     levelscp = np.arange(0.13, 0.26, 0.005)
     fig, ((ax1), (ax2)) = plt.subplots(1, 2)
 
@@ -128,18 +128,18 @@ if __name__ == '__main__':
 
     plt.colorbar(plot_ct, shrink=1, ax=ax1)
     plt.colorbar(plot_cp, shrink=1, ax=ax2)
-    ax1.set_title('$C_t$')
-    ax2.set_title('$C_p$')
+    ax1.set_title('$C_T$')
+    ax2.set_title('$C_P$')
     ax1.set_ylabel('axial inflow velocity (m/s)')
     ax2.set_ylabel('axial inflow velocity (m/s)')
     ax1.set_xlabel('edgewise inflow velocity (m/s)')
     ax2.set_xlabel('edgewise inflow velocity (m/s)')
     
     
-    ax1.set_xlim(0,60)
-    ax1.set_ylim(0,60)
-    ax2.set_xlim(0,60)
-    ax2.set_ylim(0,60)
+    #ax1.set_xlim(0,60)
+    #ax1.set_ylim(0,60)
+    #ax2.set_xlim(0,60)
+    #ax2.set_ylim(0,60)
 
 
     plt.savefig('rotor_model.png', dpi=1200, bbox_inches='tight')
@@ -150,3 +150,5 @@ if __name__ == '__main__':
     print(val)
 
     plt.show()
+    
+    plot = plt.contourf(xta, xtb, ctarr,cmap='plasma',levels=levelsct)

@@ -26,9 +26,9 @@ class RunModel(Model):
 
 
         # Inputs not changing across conditions (segments)
-        self.create_input(name='propeller_radius', shape=(1, ), units='m', val=1)
-        self.create_input(name='chord_profile', shape=(num_radial,), units='m', val=np.linspace(0.2,0.1,num_radial))
-        self.create_input(name='twist_profile', shape=(num_radial,), units='rad', val=np.linspace(80,10,num_radial)*np.pi/180)
+        self.create_input(name='propeller_radius', shape=(1, ), units='m', val=1.2)
+        self.create_input(name='chord_profile', shape=(num_radial,), units='m', val=np.linspace(0.3,0.1,num_radial))
+        self.create_input(name='twist_profile', shape=(num_radial,), units='rad', val=np.linspace(60,10,num_radial)*np.pi/180)
         # self.add_design_variable('chord_profile',lower = 0.02, upper=0.3)
         # self.add_design_variable('twist_profile',lower = 10 * np.pi/180, upper=60*np.pi/180)
 
@@ -62,7 +62,7 @@ class RunModel(Model):
             thrust_vector=thrust_vector,
             thrust_origin=thrust_origin,
             ref_pt=reference_point,
-            num_blades=4,
+            num_blades=3,
         ),name='pitt_peters_model')
 
 # sim = Simulator(RunModel(u=75,v=0))
