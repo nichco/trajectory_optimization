@@ -65,7 +65,7 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
-        self.add_constraint('min_h', lower=options['h_0'] - 0.01)
+        self.add_constraint('min_h', lower=options['min_h'])
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -142,7 +142,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-6)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-10)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()
