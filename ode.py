@@ -3,6 +3,7 @@ from aero.aero import aero
 from rotors.rotor import rotor
 from motors.motor_explicit import motor
 import numpy as np
+import python_csdl_backend
 
 
 class ODESystemModel(csdl.Model):
@@ -80,8 +81,22 @@ class ODESystemModel(csdl.Model):
         self.register_output('dx', dx)
         self.register_output('de', de)
 
-        
-        
+ 
+
+
+
+
+       
+if __name__ == '__main__':
+
+    from parameters import options
+
+
+    # run model
+    sim = python_csdl_backend.Simulator(ODESystemModel(num_nodes=30,options=options))
+    sim.run()
+    # print partials
+    sim.check_partials(compact_print=True)     
         
         
         
