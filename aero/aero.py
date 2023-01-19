@@ -1,7 +1,6 @@
 import csdl
 from aero.aero_explicit import airfoil
-from atmosphere.atm_explicit import Atm
-import numpy as np
+from atmosphere.new_atm import Atm
 import python_csdl_backend
 
 class aero(csdl.Model):
