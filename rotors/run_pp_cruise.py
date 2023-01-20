@@ -70,13 +70,13 @@ class RunModel(Model):
 
 
 n = 1000
-cparr = np.zeros((9,9))
-ctarr = np.zeros((9,9))
-jarr = np.zeros((9,9))
+cparr = np.zeros((7,7))
+ctarr = np.zeros((7,7))
+jarr = np.zeros((7,7))
 ii = 0
-for i in range(-100,101,25):
+for i in range(-75,76,25):
     jj = 0
-    for j in range (-100,101,25):
+    for j in range (-75,76,25):
         sim = Simulator(RunModel(u=i,v=j,n=n))
         sim.run()
         ctarr[ii,jj] = sim['C_T']
@@ -87,10 +87,10 @@ for i in range(-100,101,25):
 
 print(ctarr)
 print(cparr)
-print(jarr)
+#print(jarr)
 
 """
-sim = Simulator(RunModel(u=0,v=0,n=1000))
+sim = Simulator(RunModel(u=0,v=100,n=100))
 sim.run()
 
 print('Thrust: ',sim['T'])

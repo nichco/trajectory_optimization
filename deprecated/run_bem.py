@@ -21,9 +21,11 @@ class RunModel(Model):
     def initialize(self):
         self.parameters.declare('u')
         self.parameters.declare('v')
+        self.parameters.declare('n')
     def define(self):
         u = self.parameters['u']
         v = self.parameters['v']
+        n = self.parameters['n']
         # Inputs not changing across conditions (segments)
         self.create_input(name='propeller_radius', shape=(1, ), units='m', val=1)
         self.create_input(name='chord_profile', shape=(num_radial,), units='m', val=np.linspace(0.2,0.1,num_radial))
@@ -35,7 +37,7 @@ class RunModel(Model):
         # Inputs changing across conditions (segments), 
         #   - If the quantities are scalars, they will be expanded into shape (num_nodes,1)
         #   - If the quantities are vectors (numpy arrays), they must be specified s.t. they have shape (num_nodes,1)
-        self.create_input('omega', shape=(num_nodes, 1), units='rpm', val=1500)
+        self.create_input('omega', shape=(num_nodes, 1), units='rpm', val=n)
 
         self.create_input(name='u', shape=(num_nodes, 1), units='m/s', val=0)
         self.create_input(name='v', shape=(num_nodes, 1), units='m/s', val=v)
@@ -69,26 +71,16 @@ class RunModel(Model):
             normalized_hub_radius=0.2,
         ),name='BEM_model_1')
 
-"""
-sim = Simulator(RunModel())
+
+sim = Simulator(RunModel(u=50,v=0,n=1))
 sim.run()
 
-print('Model evaluation time: ',t2-t1)
-print('radius: ', sim['_radius'][0,:,0])
 print('Thrust: ',sim['T'])
-print('F:' ,sim['F'] )
-print('Torque: ',sim['total_torque'])
-print('M: ', sim['M'])
-print('eta', sim['eta'])
+print('C_T: ',sim['C_T'])
+print('C_P: ', sim['C_P'])
+print('J', sim['J'])
 
-omega = sim['omega']
-ang_vel = (omega/60)*2*np.pi
-torque = sim['total_torque']
-
-pwr = ang_vel*torque
-print(pwr)
 """
-
 cparr = np.zeros((9,9))
 ctarr = np.zeros((9,9))
 ii = 0
@@ -104,3 +96,4 @@ for i in range(-100,101,25):
 
 print(ctarr)
 print(cparr)
+"""

@@ -79,7 +79,7 @@ class RunModel(csdl.Model):
         theta = gamma + alpha
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        #self.add_constraint('max_theta',upper=np.deg2rad(15))
+        self.add_constraint('max_theta',upper=np.deg2rad(30))
         self.register_output('initial_theta',theta[0])
         self.add_constraint('initial_theta',equals=options['theta_0'])
         
@@ -142,7 +142,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-7)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()

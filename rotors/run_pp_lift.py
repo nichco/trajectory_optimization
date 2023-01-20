@@ -20,9 +20,11 @@ class RunModel(Model):
     def initialize(self):
         self.parameters.declare('u')
         self.parameters.declare('v')
+        self.parameters.declare('n')
     def define(self):
         u = self.parameters['u']
         v = self.parameters['v']
+        n = self.parameters['n']
 
 
         # Inputs not changing across conditions (segments)
@@ -35,7 +37,7 @@ class RunModel(Model):
         # Inputs changing across conditions (segments), 
         #   - If the quantities are scalars, they will be expanded into shape (num_nodes,1)
         #   - If the quantities are vectors (numpy arrays), they must be specified s.t. they have shape (num_nodes,1)
-        self.create_input('omega', shape=(num_nodes, 1), units='rpm/1000', val=1000)
+        self.create_input('omega', shape=(num_nodes, 1), units='rpm', val=n)
 
         self.create_input(name='u', shape=(num_nodes, 1), units='m/s', val=0)#np.linspace(0,100,num_nodes).reshape(num_nodes,1))
         self.create_input(name='v', shape=(num_nodes, 1), units='m/s', val=v)
@@ -67,13 +69,14 @@ class RunModel(Model):
 
 # sim = Simulator(RunModel(u=75,v=0))
 # sim.run()
-cparr = np.zeros((9,9))
-ctarr = np.zeros((9,9))
+n=1500
+cparr = np.zeros((7,7))
+ctarr = np.zeros((7,7))
 ii = 0
-for i in range(-100,101,25):
+for i in range(-75,76,25):
     jj = 0
-    for j in range (-100,101,25):
-        sim = Simulator(RunModel(u=i,v=j))
+    for j in range (-75,76,25):
+        sim = Simulator(RunModel(u=i,v=j,n=n))
         sim.run()
         ctarr[ii,jj] = sim['C_T']
         cparr[ii,jj] = sim['C_P']

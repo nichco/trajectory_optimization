@@ -15,14 +15,8 @@ class rotor(csdl.Model):
 
         # declare necessary variables
         n = self.declare_variable(name+'n', shape=num) # revolutions per SECOND
-        v_axial = self.declare_variable(name+'vAxial',shape=num)
-        v_tan = self.declare_variable(name+'vTan',shape=num)
         d = options[name+'_rotor_diameter']
         rho = self.declare_variable('density', shape=num)
-
-        # calculate advance ratio
-        ja = v_axial/(n*d)
-        jt = v_tan/(n*d)
 
         # add the explicit operation containing the surrogate model
         self.add(rotorModel(name=name,num_nodes=num), name='rotorModel')
