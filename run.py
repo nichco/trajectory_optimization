@@ -106,9 +106,9 @@ class RunModel(csdl.Model):
         self.add_design_variable('dt',lower=2.0,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
         
-        #obj = energy + csdl.pnorm(control_x,pnorm_type=2)*5E-2 + csdl.pnorm(control_alpha,pnorm_type=2)*1E1 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
+        #obj = energy + csdl.pnorm(control_x,pnorm_type=2)*1E-2 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
         #self.register_output('obj',obj)
-        #self.add_objective('obj', scaler=1E-3)
+        #self.add_objective('obj', scaler=1E-4)
         
         """
         # for the minimum time objective
@@ -142,7 +142,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-10)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-7)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()

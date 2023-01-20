@@ -9,26 +9,32 @@ class rotor(csdl.Model):
         self.parameters.declare('options')
         self.parameters.declare('num_nodes')
     def define(self):
-        n = self.parameters['num_nodes']
+        num = self.parameters['num_nodes']
         name = self.parameters['name']
         options = self.parameters['options']
 
+        # declare necessary variables
+        n = self.declare_variable(name+'n', shape=num) # revolutions per SECOND
+        v_axial = self.declare_variable(name+'vAxial',shape=num)
+        v_tan = self.declare_variable(name+'vTan',shape=num)
+        d = options[name+'_rotor_diameter']
+        rho = self.declare_variable('density', shape=num)
+
+        # calculate advance ratio
+        ja = v_axial/(n*d)
+        jt = v_tan/(n*d)
+
         # add the explicit operation containing the surrogate model
-        self.add(rotorModel(name=name,num_nodes=n), name='rotorModel')
+        self.add(rotorModel(name=name,num_nodes=num), name='rotorModel')
 
         # declare variables
-        ct = self.declare_variable(name+'ct', shape=n)
-        cp = self.declare_variable(name+'cp', shape=n)
-
-        # declare necessary variables
-        s = self.declare_variable(name+'n', shape=n) # revolutions per SECOND
-        d = options[name+'_rotor_diameter']
-        rho = self.declare_variable('density', shape=n)
+        ct = self.declare_variable(name+'ct', shape=num)
+        cp = self.declare_variable(name+'cp', shape=num)
 
         # compute thrust and power
-        thrust = ct*rho*(s**2)*(d**4)
-        power = cp*rho*(s**3)*(d**5)
-        torque = (cp/(2*np.pi))*(s**2)*(d**5)
+        thrust = ct*rho*(n**2)*(d**4)
+        power = cp*rho*(n**3)*(d**5)
+        torque = (cp/(2*np.pi))*(n**2)*(d**5)
 
         self.register_output(name+'thrust',thrust)
         self.register_output(name+'power',power)
