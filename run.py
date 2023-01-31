@@ -79,7 +79,7 @@ class RunModel(csdl.Model):
         theta = gamma + alpha
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(30))
+        #self.add_constraint('max_theta',upper=np.deg2rad(30))
         self.register_output('initial_theta',theta[0])
         self.add_constraint('initial_theta',equals=options['theta_0'])
         
@@ -103,7 +103,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=2E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.0,scaler=1E-1)
+        self.add_design_variable('dt',lower=1.0,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
         
         #obj = energy + csdl.pnorm(control_x,pnorm_type=2)*1E-2 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
@@ -134,7 +134,7 @@ class RunModel(csdl.Model):
 
 
 # ode problem instance
-num = 30
+num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
