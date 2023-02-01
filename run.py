@@ -11,6 +11,9 @@ from skmd import tonal
 from parameters import options
 from post_process import post
 
+"""
+run file for min energy trajectories
+"""
 
 class RunModel(csdl.Model):
     def initialize(self):
@@ -103,7 +106,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=2E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=1.0,scaler=1E-1)
+        self.add_design_variable('dt',scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
         
         #obj = energy + csdl.pnorm(control_x,pnorm_type=2)*1E-2 + csdl.pnorm(control_z,pnorm_type=2)*1E-2
@@ -142,7 +145,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-6)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-7)
 #optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
 optimizer.solve()
 optimizer.print_results()

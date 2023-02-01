@@ -69,13 +69,13 @@ class RunModel(Model):
 
 # sim = Simulator(RunModel(u=75,v=0))
 # sim.run()
-n=1500
-cparr = np.zeros((7,7))
-ctarr = np.zeros((7,7))
+n=1000
+cparr = np.zeros((9,9))
+ctarr = np.zeros((9,9))
 ii = 0
-for i in range(-75,76,25):
+for i in range(-100,101,25):
     jj = 0
-    for j in range (-75,76,25):
+    for j in range (-100,101,25):
         sim = Simulator(RunModel(u=i,v=j,n=n))
         sim.run()
         ctarr[ii,jj] = sim['C_T']
@@ -83,18 +83,12 @@ for i in range(-75,76,25):
         jj +=1
     ii += 1
 
-print(ctarr)
-print(cparr)
+
+print(np.array2string(ctarr,separator=','))
+print(np.array2string(cparr,separator=','))
 
 """
 print('Thrust: ',sim['T'])
 print('C_T', sim['C_T'])
 print('C_P', sim['C_P'])
-
-
-omega = sim['omega']
-ang_vel = (omega/60)*2*np.pi
-torque = sim['total_torque']
-pwr = ang_vel*torque
-print(pwr)
 """
