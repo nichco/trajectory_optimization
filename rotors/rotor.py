@@ -20,12 +20,6 @@ class rotor(csdl.Model):
         
         vAxial = self.declare_variable(name+'vAxial',shape=num)
         vTan = self.declare_variable(name+'vTan',shape=num)
-        
-        # compute axial and tangential advance ratio
-        jAxial = vAxial/((n + 1)*d)
-        self.register_output(name+'jAxial',jAxial)
-        jTan = vTan/((n + 1)*d)
-        self.register_output(name+'jTan',jTan)
 
         # add the explicit operation containing the surrogate model
         self.add(rotorModel(name=name,num_nodes=num), name='rotorModel')
