@@ -1,7 +1,7 @@
 import csdl
 import python_csdl_backend
 import numpy as np
-from rotors.rotor_explicit_j import rotorModel
+from rotors.rotor_explicit import rotorModel
 
 class rotor(csdl.Model):
     def initialize(self):
@@ -21,10 +21,10 @@ class rotor(csdl.Model):
         vAxial = self.declare_variable(name+'vAxial',shape=num)
         vTan = self.declare_variable(name+'vTan',shape=num)
         
-        jAxial = vAxial/((n+1)*d)
-        self.register_output(name+'jAxial', jAxial)
-        jTan = vTan/((n+1)*d)
-        self.register_output(name+'jTan', jTan)
+        #jAxial = vAxial/((n+1)*d)
+        #self.register_output(name+'jAxial', jAxial)
+        #jTan = ((vTan**2)**0.5)/((n+1)*d)
+        #self.register_output(name+'jTan', jTan)
 
         # add the explicit operation containing the surrogate model
         self.add(rotorModel(name=name,num_nodes=num), name='rotorModel')

@@ -40,8 +40,8 @@ class ODESystemModel(csdl.Model):
 
         # rotor and motor models
         cname = 'cruise'
-        self.register_output(cname+'vAxial',v*csdl.cos(alpha))
-        self.register_output(cname+'vTan',v*csdl.sin(alpha))
+        self.register_output(cname+'vAxial',((v*csdl.cos(alpha))**2)**0.5)
+        self.register_output(cname+'vTan',((v*csdl.sin(alpha))**2)**0.5)
         self.register_output(cname+'n',1*control_x/60) # rotations per second for rotor model
         self.register_output(cname+'m',1*control_x) # rotations per minute for motor model
         self.add(rotor(name=cname,options=options,num_nodes=n), name=cname+'rotor')
