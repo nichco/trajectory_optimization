@@ -1,8 +1,8 @@
 import csdl
 from aero.aero import aero
 from rotors.rotor import rotor
-from rotors.liftRotor import liftRotor
-from rotors.cruiseRotor import cruiseRotor
+#from rotors.liftRotor import liftRotor
+#from rotors.cruiseRotor import cruiseRotor
 from motors.motor_explicit import motor
 import numpy as np
 import python_csdl_backend
