@@ -5,7 +5,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-# from modopt.snopt_library import SNOPT
+from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 from skmd import tonal
 from parameters_time import options
@@ -55,10 +55,10 @@ class RunModel(csdl.Model):
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
-        self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-5)
+        #self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-5)
+        #self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -70,8 +70,8 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
-        #self.add_constraint('min_h', lower=options['min_h'])
-        self.add_constraint('h', lower=options['min_h'])
+        self.add_constraint('min_h', lower=options['min_h'])
+        #self.add_constraint('h', lower=options['min_h'])
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -91,7 +91,7 @@ class RunModel(csdl.Model):
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
-        #self.add_constraint('final_gamma',equals=options['gamma_f'])
+        self.add_constraint('final_gamma',equals=options['gamma_f'])
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -123,23 +123,23 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1)
         #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1/(options['control_z_i']))
-        self.add_design_variable('dt',lower=0.5)
+        self.add_design_variable('dt',lower=0.6)
         
         dt = self.declare_variable('dt')
-        obj = dt + energy*4E-4
+        obj = dt**2 + energy*1E-4
         self.register_output('obj',obj)
         
-        self.print_var(dt)
-        #self.add_objective('obj')
+        self.print_var(obj)
+        self.add_objective('obj')
         
-        self.add_objective('dt')
+        #self.add_objective('dt')
         
 
 
 
 
 # ode problem instance
-num = 30
+num = 34
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
@@ -147,8 +147,15 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=2000, ftol=1E-3)
-#optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
+#optimizer = SLSQP(prob, maxiter=2000, ftol=1E-3)
+optimizer = SNOPT(prob,Major_iterations=2000,
+                    Major_optimality=1e-3,
+                    Major_feasibility=1E-2,
+                    append2file=True,
+                    Linesearch_tolerance=0.99,
+                    Hessian_frequency=10,
+                    Major_step_limit=0.02
+                    )
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator

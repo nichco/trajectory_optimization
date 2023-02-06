@@ -13,11 +13,19 @@ class ODEProblemTest(ODEProblem):
         # Therefore, the shape does not depend on the number of timesteps
 
         # inputs names correspond to respective upstream CSDL variables
+        """
         self.add_state('v', 'dv', initial_condition_name='v_0', output='v', interp_guess=[4, 60])
-        self.add_state('gamma', 'dgamma', initial_condition_name='gamma_0', output='gamma', interp_guess=[0.001,0.02])
+        self.add_state('gamma', 'dgamma', initial_condition_name='gamma_0', output='gamma')
         self.add_state('h', 'dh', initial_condition_name='h_0', output='h', interp_guess=[1, 300])
-        self.add_state('x', 'dx', initial_condition_name='x_0', output='x', interp_guess=[0, 4000])
-        self.add_state('e', 'de', initial_condition_name='e_0', output='e', interp_guess=[0, 2103])
+        self.add_state('x', 'dx', initial_condition_name='x_0', output='x', interp_guess=[0, 5500])
+        self.add_state('e', 'de', initial_condition_name='e_0', output='e', interp_guess=[0, 1000])
+        """
+        # for min time interp guesses
+        self.add_state('v', 'dv', initial_condition_name='v_0', output='v', interp_guess=[4, 60])
+        self.add_state('gamma', 'dgamma', initial_condition_name='gamma_0', output='gamma')
+        self.add_state('h', 'dh', initial_condition_name='h_0', output='h', interp_guess=[1, 300])
+        self.add_state('x', 'dx', initial_condition_name='x_0', output='x', interp_guess=[0, 2000])
+        self.add_state('e', 'de', initial_condition_name='e_0', output='e', interp_guess=[0, 200])
 
         self.add_times(step_vector='hvec')
 

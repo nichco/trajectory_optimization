@@ -5,7 +5,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-# from modopt.snopt_library import SNOPT
+from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 from skmd import tonal
 from parameters import options
@@ -53,20 +53,16 @@ class RunModel(csdl.Model):
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
 
         # max power constraints
-        self.register_output('max_cruise_power', csdl.max(cruisepower))
-        self.register_output('max_lift_power', csdl.max(liftpower))
-        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        #self.register_output('max_cruise_power', csdl.max(cruisepower))
+        #self.register_output('max_lift_power', csdl.max(liftpower))
+        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
         #self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
         #self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
         self.add_constraint('final_h', equals=options['h_f'], scaler=1E-2)
-        
-        # final horizontal displacement constraint
-        #self.register_output('final_x', x[-1])
-        #self.add_constraint('final_x', upper=options['x_lim'], scaler=1E-4)
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
@@ -87,7 +83,7 @@ class RunModel(csdl.Model):
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(30))
         self.register_output('initial_theta',theta[0])
-        self.add_constraint('initial_theta',equals=options['theta_0'])
+        #self.add_constraint('initial_theta',equals=options['theta_0'])
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -106,11 +102,17 @@ class RunModel(csdl.Model):
         
         
         # for the minimum energy objective
-        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1)
-        self.add_design_variable('control_x',lower=0, scaler=1E-4)
-        self.add_design_variable('control_z',lower=0, scaler=1E-4)
-        self.add_design_variable('dt',scaler=1E-1)
+        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
+        self.add_design_variable('control_x',lower=0, scaler=1E-3)
+        self.add_design_variable('control_z',lower=0, scaler=1E-3)
+        self.add_design_variable('dt',lower=2.2,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
+
+        #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/(options['control_alpha_i']+0.1))
+        #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
+        #self.add_design_variable('control_z',lower=0, scaler=1E-3)
+        #self.add_design_variable('dt',lower=1.5,scaler=1/options['dt'])
+        #self.add_objective('energy', scaler=1E-4)
         
         """
         # for the minimum time objective
@@ -137,15 +139,22 @@ class RunModel(csdl.Model):
 
 # ode problem instance
 num = 40
-ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
+ODEProblem = ODEProblemTest('GaussLegendre4', 'collocation', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-7)
-#optimizer = SNOPT(prob,Major_iterations=100,Major_optimality=1e-3,Major_feasibility=1E-3,append2file=True)
+#optimizer = SLSQP(prob, maxiter=1000, ftol=1E-7)
+optimizer = SNOPT(prob,Major_iterations=1000,
+                    Major_optimality=1e-7,
+                    Major_feasibility=1E-7,
+                    append2file=True,
+                    Linesearch_tolerance=0.99,
+                    #Hessian_frequency=10,
+                    Major_step_limit=0.1
+                    )
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
