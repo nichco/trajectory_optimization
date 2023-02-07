@@ -26,9 +26,14 @@ class Atm(csdl.Model):
         
         density = rhoS*((temperature/Ts)**(-((g/(a*R)) + 1)))
 
+        # speed of sound
+        gamma = 1.4
+        a = (gamma * R * temperature)**0.5
+
 
         self.register_output('pressure', pressure)
         self.register_output('density', density)
+        self.register_output('speed_of_sound', a)
 
 
 

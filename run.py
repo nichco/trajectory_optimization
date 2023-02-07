@@ -5,7 +5,7 @@ import python_csdl_backend
 from odeproblemtest import ODEProblemTest
 from timestep import timestep
 from modopt.scipy_library import SLSQP
-from modopt.snopt_library import SNOPT
+#from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 from skmd import tonal
 from parameters import options
@@ -139,14 +139,15 @@ class RunModel(csdl.Model):
 
 # ode problem instance
 num = 40
-ODEProblem = ODEProblemTest('GaussLegendre4', 'collocation', num_times=num, display='default', visualization='end')
+ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-#optimizer = SLSQP(prob, maxiter=1000, ftol=1E-7)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-7)
+"""
 optimizer = SNOPT(prob,Major_iterations=1000,
                     Major_optimality=1e-7,
                     Major_feasibility=1E-7,
@@ -155,6 +156,7 @@ optimizer = SNOPT(prob,Major_iterations=1000,
                     #Hessian_frequency=10,
                     Major_step_limit=0.1
                     )
+"""
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator

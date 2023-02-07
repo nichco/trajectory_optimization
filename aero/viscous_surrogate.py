@@ -1,17 +1,23 @@
 from smt.surrogate_models import RBF, RMTB
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import cm
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams.update({'font.size': 12})
 
 #region data
-alpha = np.array([-90,-86,-82,-78,-74,-70,-66,-62,-58,-54,-50,-46,-42,-38,-34,-30,28,-26,-24,-22,-20,-18,-16,-14,-12,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,
-                    0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,22,24,26,28,30,34,38,42,46,50,54,58,62,66,70,74,78,82,86,90,])
+alpha = np.deg2rad(np.array([-90.0,-86.0,-82.0,-78.0,-74.0,-70.0,-66.0,-62.0,-58.0,-54.0,-50.0,-46.0,-42.0,-38.0,-34.0,-30.0,-28.0,
+                    -26.0,-24.0,-22.0,-20.0,-18.0,-16.0,-14.0,-12.0,-10.0,-9.0,-8.0,-7.0,-6.0,-5.0,-4.0,-3.0,-2.0,-1.0,
+                    0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,12.0,14.0,16.0,18.0,20.0,22.0,24.0,26.0,28.0,30.0,34.0,
+                    38.0,42.0,46.0,50.0,54.0,58.0,62.0,66.0,70.0,74.0,78.0,82.0,86.0,90.0,]))
+
 mach = np.array([0,0.05,0.1,0.15,0.2,0.25,])
-yt_cl = np.array([0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9,-1,-1.,1-1.2,-1.3,-1.4,-1.51,-1.57,-1.6,-1.588070455,-1.530320887,-1.435595552,-1.239615964,
+
+yt_cl = np.array([0,-0.1,-0.2,-0.3,-0.4,-0.5,-0.6,-0.7,-0.8,-0.9,-1,-1.1,-1.2,-1.3,-1.4,-1.51,-1.57,-1.6,-1.588070455,-1.530320887,-1.435595552,-1.239615964,
 -1.041723778,-0.845277566,-0.648485652,-0.450238406,-0.348259602,-0.248636703,-0.148952539,-0.0481308,0.050757594,0.150340236,0.250846236,0.349074757,
 0.449352117,0.547829033,0.645443497,0.746708352,0.840086807,0.941883703,1.038413324,1.136352044,1.235221826,1.333400827,1.385795143,1.409719559,
 1.44,1.42,1.38,1.34,1.3,1.26,1.22,1.18,1.14,1.1,1.03,0.96,0.89,0.82,0.75,0.68,0.61,0.54,0.47,0.4,0.33,0.26,0.19,0.12,0.05,])
+
 yt_cdi = np.array([1.285,1.28,1.279793779,1.273160103,1.265681088,1.232972271,1.19040054,1.134941379,1.061688602,0.976249697,0.890448309,0.789433507,
 0.681494704,0.567166135,0.449270459,0.325785086,0.265547002,0.203603892,0.144397407,0.094618849,0.053416623,0.036564225,0.022821768,
 0.012353886,0.003485044,-0.002600189,-0.005194702,-0.006713881,-0.007742439,-0.00769314,-0.007594652,-0.006369865,-0.005088151,-0.002464788,
@@ -19,16 +25,96 @@ yt_cdi = np.array([1.285,1.28,1.279793779,1.273160103,1.265681088,1.232972271,1.
 0.157334225,0.218046899,0.278941601,0.339442619,0.400480584,0.460611005,0.520034671,0.579355032,0.640043686,0.699553734,0.805142894,
 0.906641227,0.994160511,1.074643432,1.135182693,1.189257697,1.225111109,1.232,1.238888891,1.245777782,1.252666674,1.259555565,1.266444456,
 1.273333347,1.280222239,])
-yt_cd0 = np.array([0.04145,0.02348,0.02044,0.01885,0.01779,0.01702,])
+
+yt_cd0 = np.array([0.04645,0.02448,0.02044,0.01885,0.01779,0.01702,])
 #endregion
 
-
+# format data
 n = len(yt_cdi)*len(mach)
-xt_cd = np.zeros((2,n))
+xt_cd = np.zeros((n,2))
 yt_cd = np.zeros((n))
 i = 0
 for a in enumerate(alpha):
-    for m in enumerate(mach)s:
-        xt_cd[0,i], xt_cd[1,i] = a, m
-        yt_cd[i] = yt_cdi[a] + yt_cd0[m]
+    for m in enumerate(mach):
+        xt_cd[i,0] = a[1]
+        xt_cd[i,1] = m[1]
+        yt_cd[i] = yt_cdi[a[0]] + yt_cd0[m[0]] # drag buildup: cd = cd0 + cdi
         i = i + 1
+
+# train surrogate models
+sm_cl = RBF(d0=0.3,print_global=False,print_solver=False,)
+sm_cl.set_training_values(alpha, yt_cl)
+sm_cl.train()
+
+xlimits = np.array([[-np.pi/2, np.pi/2],[0,0.25]])
+sm_cd = RMTB(
+            xlimits=xlimits,
+            order=3,
+            num_ctrl_pts=15,
+            energy_weight=1e-10,
+            regularization_weight=0.0,
+            print_global=False,
+            print_solver=False,)
+sm_cd.set_training_values(xt_cd, yt_cd)
+sm_cd.train()
+
+
+
+
+
+
+if __name__ == '__main__':
+
+
+    fig = plt.figure(figsize=[12, 3])
+
+    
+    num = 1000
+    xcl = np.deg2rad(np.linspace(-90, 90, num))
+    ycl = sm_cl.predict_values(xcl)
+
+    ax1 = fig.add_subplot(1, 2, 1)
+    ax1.plot(np.rad2deg(xcl), ycl,color='k',linewidth=2)
+    ax1.plot(np.rad2deg(alpha), yt_cl,'o',color='k')
+    
+
+    num=100
+    x_alpha = np.deg2rad(np.linspace(-90, 90, num))
+    x_mach = np.linspace(0,0.25,num)
+    X, Y = np.meshgrid(x_alpha,x_mach)
+
+    # interpolation vector for smt data
+    xint = np.zeros((num*num,2))
+    index = 0
+    for i in range(num):
+        for j in range(num):
+            xint[index,0] = x_alpha[i]
+            xint[index,1] = x_mach[j]
+            index += 1
+
+    # interpolate data:
+    zint_cd = sm_cd.predict_values(xint)
+    Z = np.zeros((num,num))
+    index = 0
+    for i in range(num):
+        for j in range(num):
+            Z[i,j] = zint_cd[index]
+            index += 1
+
+    
+    # Plot the surface.
+    levels = np.arange(0.0, 1.4, 0.005)
+    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+    #fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+    surf = ax2.plot_surface(np.rad2deg(X), Y, Z.T, cmap=cm.coolwarm,
+                       linewidth=1, antialiased=True,vmin=0,vmax=1.2,rcount=10,ccount=100)
+    #fig.colorbar(surf, shrink=0.5, aspect=10, label='$C_D$')
+    ax2.set_xlabel('angle of attack')
+    ax2.set_ylabel('mach number')
+    ax2.set_zlabel('$C_D$')
+    plt.show()
+
+    # testing
+    tt = np.array([[0,0.25]])
+    val = sm_cd.predict_values(tt)
+    print(val)
