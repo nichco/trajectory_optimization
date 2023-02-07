@@ -1,5 +1,5 @@
 import csdl
-from aero.aero_explicit import airfoil
+#from aero.aero_explicit import airfoil
 from aero.cl_explicit import cl_aero
 from aero.cd_explicit import cd_aero
 from atmosphere.new_atm import Atm

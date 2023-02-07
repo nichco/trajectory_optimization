@@ -13,10 +13,10 @@ class cd_aero(csdl.Model):
         mach = self.declare_variable('mach', shape=n)
 
         # custom operation insertion
-        cd = csdl.custom(alpha_w, mach, op=AeroExplicit(num_nodes=n))
+        cd = csdl.custom(alpha_w, mach, op=CDAeroExplicit(num_nodes=n))
         self.register_output('cd', cd)
 
-class AeroExplicit(csdl.CustomExplicitOperation):
+class CDAeroExplicit(csdl.CustomExplicitOperation):
     def initialize(self):
         self.parameters.declare('num_nodes')
     def define(self):

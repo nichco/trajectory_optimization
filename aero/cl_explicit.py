@@ -12,11 +12,11 @@ class cl_aero(csdl.Model):
         alpha_w = self.declare_variable('alpha_w', shape=n)
 
         # custom operation insertion
-        cl = csdl.custom(alpha_w, op=AeroExplicit(num_nodes=n))
+        cl = csdl.custom(alpha_w, op=CLAeroExplicit(num_nodes=n))
 
         self.register_output('cl', cl)
 
-class AeroExplicit(csdl.CustomExplicitOperation):
+class CLAeroExplicit(csdl.CustomExplicitOperation):
     def initialize(self):
         self.parameters.declare('num_nodes')
     def define(self):

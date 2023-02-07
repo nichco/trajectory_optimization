@@ -112,9 +112,12 @@ if __name__ == '__main__':
     ax2.set_xlabel('angle of attack')
     ax2.set_ylabel('mach number')
     ax2.set_zlabel('$C_D$')
+
+    ax2.set_box_aspect((1.5,1.5,1))
+
     plt.show()
 
     # testing
-    tt = np.array([[0,0.25]])
-    val = sm_cd.predict_values(tt)
-    print(val)
+    #tt = np.array([[0,0.25]])
+    #val = sm_cd.predict_values(tt)
+    #print(val)
