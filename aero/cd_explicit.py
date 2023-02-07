@@ -1,6 +1,6 @@
 import csdl
 import python_csdl_backend
-from aero.viscous_surrogate import sm_cd
+from viscous_surrogate import sm_cd
 import numpy as np
 
 class cd_aero(csdl.Model):
@@ -36,12 +36,11 @@ class CDAeroExplicit(csdl.CustomExplicitOperation):
         n = self.parameters['num_nodes']
 
         # surrogate model
-        # cd = sm_cd.predict_values(inputs['alpha_w'])
         cd = np.zeros((n))
         for i in range(n):
             a = np.array([inputs['alpha_w'][i]])
-            mach = np.array([inputs['mach'][i]])
-            point = np.array([[a,mach]]).reshape(1,2)
+            machNum = np.array([inputs['mach'][i]])
+            point = np.array([[a,machNum]]).reshape(1,2)
             cd[i] = sm_cd.predict_values(point)
 
         outputs['cd'] = 1*cd
@@ -49,13 +48,12 @@ class CDAeroExplicit(csdl.CustomExplicitOperation):
     def compute_derivatives(self, inputs, derivatives):
         n = self.parameters['num_nodes']
 
-        # dcd_dalpha = sm_cd.predict_derivatives(inputs['alpha_w'], 0)
         dcd_dalpha = np.zeros((n))
         dcd_dmach = np.zeros((n))
         for i in range(n):
             a = np.array([inputs['alpha_w'][i]])
-            mach = np.array([inputs['mach'][i]])
-            point = np.array([[a,mach]]).reshape(1,2)
+            machNum = np.array([inputs['mach'][i]])
+            point = np.array([[a,machNum]]).reshape(1,2)
             dcd_dalpha[i] = sm_cd.predict_derivatives(point, 0)
             dcd_dmach[i] = sm_cd.predict_derivatives(point, 1)
 
@@ -68,10 +66,12 @@ class CDAeroExplicit(csdl.CustomExplicitOperation):
 
 if __name__ == '__main__':
     # run model
+    
     sim = python_csdl_backend.Simulator(cd_aero(num_nodes=10))
+    sim['mach']=0.2
     sim.run()
 
     print(sim['cd'])
 
     # print partials
-    sim.check_partials(step=1E-2,compact_print=True)
+    sim.check_partials(step=1E-6,compact_print=True)
