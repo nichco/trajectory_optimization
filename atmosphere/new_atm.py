@@ -45,6 +45,7 @@ if __name__ == '__main__':
 
     print(sim['pressure'])
     print(sim['density'])
+    print(sim['speed_of_sound'])
 
     # print partials
     sim.check_partials(compact_print=True)
