@@ -26,7 +26,6 @@ class aero(csdl.Model):
         
         self.add(cl_aero(num_nodes=n),name='cl_aero')
         self.add(cd_aero(num_nodes=n),name='cd_aero')
-        #self.add(airfoil(num_nodes=n), name='airfoil')
         cl = self.declare_variable('cl', shape=n)
         cd = self.declare_variable('cd', shape=n)
         
