@@ -1,6 +1,6 @@
 import csdl
 import python_csdl_backend
-from viscous_surrogate import sm_cd
+from aero.viscous_surrogate import sm_cd
 import numpy as np
 
 class cd_aero(csdl.Model):
