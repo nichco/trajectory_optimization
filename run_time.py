@@ -118,16 +118,16 @@ class RunModel(csdl.Model):
         #self.add_design_variable('control_z',lower=0, scaler=1/(options['control_z_i']))
         self.add_design_variable('dt',lower=0.5,scaler=1)
         
-        hvec = self.declare_variable('hvec',shape=(num-1,))
-        self.register_output('tf',hvec[-1])
-        self.add_objective('tf',scaler=1E-1)
+        #hvec = self.declare_variable('hvec',shape=(num-1,))
+        #self.register_output('tf',hvec[-1])
+        #self.add_objective('tf',scaler=1E-1)
 
-        #dt = self.declare_variable('dt')
-        #obj = dt**2 + energy*3E-4
-        #self.register_output('obj',obj)
+        dt = self.declare_variable('dt')
+        obj = dt + energy*2E-4
+        self.register_output('obj',obj)
         
-        #self.print_var(obj)
-        #self.add_objective('obj')
+        self.print_var(obj)
+        self.add_objective('obj')
         #self.add_objective('dt')
         
 

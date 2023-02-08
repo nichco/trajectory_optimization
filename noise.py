@@ -79,6 +79,8 @@ if __name__ == '__main__':
     sim = python_csdl_backend.Simulator(noise(options=options,num=num))
     sim.run()
 
+    sim.check_partials(compact_print=True)
+
     print('cruise spl 150: ', sim['cruise_spl_150'])
     print('lift spl 150: ', sim['lift_spl_150'])
     print('cruise spl s: ', sim['cruise_spl_s'])
