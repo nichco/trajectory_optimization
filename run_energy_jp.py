@@ -102,7 +102,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.2,scaler=1E-1)
+        self.add_design_variable('dt',lower=1.0,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
         #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/(options['control_alpha_i']+0.1))

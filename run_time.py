@@ -113,17 +113,21 @@ class RunModel(csdl.Model):
         # for the minimum time objective
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1)
+        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=10)
         #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1/(options['control_z_i']))
-        self.add_design_variable('dt',scaler=1E1)
+        self.add_design_variable('dt',lower=0.5,scaler=1)
         
-        dt = self.declare_variable('dt')
-        obj = dt**2 + energy*3E-4
-        self.register_output('obj',obj)
+        hvec = self.declare_variable('hvec',shape=(num-1,))
+        self.register_output('tf',hvec[-1])
+        self.add_objective('tf',scaler=1E-1)
+
+        #dt = self.declare_variable('dt')
+        #obj = dt**2 + energy*3E-4
+        #self.register_output('obj',obj)
         
-        self.print_var(obj)
-        self.add_objective('obj')
+        #self.print_var(obj)
+        #self.add_objective('obj')
         #self.add_objective('dt')
         
 
@@ -131,7 +135,7 @@ class RunModel(csdl.Model):
 
 
 # ode problem instance
-num = 34
+num = 36
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
@@ -140,16 +144,15 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=2000, ftol=1E-3)
-"""
-optimizer = SNOPT(prob,Major_iterations=2000,
-                    Major_optimality=1e-3,
-                    Major_feasibility=1E-2,
-                    append2file=True,
-                    Linesearch_tolerance=0.99,
-                    Hessian_frequency=10,
-                    Major_step_limit=0.02
-                    )
-"""
+#optimizer = SNOPT(prob,Major_iterations=2000,
+#                    Major_optimality=1e-3,
+#                    Major_feasibility=1E-2,
+#                    append2file=True,
+#                    Linesearch_tolerance=0.99,
+#                    Hessian_frequency=10,
+#                    Major_step_limit=0.02
+#                    )
+
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
@@ -157,6 +160,5 @@ plt.show()
 
 # post-process results and generate plots
 post(sim=sim, options=options)
-
 
 
