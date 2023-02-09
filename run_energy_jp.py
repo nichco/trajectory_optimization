@@ -51,12 +51,13 @@ class RunModel(csdl.Model):
         control_x = self.declare_variable('control_x',shape=(num,))
         control_z = self.declare_variable('control_z',shape=(num,))
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
+        dv = self.declare_variable('dv',shape=(num,))
 
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -86,6 +87,10 @@ class RunModel(csdl.Model):
         self.register_output('final_gamma',gamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
         
+        # acceleration constraints
+        self.register_output('final_dv',dv[-1])
+        #self.add_constraint('final_dv',equals=0,scaler=1)
+        
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
@@ -94,26 +99,18 @@ class RunModel(csdl.Model):
         # compute total energy
         energy = e[-1]
         self.register_output('energy',energy)
-        #self.print_var(energy)
-        
-        # compute control effort
-        #control_effort = csdl.pnorm(control_x,pnorm_type=2) + csdl.pnorm(control_z,pnorm_type=2) + csdl.pnorm(control_alpha,pnorm_type=2)
-        #self.register_output('control_effort', control_effort)
-        #self.print_var(control_effort)
-        
+        self.print_var(energy)
         
         # for the minimum energy objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=1.0,scaler=1E-1)
+        self.add_design_variable('dt',lower=0.5,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
         #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/(options['control_alpha_i']+0.1))
         #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        #self.add_objective('energy', scaler=1E-4)
-        #self.add_objective('control_effort', scaler=1E-4)
 
 
 
@@ -127,7 +124,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-5)
 """
 optimizer = SNOPT(prob,Major_iterations=1000,
                     Major_optimality=1e-7,
