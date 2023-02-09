@@ -87,10 +87,6 @@ class RunModel(csdl.Model):
         self.register_output('final_gamma',gamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
         
-        # acceleration constraints
-        self.register_output('final_dv',dv[-1])
-        #self.add_constraint('final_dv',equals=0,scaler=1)
-        
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
@@ -108,10 +104,6 @@ class RunModel(csdl.Model):
         self.add_design_variable('dt',lower=0.5,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
-        #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/(options['control_alpha_i']+0.1))
-        #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
-        #self.add_design_variable('control_z',lower=0, scaler=1E-3)
-
 
 
 
@@ -124,7 +116,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-5)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-5)
 """
 optimizer = SNOPT(prob,Major_iterations=1000,
                     Major_optimality=1e-7,
