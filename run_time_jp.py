@@ -57,7 +57,7 @@ class RunModel(csdl.Model):
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
         #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
@@ -96,7 +96,7 @@ class RunModel(csdl.Model):
         self.add(slope(num=num),name='slope')
         dcz = self.declare_variable('dcz',shape=(num,))
         self.register_output('max_slope',csdl.max((dcz**2)**0.5))
-        self.add_constraint('dcz',upper=200,scaler=1E-3)
+        self.add_constraint('dcz',upper=100,scaler=1E-3)
         
         # compute total energy
         energy = e[-1]
@@ -105,7 +105,7 @@ class RunModel(csdl.Model):
         
         # for the minimum time objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
-        self.add_design_variable('control_x',lower=0,upper=1500,scaler=1E-3)
+        self.add_design_variable('control_x',lower=0,scaler=1E-3)
         self.add_design_variable('control_z',lower=0,upper=1500,scaler=1E-3)
         self.add_design_variable('dt',lower=0.25,scaler=1E-1)
         self.add_objective('dt', scaler=1)

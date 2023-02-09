@@ -26,8 +26,8 @@ yt_cdi = np.array([1.285,1.28,1.279793779,1.273160103,1.265681088,1.232972271,1.
 0.906641227,0.994160511,1.074643432,1.135182693,1.189257697,1.225111109,1.232,1.238888891,1.245777782,1.252666674,1.259555565,1.266444456,
 1.273333347,1.280222239,])
 
-yt_cd0 = np.array([0.05645,0.03448,0.02044,0.01885,0.01779,0.01702,])
-#yt_cd0 = np.array([0.061,0.0511,0.0480,0.04522,0.04315,0.04153,0.0395])
+#yt_cd0 = np.array([0.05645,0.03448,0.02044,0.01885,0.01779,0.01702,])
+yt_cd0 = np.array([0.05745,0.03448,0.02444,0.02085,0.01979,0.01902,])
 #endregion
 
 # format data
@@ -51,7 +51,7 @@ xlimits = np.array([[-np.pi/2, np.pi/2],[0,0.25]])
 sm_cd = RMTB(
             xlimits=xlimits,
             order=3,
-            num_ctrl_pts=15,
+            num_ctrl_pts=17,
             energy_weight=1e-10,
             regularization_weight=0.0,
             print_global=False,
@@ -75,8 +75,17 @@ if __name__ == '__main__':
     ycl = sm_cl.predict_values(xcl)
 
     ax1 = fig.add_subplot(1, 2, 1)
-    ax1.plot(np.rad2deg(xcl), ycl,color='k',linewidth=2)
-    ax1.plot(np.rad2deg(alpha), yt_cl,'o',color='k')
+    ax1.plot(np.rad2deg(alpha), yt_cl,'o',color='darkkhaki',markersize=6)
+    ax1.plot(np.rad2deg(xcl), ycl,color='k',linewidth=1.0)
+
+    plt.xticks(np.arange(-90, 95, 30))
+    plt.yticks(np.arange(-1.5, 1.75, 0.5))
+
+    plt.xlim([-90,90])
+    
+    ax1.set_ylabel('lift coefficient')
+    ax1.set_xlabel('angle of attack '+r'($^{\circ}$)')
+    ax1.legend(['VLM training points','RBF surrogate'], frameon=False)
     
 
     num=100
@@ -102,7 +111,7 @@ if __name__ == '__main__':
             Z[i,j] = zint_cd[index]
             index += 1
 
-    
+    """
     # Plot the surface.
     levels = np.arange(0.0, 1.4, 0.005)
     ax2 = fig.add_subplot(1, 2, 2, projection='3d')
@@ -112,12 +121,21 @@ if __name__ == '__main__':
     ax2.set_xlabel('angle of attack')
     ax2.set_ylabel('mach number')
     ax2.set_zlabel('$C_D$')
-
     ax2.set_box_aspect((1.5,1.5,1))
+    """
+    
+    levels = np.arange(0.0, 1.5, 0.05)
+    ax2 = fig.add_subplot(1, 2, 2)
+    plot_cd = ax2.contourf(np.rad2deg(X), Y, Z.T, cmap='rainbow', levels=levels)
+    ax2.contour(np.rad2deg(X), Y, Z.T,levels=levels,colors='k',alpha=0.2,linewidths=0.5)
+    cbar = plt.colorbar(plot_cd, shrink=1, ax=ax2)
+    cbar.set_label('drag coefficient')
+    ax2.set_ylabel('mach number')
+    ax2.set_xlabel('angle of attack '+r'($^{\circ}$)')
+    plt.xticks(np.arange(-90, 95, 30))
 
+    plt.savefig('viscous_aero_model.png', dpi=1200, bbox_inches='tight')
+    
     plt.show()
 
-    # testing
-    #tt = np.array([[0,0.25]])
-    #val = sm_cd.predict_values(tt)
-    #print(val)
+    
