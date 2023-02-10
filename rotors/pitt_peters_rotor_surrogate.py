@@ -113,7 +113,7 @@ if __name__ == '__main__':
     plt.rcParams['figure.figsize'] = [12, 4]
 
 
-    levelsct = np.arange(0.0, 0.5, 0.005)
+    levelsct = np.arange(0.15, 0.4, 0.005)
     levelscp = np.arange(0.13, 0.26, 0.005)
     fig, ((ax1), (ax2)) = plt.subplots(1, 2)
 
@@ -136,19 +136,19 @@ if __name__ == '__main__':
     ax2.set_xlabel('edgewise inflow velocity (m/s)')
     
     
-    #ax1.set_xlim(0,60)
-    #ax1.set_ylim(0,60)
-    #ax2.set_xlim(0,60)
-    #ax2.set_ylim(0,60)
+    ax1.set_xlim(0,60)
+    ax1.set_ylim(0,60)
+    ax2.set_xlim(0,60)
+    ax2.set_ylim(0,60)
 
 
-    plt.savefig('rotor_model.png', dpi=1200, bbox_inches='tight')
+    #plt.savefig('rotor_model.png', dpi=1200, bbox_inches='tight')
 
     # test predict vals
-    tt = np.array([[100,0]])
-    val = sm_ct.predict_values(tt)
-    print(val)
+    #tt = np.array([[100,0]])
+    #val = sm_ct.predict_values(tt)
+    #print(val)
 
     plt.show()
     
-    plot = plt.contourf(xta, xtb, ctarr,cmap='plasma',levels=levelsct)
+    #plot = plt.contourf(xta, xtb, ctarr,cmap='plasma',levels=levelsct)

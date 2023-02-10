@@ -88,6 +88,10 @@ class RunModel(csdl.Model):
         self.register_output('final_gamma',gamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
         
+        # acceleration constraints
+        self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
+        self.add_constraint('max_g',upper=0.5)
+        
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
@@ -118,17 +122,15 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-5)
-"""
-optimizer = SNOPT(prob,Major_iterations=1000,
-                    Major_optimality=1e-7,
-                    Major_feasibility=1E-7,
-                    append2file=True,
-                    Linesearch_tolerance=0.99,
-                    #Hessian_frequency=10,
-                    Major_step_limit=0.1
-                    )
-"""
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-4)
+#optimizer = SNOPT(prob,Major_iterations=1000,
+#                    Major_optimality=1e-7,
+#                    Major_feasibility=1E-7,
+#                    append2file=True,
+#                    Linesearch_tolerance=0.99,
+#                    #Hessian_frequency=10,
+#                    Major_step_limit=0.1
+#                    )
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
@@ -136,6 +138,4 @@ plt.show()
 
 # post-process results and generate plots
 post(sim=sim, options=options)
-
-
 

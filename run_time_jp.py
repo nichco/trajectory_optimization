@@ -10,7 +10,6 @@ from modopt.csdl_library import CSDLProblem
 from skmd import tonal
 from parameters_time_jp import options
 from post_process import post
-from slope import slope
 
 """
 run file for min time trajectories
@@ -58,7 +57,7 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -79,25 +78,24 @@ class RunModel(csdl.Model):
         # pitch angle constraints
         theta = gamma + alpha
         self.register_output('theta',theta)
-        self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        #self.add_constraint('max_theta',upper=np.deg2rad(30))
-        self.register_output('initial_theta',theta[0])
+        #self.register_output('max_theta',csdl.max((theta**2)**0.5))
+        #self.add_constraint('max_theta',upper=np.deg2rad(15))
+        #self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
+
+        # acceleration constraints
+        self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
+        self.add_constraint('max_g',upper=0.6)
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
         # self.add_constraint('seg_ospl',upper=70,scaler=1E-2)
 
-        self.add(slope(num=num),name='slope')
-        dcz = self.declare_variable('dcz',shape=(num,))
-        self.register_output('max_slope',csdl.max((dcz**2)**0.5))
-        self.add_constraint('dcz',upper=100,scaler=1E-3)
-        
         # compute total energy
         energy = e[-1]
         self.register_output('energy',energy)
@@ -106,7 +104,7 @@ class RunModel(csdl.Model):
         # for the minimum time objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0,scaler=1E-3)
-        self.add_design_variable('control_z',lower=0,upper=1500,scaler=1E-3)
+        self.add_design_variable('control_z',lower=0,scaler=1E-3)
         self.add_design_variable('dt',lower=0.25,scaler=1E-1)
         self.add_objective('dt', scaler=1)
 
@@ -131,16 +129,14 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=3000, ftol=1E-4)
-"""
-optimizer = SNOPT(prob,Major_iterations=1000,
-                    Major_optimality=1e-7,
-                    Major_feasibility=1E-7,
-                    append2file=True,
-                    Linesearch_tolerance=0.99,
-                    #Hessian_frequency=10,
-                    Major_step_limit=0.1
-                    )
-"""
+#optimizer = SNOPT(prob,Major_iterations=1000,
+#                    Major_optimality=1e-7,
+#                    Major_feasibility=1E-7,
+#                    append2file=True,
+#                    Linesearch_tolerance=0.99,
+#                    #Hessian_frequency=10,
+#                    Major_step_limit=0.1
+#                    )
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
@@ -148,6 +144,3 @@ plt.show()
 
 # post-process results and generate plots
 post(sim=sim, options=options)
-
-
-
