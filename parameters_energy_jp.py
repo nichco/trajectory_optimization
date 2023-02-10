@@ -35,7 +35,7 @@ options['x_lim'] = 5000 # (m)
 options['theta_0'] = 0 # (rad)
 options['gamma_f'] = 0 # (rad)
 options['max_g'] = 0.5 # (g)
-options['max_dgamma'] = 1.25 # (rad/s)
+options['max_dgamma'] = 1.5 # (rad/s)
 
 # set the initial integrator timestep
 options['dt'] = 2.206601

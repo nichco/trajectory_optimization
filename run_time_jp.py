@@ -89,8 +89,8 @@ class RunModel(csdl.Model):
         self.add_constraint('final_gamma',equals=options['gamma_f'])
 
         # acceleration constraints
-        self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
-        self.add_constraint('max_g',upper=options['max_g'])
+        #self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
+        #self.add_constraint('max_g',upper=options['max_g'])
 
         # rotation rate constraints
         self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
