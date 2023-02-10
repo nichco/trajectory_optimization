@@ -75,7 +75,7 @@ class RunModel(csdl.Model):
         
         # vne constraint
         self.register_output('max_v',csdl.max(v))
-        self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
+        #self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
         
         # pitch angle constraints
         theta = gamma + alpha
@@ -90,12 +90,14 @@ class RunModel(csdl.Model):
         self.add_constraint('final_gamma',equals=options['gamma_f'])
         
         # acceleration constraints
-        self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
-        self.add_constraint('max_g',upper=0.5)
+        self.register_output('max_g',csdl.max(dv/options['gravity']))
+        self.register_output('min_g',csdl.min(dv/options['gravity']))
+        self.add_constraint('max_g',upper=options['max_g'])
+        #self.add_constraint('min_g',lower=0)
         
         # rotation rate constraints
         self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
-        self.add_constraint('max_dgamma',upper=2.0)
+        self.add_constraint('max_dgamma',upper=options['max_dgamma'])
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
