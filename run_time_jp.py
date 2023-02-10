@@ -52,6 +52,7 @@ class RunModel(csdl.Model):
         control_z = self.declare_variable('control_z',shape=(num,))
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
         dv = self.declare_variable('dv',shape=(num,))
+        dgamma = self.declare_variable('dgamma',shape=(num,))
 
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
@@ -90,6 +91,10 @@ class RunModel(csdl.Model):
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
         self.add_constraint('max_g',upper=0.6)
+
+        # rotation rate constraints
+        self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
+        self.add_constraint('max_dgamma',upper=2.0)
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')

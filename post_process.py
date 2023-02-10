@@ -17,8 +17,8 @@ def post(sim, options):
     e = sim['e']
     dt = sim['dt']
     alpha = sim['control_alpha']
-    cl = sim['cl']
-    cd = sim['cd']
+    dv = sim['dv']
+    dgamma = sim['dgamma']
     lift = sim['lift']
     drag = sim['drag']
     control_x = sim['control_x']
@@ -50,9 +50,9 @@ def post(sim, options):
     ax5.plot(e,color='m')
     ax5.legend(['e'])
     
-    ax6.plot(cl)
-    ax6.plot(cd)
-    ax6.legend(['cl','cd'])
+    ax6.plot(dv)
+    ax6.plot(dgamma)
+    ax6.legend(['dv','dgamma'])
     
     ax7.plot(alpha,color='k')
     ax7.set_title('alpha')

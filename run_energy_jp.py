@@ -53,6 +53,7 @@ class RunModel(csdl.Model):
         control_z = self.declare_variable('control_z',shape=(num,))
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
         dv = self.declare_variable('dv',shape=(num,))
+        dgamma = self.declare_variable('dgamma',shape=(num,))
 
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
@@ -92,6 +93,10 @@ class RunModel(csdl.Model):
         self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
         self.add_constraint('max_g',upper=0.5)
         
+        # rotation rate constraints
+        self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
+        self.add_constraint('max_dgamma',upper=2.0)
+        
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
@@ -122,7 +127,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
