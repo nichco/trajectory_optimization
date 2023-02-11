@@ -54,6 +54,7 @@ class RunModel(csdl.Model):
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
         dv = self.declare_variable('dv',shape=(num,))
         dgamma = self.declare_variable('dgamma',shape=(num,))
+        dt = self.declare_variable('dt')
 
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
@@ -83,7 +84,7 @@ class RunModel(csdl.Model):
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(30))
         self.register_output('initial_theta',theta[0])
-        #self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.add_constraint('initial_theta',equals=options['theta_0'])
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -95,7 +96,7 @@ class RunModel(csdl.Model):
         
         # rotation rate constraints
         self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
-        #self.add_constraint('max_dgamma',upper=options['max_dgamma'])
+        self.add_constraint('max_dgamma',upper=options['max_dgamma'])
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
@@ -127,7 +128,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=2000, ftol=1E-4)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
