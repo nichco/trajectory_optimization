@@ -62,7 +62,7 @@ class RunModel(csdl.Model):
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
-        self.add_constraint('final_h', equals=options['h_f'], scaler=1E-2)
+        self.add_constraint('final_h', lower=options['h_f'], scaler=1E-2)
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
@@ -73,15 +73,15 @@ class RunModel(csdl.Model):
         self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
         
         # vne constraint
-        self.register_output('max_v',csdl.max(v))
-        self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
+        #self.register_output('max_v',csdl.max(v))
+        #self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
         
         # pitch angle constraints
         theta = gamma + alpha
         self.register_output('theta',theta)
-        #self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        #self.add_constraint('max_theta',upper=np.deg2rad(15))
-        #self.register_output('initial_theta',theta[0])
+        self.register_output('max_theta',csdl.max((theta**2)**0.5))
+        self.add_constraint('max_theta',upper=np.deg2rad(30))
+        self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
         
         # flight path angle constraints
@@ -89,12 +89,12 @@ class RunModel(csdl.Model):
         self.add_constraint('final_gamma',equals=options['gamma_f'])
 
         # acceleration constraints
-        #self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
+        self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
         #self.add_constraint('max_g',upper=options['max_g'])
 
         # rotation rate constraints
         self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
-        self.add_constraint('max_dgamma',upper=options['max_dgamma'])
+        #self.add_constraint('max_dgamma',upper=options['max_dgamma'])
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
@@ -121,7 +121,7 @@ class RunModel(csdl.Model):
 
 
 # ode problem instance
-num = 40
+num = 45
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
@@ -129,7 +129,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-5)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
@@ -145,3 +145,6 @@ plt.show()
 
 # post-process results and generate plots
 post(sim=sim, options=options)
+
+
+#print(sim['max_dalpha'])
