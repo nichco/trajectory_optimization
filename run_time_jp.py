@@ -58,7 +58,7 @@ class RunModel(csdl.Model):
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
         #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
