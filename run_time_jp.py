@@ -53,20 +53,22 @@ class RunModel(csdl.Model):
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
         dv = self.declare_variable('dv',shape=(num,))
         dgamma = self.declare_variable('dgamma',shape=(num,))
+        dt = self.declare_variable('dt')
 
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
-        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
-        self.add_constraint('final_h', lower=options['h_f'], scaler=1E-2)
+        self.add_constraint('final_h', equals=options['h_f'], scaler=1E-2)
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
         self.add_constraint('min_h', lower=options['min_h'])
+        #self.add_constraint('min_h', lower=0.0)
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -82,7 +84,7 @@ class RunModel(csdl.Model):
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         self.add_constraint('max_theta',upper=np.deg2rad(30))
         self.register_output('initial_theta',theta[0])
-        #self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.add_constraint('initial_theta',equals=options['theta_0'])
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -90,7 +92,7 @@ class RunModel(csdl.Model):
 
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
-        #self.add_constraint('max_g',upper=options['max_g'])
+        self.add_constraint('max_g',upper=options['max_g'])
 
         # rotation rate constraints
         self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
@@ -110,12 +112,19 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0,scaler=1E-3)
         self.add_design_variable('control_z',lower=0,scaler=1E-3)
-        self.add_design_variable('dt',lower=0.25,scaler=1E-1)
-        self.add_objective('dt', scaler=1)
+        self.add_design_variable('dt',lower=0.25,upper=0.75,scaler=1E-1)
+        #self.add_objective('dt', scaler=1)
 
         #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/(options['control_alpha_i']+0.1))
         #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
         #self.add_design_variable('control_z',lower=0, scaler=1E-3)
+
+        obj = energy*1
+        self.register_output('obj',obj)
+        self.print_var(obj)
+        self.print_var(dt)
+        self.add_objective('obj',scaler=1E-4)
+
 
 
 
@@ -148,3 +157,6 @@ post(sim=sim, options=options)
 
 
 #print(sim['max_dalpha'])
+print(np.array2string(sim['control_x'],separator=','))
+print(np.array2string(sim['control_z'],separator=','))
+print(np.array2string(sim['control_alpha'],separator=','))
