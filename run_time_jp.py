@@ -59,7 +59,7 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -112,16 +112,12 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0,scaler=1E-3)
         self.add_design_variable('control_z',lower=0,scaler=1E-3)
-        self.add_design_variable('dt',lower=0.25,upper=0.75,scaler=1E-1)
+        self.add_design_variable('dt',lower=0.25,upper=0.72,scaler=1E-1)
         #self.add_objective('dt', scaler=1)
 
-        #self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=1/(options['control_alpha_i']+0.1))
-        #self.add_design_variable('control_x',lower=0, scaler=1/options['control_x_i'])
-        #self.add_design_variable('control_z',lower=0, scaler=1E-3)
-
-        obj = energy*1
+        obj = energy*1 + dt*1200
         self.register_output('obj',obj)
-        self.print_var(obj)
+        #self.print_var(obj)
         self.print_var(dt)
         self.add_objective('obj',scaler=1E-4)
 
@@ -138,7 +134,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-5)
+optimizer = SLSQP(prob, maxiter=4000, ftol=1E-4)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
