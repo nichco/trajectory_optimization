@@ -113,13 +113,13 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_x',lower=0,scaler=1E-3)
         self.add_design_variable('control_z',lower=0,scaler=1E-3)
         self.add_design_variable('dt',lower=0.25,upper=0.72,scaler=1E-1)
-        #self.add_objective('dt', scaler=1)
+        self.add_objective('dt', scaler=1)
 
         obj = energy*1 + dt*1200
         self.register_output('obj',obj)
         #self.print_var(obj)
         self.print_var(dt)
-        self.add_objective('obj',scaler=1E-4)
+        #self.add_objective('obj',scaler=1E-4)
 
 
 
