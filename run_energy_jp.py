@@ -53,8 +53,9 @@ class RunModel(csdl.Model):
         control_z = self.declare_variable('control_z',shape=(num,))
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
         dv = self.declare_variable('dv',shape=(num,))
+        dt = self.declare_variable('dt')
         dgamma = self.declare_variable('dgamma',shape=(num,))
-
+        
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
@@ -79,11 +80,16 @@ class RunModel(csdl.Model):
         
         # pitch angle constraints
         theta = gamma + alpha
+        dtheta = self.create_output('dtheta',shape=(num-1,), val=0)
+        for i in range(1,num):
+            dtheta[i-1] = (((theta[i] - theta[i-1])/dt)**2)**0.5
+        self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(30))
+        self.add_constraint('max_theta',upper=np.deg2rad(20))
         self.register_output('initial_theta',theta[0])
         self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.add_constraint('max_dtheta',upper=np.deg2rad(11))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -92,10 +98,6 @@ class RunModel(csdl.Model):
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
         self.add_constraint('max_g',upper=options['max_g'])
-        
-        # rotation rate constraints
-        self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
-        #self.add_constraint('max_dgamma',upper=options['max_dgamma'])
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
@@ -127,7 +129,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-8)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
