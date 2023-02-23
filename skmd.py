@@ -87,7 +87,7 @@ class tonal(csdl.Model):
         # b1, b2, b3 = 0.031, 6.2429, 0.7267
         # old values
         b1, b2, b3 = 0.0209, 18.2429, 6.7267
-        r = self.create_input('range',val=np.linspace(-200,200,num),shape=(num,))
+        r = self.create_input('range',val=np.linspace(-250,250,num),shape=(num,))
         hc = h + 1 # add a correction factor so equations aren't undefined
         
         max_spl_gl = self.create_output('max_spl_gl',shape=(num,))
