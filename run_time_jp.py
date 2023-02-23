@@ -68,7 +68,6 @@ class RunModel(csdl.Model):
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
         self.add_constraint('min_h', lower=options['min_h'])
-        #self.add_constraint('min_h', lower=0.0)
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -80,23 +79,28 @@ class RunModel(csdl.Model):
         
         # pitch angle constraints
         theta = gamma + alpha
+        dtheta = self.create_output('dtheta',shape=(num-1,), val=0)
+        for i in range(1,num):
+            dtheta[i-1] = (((theta[i] - theta[i-1])/dt)**2)**0.5
+        self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(30))
+        self.add_constraint('max_theta',upper=np.deg2rad(20))
         self.register_output('initial_theta',theta[0])
         self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.add_constraint('max_dtheta',upper=np.deg2rad(11))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
+        self.register_output('final_dgamma',dgamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
+        self.add_constraint('final_dgamma',equals=0.0)
 
         # acceleration constraints
-        self.register_output('max_g',csdl.max(((dv/options['gravity'])**2)**0.5))
+        self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
+        self.register_output('final_dv',dv[-1])
         self.add_constraint('max_g',upper=options['max_g'])
-
-        # rotation rate constraints
-        self.register_output('max_dgamma',csdl.max((dgamma**2)**0.5))
-        #self.add_constraint('max_dgamma',upper=options['max_dgamma'])
+        self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
@@ -112,14 +116,13 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0,scaler=1E-3)
         self.add_design_variable('control_z',lower=0,scaler=1E-3)
-        self.add_design_variable('dt',lower=0.25,upper=0.72,scaler=1E-1)
+        self.add_design_variable('dt',lower=0.5,scaler=1E-1)
         self.add_objective('dt', scaler=1)
 
-        obj = energy*1 + dt*1200
-        self.register_output('obj',obj)
-        #self.print_var(obj)
+        #obj = energy*1E-4 + dt
+        #self.register_output('obj',obj)
         self.print_var(dt)
-        #self.add_objective('obj',scaler=1E-4)
+        #self.add_objective('obj',scaler=1)
 
 
 
@@ -134,7 +137,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=4000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=5000, ftol=0.75E-4)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,

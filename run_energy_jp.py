@@ -93,11 +93,15 @@ class RunModel(csdl.Model):
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
+        self.register_output('final_dgamma',dgamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
+        self.add_constraint('final_dgamma',equals=0.0)
         
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
+        self.register_output('final_dv',dv[-1])
         self.add_constraint('max_g',upper=options['max_g'])
+        self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
         # self.add(tonal(options=options,num=num), name='tonal')
@@ -129,7 +133,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-6)
+optimizer = SLSQP(prob, maxiter=3000, ftol=2.5E-8)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
