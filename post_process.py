@@ -27,7 +27,8 @@ def post(sim, options):
     liftpower = sim['liftpower']
     #cruise_spl_gl = sim['max_cruise_spl_gl']
     #lift_spl_gl = sim['max_lift_spl_gl']
-    ospl = sim['max_spl_gl']
+    #ospl = sim['max_spl_gl']
+    ospl = sim['sum_spl']
     theta = sim['theta']
     
     

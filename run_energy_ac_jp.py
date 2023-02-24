@@ -104,11 +104,12 @@ class RunModel(csdl.Model):
         self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
+        #self.add(noise(options=options,num=num), name='noise')
+        #self.add_constraint('sum_spl',upper=np.linspace(100,70,num),scaler=1E-2)
         self.add(tonal(options=options,num=num), name='tonal')
-        #self.add_constraint('max_spl_gl',upper=92,scaler=1E-2)
-        self.add_constraint('mspl',upper=95,scaler=1E-2)
-        # self.add_constraint('seg_ospl',upper=70,scaler=1E-2)
-        # self.add(noise(options=options,num=num), name='noise')
+        # self.add_constraint('max_spl_gl',upper=92,scaler=1E-2)
+        # self.add_constraint('mspl',upper=95,scaler=1E-2)
+        self.add_constraint('seg_ospl',upper=75,scaler=1E-2)
         
         # compute total energy
         energy = e[-1]
@@ -134,7 +135,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-5)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
