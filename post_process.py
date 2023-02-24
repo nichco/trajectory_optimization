@@ -28,6 +28,7 @@ def post(sim, options):
     #cruise_spl_gl = sim['max_cruise_spl_gl']
     #lift_spl_gl = sim['max_lift_spl_gl']
     #ospl = sim['max_spl_gl']
+    ospl = sim['sum_spl']
     theta = sim['theta']
     
     
@@ -73,9 +74,9 @@ def post(sim, options):
     
     #ax11.plot(cruise_spl_gl,color='k')
     #ax11.plot(lift_spl_gl,color='r')
-    #ax11.plot(ospl,color='c')
-    #ax11.set_title('spl')
-    #ax11.set_ylabel('spl (db)')
+    ax11.plot(ospl,color='c')
+    ax11.set_title('spl')
+    ax11.set_ylabel('spl (db)')
     
     ax12.plot(lift,color='k')
     ax12.plot(drag,color='r')

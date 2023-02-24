@@ -15,6 +15,7 @@ class noise(csdl.Model):
         cruise_ct = self.declare_variable('cruisect', shape=(num,),val=0.2)
         lift_ct = self.declare_variable('liftct', shape=(num,),val=0.2)
         theta = self.declare_variable('theta', shape=(num,),val=0)
+        h = self.declare_variable('h', shape=(num,),val=100)
         control_x = self.declare_variable('control_x', shape=(num,),val=1200)
         control_z = self.declare_variable('control_z', shape=(num,),val=1000)
 
@@ -41,23 +42,26 @@ class noise(csdl.Model):
         lct = (lift_ct**2)**0.5
 
         # SKM model
-        cruise_spl_150 = 10*csdl.log10((cvt**6)*cab*((cct/cruise_sigma)**2) + 0.01) - 42.9
-        lift_spl_150 = 10*csdl.log10((lvt**6)*lab*((lct/lift_sigma)**2) + 0.01) - 42.9
+        cruise_spl_150 = 10*csdl.log10((cvt**6)*cab*((cct/cruise_sigma)**2) + 0.001) - 42.9
+        lift_spl_150 = 10*csdl.log10((lvt**6)*lab*((lct/lift_sigma)**2) + 0.001) - 42.9
         self.register_output('cruise_spl_150',cruise_spl_150)
         self.register_output('lift_spl_150',lift_spl_150)
 
         # transformed to observer location
         theta = np.pi/2 # (rad)
-        s0 = 76.2 # (m)
+        s0 = h #76.2 # (m)
 
-        cruise_spl = cruise_spl_150 + 20*np.log10(np.sin(theta)/(s0/150))
-        lift_spl = lift_spl_150 + 20*np.log10(np.sin(theta)/(s0/150))
+        cruise_spl = cruise_spl_150 + 20*csdl.log10(np.sin(theta)/(s0/150))
+        lift_spl = lift_spl_150 + 20*csdl.log10(np.sin(theta)/(s0/150))
         self.register_output('cruise_spl_s',cruise_spl)
         self.register_output('lift_spl_s',lift_spl)
 
         # sum rotor noise
         sum_spl = 10*csdl.log10(csdl.exp_a(10,0.1*cruise_spl) + num_lift_rotors*csdl.exp_a(10,0.1*lift_spl))
         self.register_output('sum_spl',sum_spl)
+        
+        mspl = csdl.max(sum_spl)
+        self.register_output('mspl', mspl)
         
 
 

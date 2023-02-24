@@ -7,7 +7,7 @@ from timestep import timestep
 from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
-#from skmd import tonal
+from skmd import tonal
 from noise import noise
 from parameters_energy_jp import options
 from post_process import post
@@ -104,10 +104,10 @@ class RunModel(csdl.Model):
         self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
-        # self.add(tonal(options=options,num=num), name='tonal')
+        self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
         # self.add_constraint('seg_ospl',upper=70,scaler=1E-2)
-        self.add(noise(options=options,num=num), name='noise')
+        # self.add(noise(options=options,num=num), name='noise')
         
         # compute total energy
         energy = e[-1]
