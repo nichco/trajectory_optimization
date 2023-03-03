@@ -71,7 +71,7 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
-        #self.add_constraint('min_h', lower=options['min_h'])
+        self.add_constraint('min_h', lower=options['min_h'])
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -89,10 +89,10 @@ class RunModel(csdl.Model):
         self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(20))
+        self.add_constraint('max_theta',upper=np.deg2rad(25))
         #self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
-        self.add_constraint('max_dtheta',upper=np.deg2rad(25))
+        self.add_constraint('max_dtheta',upper=np.deg2rad(20))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
