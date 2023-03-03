@@ -10,6 +10,8 @@ from modopt.csdl_library import CSDLProblem
 from skmd import tonal
 from parameters_obs import options
 from post_process import post
+import matplotlib.pyplot as plt
+from obs_explicit import obs
 
 """
 run file for min energy trajectories
@@ -69,7 +71,7 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(h))
-        self.add_constraint('min_h', lower=options['min_h'])
+        #self.add_constraint('min_h', lower=options['min_h'])
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -86,11 +88,11 @@ class RunModel(csdl.Model):
             dtheta[i-1] = (((theta[i] - theta[i-1])/dt)**2)**0.5
         self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
-        #self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        #self.add_constraint('max_theta',upper=np.deg2rad(20))
+        self.register_output('max_theta',csdl.max((theta**2)**0.5))
+        self.add_constraint('max_theta',upper=np.deg2rad(20))
         #self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
-        self.add_constraint('max_dtheta',upper=np.deg2rad(20))
+        self.add_constraint('max_dtheta',upper=np.deg2rad(25))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -109,22 +111,42 @@ class RunModel(csdl.Model):
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
         # self.add_constraint('seg_ospl',upper=80,scaler=1E-2)
 
-        # pos constraints
-        hx = v*csdl.sin(gamma)*x/csdl.cos(gamma)
-        self.register_output('hx',hx)
+        
+        # obstacle constraint
+        """
+        sig = 32 # stdev ~2
+        q = 50 # obstacle height (m)
+        c = q*80/(sig*(2*np.pi)**0.5)
+        p = 50 # center of obstacle peak
+        eps = 15 # buffer
+        res = self.create_output('res',shape=(num),val=0)
+        for i in range(num):
+            xi = x[i]
+            hi = h[i]
+            a = c*csdl.exp(-0.5*(((xi-p)/sig)**2)) - eps
+            res[i] = hi - a
+        self.register_output('min_res',csdl.min(res))
+        self.add_constraint('min_res',lower=0)
+        """
+        
+        self.add(obs(num_nodes=num))
+        obsi = self.declare_variable('obsi',shape=(num))
+        obs_res = h - (obsi - 1E-1)
+        self.register_output('min_obs_res',csdl.min(obs_res))
+        #self.add_constraint('min_obs_res',lower=0.0)
+        
+        
         
         # compute total energy
         energy = e[-1]
         self.register_output('energy',energy)
         self.print_var(energy)
-       
-        
-        
+
         # for the minimum energy objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.2,scaler=1E-1)
+        self.add_design_variable('dt',lower=2.0,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
 
@@ -134,12 +156,12 @@ class RunModel(csdl.Model):
 num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-sim.run()
+#sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
-"""
+
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=1000, ftol=0.5E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
@@ -152,17 +174,19 @@ optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-"""
+
 # post-process results and generate plots
 post(sim=sim, options=options)
 
 
 
-print(np.array2string(sim['x'],separator=','))
-print(np.array2string(sim['h'],separator=','))
-print(np.array2string(sim['v'],separator=','))
-print(np.array2string(sim['control_alpha'],separator=','))
-print(np.array2string(sim['gamma'],separator=','))
-print(np.array2string(sim['control_x'],separator=','))
-print(np.array2string(sim['control_z'],separator=','))
-print(np.array2string(sim['max_spl_gl'],separator=','))
+
+
+
+
+
+
+
+
+
+
