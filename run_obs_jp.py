@@ -110,8 +110,8 @@ class RunModel(csdl.Model):
         # self.add_constraint('seg_ospl',upper=80,scaler=1E-2)
 
         # pos constraints
-        self.register_output('first_three_x',x[0:3])
-        self.add_constraint('first_three_x', upper=5)
+        hx = v*csdl.sin(gamma)*x/csdl.cos(gamma)
+        self.register_output('hx',hx)
         
         # compute total energy
         energy = e[-1]
@@ -134,27 +134,25 @@ class RunModel(csdl.Model):
 num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-#sim.run()
+sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
-
+"""
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
-"""
-optimizer = SNOPT(prob,Major_iterations=1000,
-                    Major_optimality=1e-7,
-                    Major_feasibility=1E-7,
-                    append2file=True,
-                    Linesearch_tolerance=0.99,
-                    #Hessian_frequency=10,
-                    Major_step_limit=0.1
-                    )
-"""
+#optimizer = SNOPT(prob,Major_iterations=1000,
+#                    Major_optimality=1e-7,
+#                    Major_feasibility=1E-7,
+#                    append2file=True,
+#                    Linesearch_tolerance=0.99,
+#                    #Hessian_frequency=10,
+#                    Major_step_limit=0.1
+#                    )
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-
+"""
 # post-process results and generate plots
 post(sim=sim, options=options)
 
