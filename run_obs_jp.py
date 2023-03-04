@@ -58,12 +58,10 @@ class RunModel(csdl.Model):
         dgamma = self.declare_variable('dgamma',shape=(num,))
 
         # max power constraints
-        #self.register_output('max_cruise_power', csdl.max(cruisepower))
-        #self.register_output('max_lift_power', csdl.max(liftpower))
+        self.register_output('max_cruise_power', csdl.max(cruisepower))
+        self.register_output('max_lift_power', csdl.max(liftpower))
         #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
-        #self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -128,12 +126,12 @@ class RunModel(csdl.Model):
         self.register_output('min_res',csdl.min(res))
         self.add_constraint('min_res',lower=0)
         """
-        
+        eps = 1E-1
         self.add(obs(num_nodes=num))
         obsi = self.declare_variable('obsi',shape=(num))
-        obs_res = h - (obsi - 1E-1)
+        obs_res = h - (obsi - eps)
         self.register_output('min_obs_res',csdl.min(obs_res))
-        #self.add_constraint('min_obs_res',lower=0.0)
+        self.add_constraint('min_obs_res',lower=0.0)
         
         
         
@@ -161,7 +159,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=0.5E-3)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
