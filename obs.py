@@ -1,13 +1,14 @@
 from smt.surrogate_models import RBF
 import numpy as np
+from parameters_obs import options
 
 
 n = 2000
 x_lim = 10000.0 # (m)
-be = 10 # (m) start of sinusoidal ramp
-pi = 100 # (m) start of obstacle
-pf = 10000.0 # (m) end of obstacle
-o = 10 # (m)
+be = options['be']
+pi = options['p_i']
+pf = options['p_f']
+o = options['obs_height']
 x = np.linspace(0,x_lim,n)
 obs = np.zeros((n))
 
