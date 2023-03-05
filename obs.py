@@ -3,8 +3,8 @@ import numpy as np
 from parameters_obs import options
 
 
-n = 3000
-x_lim = 10000.0 # (m)
+n = 3500
+x_lim = 12000.0 # (m)
 be = options['be']
 pi = options['p_i']
 pf = options['p_f']

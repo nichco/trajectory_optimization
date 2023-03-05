@@ -56,12 +56,12 @@ class RunModel(csdl.Model):
         dgamma = self.declare_variable('dgamma',shape=(num,))
 
         # max power constraints
-        #self.register_output('max_cruise_power', csdl.max(cruisepower))
-        #self.register_output('max_lift_power', csdl.max(liftpower))
-        #self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
-        #self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
+        self.register_output('max_cruise_power', csdl.max(cruisepower))
+        self.register_output('max_lift_power', csdl.max(liftpower))
+        self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -86,8 +86,8 @@ class RunModel(csdl.Model):
             dtheta[i-1] = (((theta[i] - theta[i-1])/dt)**2)**0.5
         self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
-        #self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        #self.add_constraint('max_theta',upper=np.deg2rad(20))
+        self.register_output('max_theta',csdl.max((theta**2)**0.5))
+        self.add_constraint('max_theta',upper=np.deg2rad(20))
         #self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
         self.add_constraint('max_dtheta',upper=np.deg2rad(20))
@@ -107,7 +107,7 @@ class RunModel(csdl.Model):
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
-        self.add_constraint('seg_ospl',upper=80,scaler=1E-2)
+        # self.add_constraint('seg_ospl',upper=80,scaler=1E-2)
         
         # compute total energy
         energy = e[-1]
@@ -120,7 +120,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.2,scaler=1E-1)
+        self.add_design_variable('dt',lower=2.0,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
 
@@ -130,12 +130,12 @@ class RunModel(csdl.Model):
 num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-sim.run()
+#sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
 
-#prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-#optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
+prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
+optimizer = SLSQP(prob, maxiter=1000, ftol=0.5E-3)
 """
 optimizer = SNOPT(prob,Major_iterations=1000,
                     Major_optimality=1e-7,
@@ -146,21 +146,14 @@ optimizer = SNOPT(prob,Major_iterations=1000,
                     Major_step_limit=0.1
                     )
 """
-#optimizer.solve()
-#optimizer.print_results()
+optimizer.solve()
+optimizer.print_results()
 # plot states from integrator
-#plt.show()
+plt.show()
 
 # post-process results and generate plots
 post(sim=sim, options=options)
 
-
-
-print(np.array2string(sim['x'],separator=','))
-print(np.array2string(sim['h'],separator=','))
-print(np.array2string(sim['v'],separator=','))
-print(np.array2string(sim['control_alpha'],separator=','))
-print(np.array2string(sim['gamma'],separator=','))
 print(np.array2string(sim['control_x'],separator=','))
 print(np.array2string(sim['control_z'],separator=','))
-print(np.array2string(sim['max_spl_gl'],separator=','))
+print(np.array2string(sim['control_alpha'],separator=','))

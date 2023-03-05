@@ -131,7 +131,7 @@ class RunModel(csdl.Model):
         obsi = self.declare_variable('obsi',shape=(num))
         obs_res = h - (obsi - eps)
         self.register_output('min_obs_res',csdl.min(obs_res))
-        #self.add_constraint('min_obs_res',lower=0.0)
+        self.add_constraint('min_obs_res',lower=0.0)
         
         
         
@@ -144,14 +144,14 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.0,upper=4.0,scaler=1E-1)
+        self.add_design_variable('dt',lower=2.0,upper=4.5,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
 
 
 
 # ode problem instance
-num = 40
+num = 47
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
@@ -159,7 +159,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=0.4E-3)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
