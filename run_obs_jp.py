@@ -87,7 +87,7 @@ class RunModel(csdl.Model):
         self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(15))
+        self.add_constraint('max_theta',upper=np.deg2rad(20))
         # self.register_output('initial_theta',theta[0])
         # self.add_constraint('initial_theta',equals=options['theta_0'])
         self.add_constraint('max_dtheta',upper=np.deg2rad(15))
@@ -144,7 +144,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.0,upper=3.5,scaler=1E-1)
+        self.add_design_variable('dt',lower=2.0,upper=4.0,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
 
