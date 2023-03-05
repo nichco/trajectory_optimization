@@ -3,7 +3,7 @@ import numpy as np
 from parameters_obs import options
 
 
-n = 2000
+n = 3000
 x_lim = 10000.0 # (m)
 be = options['be']
 pi = options['p_i']

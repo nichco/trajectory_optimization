@@ -70,7 +70,8 @@ class ODESystemModel(csdl.Model):
 
         
         # system of ODE's
-        dv = (TC/m)*csdl.cos(alpha) + (TL/m)*csdl.sin(alpha) - (D/m) - g*csdl.sin(gamma)
+        # dv = (TC/m)*csdl.cos(alpha) + (TL/m)*csdl.sin(alpha) - (D/m) - g*csdl.sin(gamma)
+        dv = (TC/m)*csdl.cos(alpha) - (TL/m)*csdl.sin(alpha) - (D/m) - g*csdl.sin(gamma)
         dgamma = (TC/(m*v))*csdl.sin(alpha) + (TL/(m*v))*csdl.cos(alpha) + (L/(m*v)) - (g*csdl.cos(gamma)/v)
         dh = v*csdl.sin(gamma)
         dx = v*csdl.cos(gamma)
