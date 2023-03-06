@@ -129,7 +129,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=1.0,upper=4.5,scaler=1E-1)
+        self.add_design_variable('dt',lower=1.0,upper=4.1,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
 
@@ -144,7 +144,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-2)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
