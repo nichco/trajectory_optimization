@@ -103,7 +103,7 @@ class RunModel(csdl.Model):
         self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
-        # self.add(tonal(options=options,num=num), name='tonal')
+        self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
         # self.add_constraint('seg_ospl',upper=70,scaler=1E-2)
 
@@ -132,10 +132,10 @@ class RunModel(csdl.Model):
 num = 45
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-#sim.run()
+sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
-
+"""
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=5000, ftol=0.25E-4)
 #optimizer = SNOPT(prob,Major_iterations=1000,
@@ -150,12 +150,10 @@ optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-
+"""
 # post-process results and generate plots
 post(sim=sim, options=options)
 
 
-#print(sim['max_dalpha'])
-print(np.array2string(sim['control_x'],separator=','))
-print(np.array2string(sim['control_z'],separator=','))
-print(np.array2string(sim['control_alpha'],separator=','))
+print(np.array2string(sim['h'],separator=','))
+print(np.array2string(sim['v'],separator=','))
