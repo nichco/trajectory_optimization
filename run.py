@@ -90,7 +90,7 @@ class RunModel(csdl.Model):
         self.add_constraint('max_theta',upper=np.deg2rad(20))
         #self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
-        self.add_constraint('max_dtheta',upper=np.deg2rad(20))
+        self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -136,16 +136,14 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=1000, ftol=0.5E-3)
-"""
-optimizer = SNOPT(prob,Major_iterations=1000,
-                    Major_optimality=1e-7,
-                    Major_feasibility=1E-7,
-                    append2file=True,
-                    Linesearch_tolerance=0.99,
-                    #Hessian_frequency=10,
-                    Major_step_limit=0.1
-                    )
-"""
+#optimizer = SNOPT(prob,Major_iterations=1000,
+#                    Major_optimality=1e-7,
+#                    Major_feasibility=1E-7,
+#                    append2file=True,
+#                    Linesearch_tolerance=0.99,
+#                    #Hessian_frequency=10,
+#                    Major_step_limit=0.1
+#                    )
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
