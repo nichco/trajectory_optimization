@@ -133,6 +133,7 @@ class RunModel(csdl.Model):
         self.add_objective('energy', scaler=1E-4)
 
         #obj = energy + dt*1E3
+        #self.register_output('obj',obj)
         #self.add_objective('obj', scaler=1E-4)
 
 
@@ -146,7 +147,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=0.1E-2) # 0.5e-2 spyder min energy
+optimizer = SLSQP(prob, maxiter=1000, ftol=0.1E-2)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
