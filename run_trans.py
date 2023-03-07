@@ -132,8 +132,8 @@ class RunModel(csdl.Model):
         self.add_design_variable('dt',lower=2.5,upper=4.25,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
-        obj = energy + dt*1E3
-        # self.add_objective('obj', scaler=1E-4)
+        #obj = energy + dt*1E3
+        #self.add_objective('obj', scaler=1E-4)
 
 
 
