@@ -92,3 +92,11 @@ options['control_alpha_i'] = np.array([ 1.69192075e-01,-1.57079633e+00,-1.052416
  -8.60954917e-03,-8.45990546e-03,-9.74782551e-03,-1.07150042e-02,
  -1.10234640e-02,-9.03643285e-03,-3.10362739e-03, 2.94956754e-03,
   2.58116793e-02,-9.57654706e-03, 3.65392539e-02])
+
+"""
+# min dt seed OBS!
+options['dt'] = 
+options['control_x_i'] = np.array()
+options['control_z_i'] = np.array()
+options['control_alpha_i'] = np.array()
+"""

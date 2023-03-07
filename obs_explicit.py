@@ -1,6 +1,6 @@
 import csdl
 import python_csdl_backend
-from obs import sm
+from obs import sm_obs
 import numpy as np
 
 class obs(csdl.Model):
@@ -37,7 +37,7 @@ class ObsExplicit(csdl.CustomExplicitOperation):
         obsi = np.zeros((n))
         for i in range(n):
             xi = np.array([inputs['x'][i]])
-            obsi[i] = sm.predict_values(xi)
+            obsi[i] = sm_obs.predict_values(xi)
 
         outputs['obsi'] = 1*obsi
 
@@ -47,16 +47,17 @@ class ObsExplicit(csdl.CustomExplicitOperation):
         dobsi_dxi = np.zeros((n))
         for i in range(n):
             xi = np.array([inputs['x'][i]])
-            dobsi_dxi[i] = sm.predict_derivatives(xi, 0)
+            dobsi_dxi[i] = sm_obs.predict_derivatives(xi, 0)
 
         derivatives['obsi', 'x'] = np.diag(dobsi_dxi)
 
 
 if __name__ == '__main__':
     # run model
-    sim = python_csdl_backend.Simulator(obs(num_nodes=10))
+    num = 100
+    sim = python_csdl_backend.Simulator(obs(num_nodes=num))
     sim.run()
     print(sim['obsi'])
 
     # print partials
-    sim.check_partials(step=1E-6,compact_print=True)
+    sim.check_partials(step=1E-3,compact_print=True)
