@@ -1,6 +1,6 @@
 import csdl
 import python_csdl_backend
-from obs import sm_obs
+from obstacle.obs import sm_obs
 import numpy as np
 
 class obs(csdl.Model):
