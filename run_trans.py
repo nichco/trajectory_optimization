@@ -7,7 +7,7 @@ from timestep import timestep
 from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
-from skmd import tonal
+from acoustics.skmd import tonal
 from parameters_trans import options
 from post_process import post
 import matplotlib.pyplot as plt
@@ -75,6 +75,10 @@ class RunModel(csdl.Model):
         self.register_output('final_v',v[-1])
         self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
         
+        # final x constraint
+        self.register_output('final_x',x[-1])
+        self.add_constraint('final_x',upper=options['x_lim'],scaler=1E-4)
+        
         # vne constraint
         # self.register_output('max_v',csdl.max(v))
         # self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
@@ -129,10 +133,10 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.5,upper=4.25,scaler=1E-1)
+        self.add_design_variable('dt',lower=2.0,upper=4.25,scaler=1E-1)
         self.add_objective('energy', scaler=1E-4)
 
-        #obj = energy + dt*1E3
+        #obj = 0.1*energy + dt*2E3
         #self.register_output('obj',obj)
         #self.add_objective('obj', scaler=1E-4)
 
@@ -147,7 +151,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=0.1E-2)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-4)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
@@ -170,7 +174,7 @@ print(np.array2string(sim['control_x'],separator=','))
 print(np.array2string(sim['control_z'],separator=','))
 print(np.array2string(sim['control_alpha'],separator=','))
 
-# plt.plot(sim['x'],sim['h'])
+#print(np.array2string(sim['e']/options['energy_scale'],separator=','))
 
 
 

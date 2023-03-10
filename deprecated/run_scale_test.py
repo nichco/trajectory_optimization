@@ -7,7 +7,7 @@ from modopt.scipy_library import SLSQP
 from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 import matplotlib.pyplot as plt
-from skmd import tonal
+from acoustics.skmd import tonal
 plt.rcParams['font.family'] = 'Century'
 plt.rcParams.update({'font.size': 12})
 

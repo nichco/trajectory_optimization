@@ -7,7 +7,7 @@ from timestep import timestep
 from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
-from skmd import tonal
+from acoustics.skmd import tonal
 from parameters_time import options
 from post_process import post
 
