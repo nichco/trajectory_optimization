@@ -7,7 +7,7 @@ from timestep import timestep
 from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
-from acoustics.skmd import tonal
+from skmd import tonal
 from parameters_trans import options
 from post_process import post
 import matplotlib.pyplot as plt
@@ -151,7 +151,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
