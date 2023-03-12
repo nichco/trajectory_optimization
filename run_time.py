@@ -58,8 +58,9 @@ class RunModel(csdl.Model):
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
+        self.print_var(csdl.max(liftpower))
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-5)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -82,8 +83,8 @@ class RunModel(csdl.Model):
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         self.add_constraint('max_theta',upper=np.deg2rad(20))
-        #self.register_output('initial_theta',theta[0])
-        #self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.register_output('initial_theta',theta[0])
+        self.add_constraint('initial_theta',equals=options['theta_0'])
         self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
@@ -111,8 +112,8 @@ class RunModel(csdl.Model):
         # for the minimum time objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
-        self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=1.0,scaler=1E-1)
+        self.add_design_variable('control_z',lower=0, scaler=1E-2)
+        self.add_design_variable('dt',lower=1.21,scaler=1E0)
         self.add_objective('dt')
         
 
@@ -128,7 +129,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=1000, ftol=0.8E-1)
 #optimizer = SNOPT(prob,Major_iterations=2000,
 #                    Major_optimality=1e-3,
 #                    Major_feasibility=1E-2,
