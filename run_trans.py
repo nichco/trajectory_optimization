@@ -77,11 +77,7 @@ class RunModel(csdl.Model):
         
         # final x constraint
         self.register_output('final_x',x[-1])
-        self.add_constraint('final_x',upper=options['x_lim'],scaler=1E-4)
-        
-        # vne constraint
-        # self.register_output('max_v',csdl.max(v))
-        # self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
+        #self.add_constraint('final_x',upper=options['x_lim'],scaler=1E-4)
         
         # pitch angle constraints
         theta = gamma + alpha
@@ -92,8 +88,8 @@ class RunModel(csdl.Model):
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         self.add_constraint('max_theta',upper=np.deg2rad(20))
-        # self.register_output('initial_theta',theta[0])
-        # self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.register_output('initial_theta',theta[0])
+        self.add_constraint('initial_theta',equals=options['theta_0'])
         self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
@@ -151,7 +147,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-6)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,

@@ -7,7 +7,7 @@ from timestep import timestep
 from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
-from acoustics.skmd import tonal
+from skmd import tonal
 from parameters_time import options
 from post_process import post
 
@@ -73,10 +73,6 @@ class RunModel(csdl.Model):
         self.register_output('final_v',v[-1])
         self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
         
-        # vne constraint
-        #self.register_output('max_v',csdl.max(v))
-        #self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
-        
         # pitch angle constraints
         theta = gamma + alpha
         dtheta = self.create_output('dtheta',shape=(num-1,), val=0)
@@ -85,10 +81,10 @@ class RunModel(csdl.Model):
         self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(25))
+        self.add_constraint('max_theta',upper=np.deg2rad(20))
         #self.register_output('initial_theta',theta[0])
         #self.add_constraint('initial_theta',equals=options['theta_0'])
-        self.add_constraint('max_dtheta',upper=np.deg2rad(20))
+        self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
         self.register_output('final_gamma',gamma[-1])
@@ -117,9 +113,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
         self.add_design_variable('dt',lower=1.0,scaler=1E-1)
-        #self.add_design_variable('dt',lower=1.0,upper=1.34,scaler=1E-1)
         self.add_objective('dt')
-        #self.add_objective('energy',scaler=1E-4)
         
 
 
@@ -129,12 +123,12 @@ class RunModel(csdl.Model):
 num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-sim.run()
+#sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
-"""
+
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-5)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=2000,
 #                    Major_optimality=1e-3,
 #                    Major_feasibility=1E-2,
@@ -148,7 +142,7 @@ optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-"""
+
 # post-process results and generate plots
 post(sim=sim, options=options)
 
