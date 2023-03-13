@@ -178,9 +178,8 @@ post(sim=sim, options=options)
 
 
 
-print(np.array2string(sim['control_x'],separator=','))
-print(np.array2string(sim['control_z'],separator=','))
-print(np.array2string(sim['control_alpha'],separator=','))
+print(np.array2string(sim['e']/options['energy_scale'],separator=','))
+print(np.array2string(sim['max_spl_gl'],separator=','))
 
 
 

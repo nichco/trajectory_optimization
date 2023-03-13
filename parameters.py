@@ -22,7 +22,7 @@ options['energy_scale'] = 0.0001 # scale energy for plotting
 
 # mission parameters
 options['gravity'] = 9.81 # (m/s^2)
-options['v_0'] = 0.6 # 4 (m/s)
+options['v_0'] = 0.625 # 4 (m/s)
 options['gamma_0'] = 0 # (rad)
 options['h_0'] = 0 # (m)
 options['min_h'] = -0.1 # (m)

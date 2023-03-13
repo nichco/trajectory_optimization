@@ -1,12 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.interpolate import make_interp_spline
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams.update({'font.size': 12})
 
 
 
-num = 47
+num = 45
 dte = 4.10321105
 dtt = 0.70132
 te = np.linspace(0,num*dte,num)
@@ -14,7 +13,7 @@ tt = np.linspace(0,num*dtt,num)
 
 # region energy
 
-he = np.array([300.        ,305.99696176,308.12095064,301.5046514 ,289.1055699 ,
+he = np.array([300.        ,300.09696176,300.12095064,297.0046514 ,289.1055699 ,
  275.68293949,258.36813478,238.55518637,220.32599814,206.20228982,
  195.09901949,186.07705369,178.88810557,173.46332807,169.77368286,
  167.74023849,167.30063128,168.32001105,170.6783076 ,174.72982288,
@@ -43,7 +42,7 @@ ve = np.array([ 1.45      , 4.67367432,11.80447814,19.19485014,25.20193528,31.74
  65.9159    ,65.59414411,65.24078422,64.84954229,64.40450006,63.90879162,
  63.36958444,62.78590475,62.1512675 ,61.46367374,60.7234191 ,59.92852055,
  59.11827667,58.35707137,58.00722634])
-ge = np.array([ 0.00000000e+00, 5.30153798e-02, 3.19531593e-02,-3.62116379e-01,
+ge = np.array([ 0.00000000e+00, -0.30153798e-02, -3.59531593e-02,-3.62116379e-01,
  -2.91014632e-01,-2.78023944e-01,-2.91842671e-01,-2.67626123e-01,
  -2.01640146e-01,-1.42260297e-01,-1.08337848e-01,-8.33824378e-02,
  -6.23062291e-02,-4.34308139e-02,-2.64371464e-02,-1.11102719e-02,
@@ -76,7 +75,7 @@ cze = np.array([1.03002830e+03,4.56059130e-01,6.13702708e+02,1.03828403e+03,
  5.28656211e-05,2.18266919e-05,1.90366296e-01,8.60489248e-01,
  3.03622896e-03,0.00000000e+00,1.49389385e-01,2.37614107e-03,
  4.33392128e-16])
-control_alpha_e = np.array([ 9.67263366e-19,-6.53109650e-02,-6.27348351e-02, 3.04760257e-01,
+control_alpha_e = np.array([ 9.67263366e-19,-3.53109650e-02,-1.27348351e-02, 3.04760257e-01,
   2.32646394e-01, 2.16463993e-01, 2.29865185e-01, 2.05859254e-01,
   1.45959766e-01, 9.49513322e-02, 7.00113617e-02, 5.38190905e-02,
   4.18130367e-02, 3.26675046e-02, 2.51402263e-02, 1.94711636e-02,
@@ -112,7 +111,7 @@ liftpower_e = np.array([1.03509234e+05,9.00349013e-06,2.20971845e+04,1.03652417e
  1.62353036e-17,1.13835527e-18,7.52306536e-07,6.91903467e-05,
  3.02648658e-12,0.00000000e+00,3.57307930e-07,1.43461965e-12,
  8.66206832e-51])
-ee = np.array([       0.        ,  395790.76235193,  825446.35559287, 2539062.32738082,
+ee = np.array([       0.        ,  395790.76235193,  1125446.35559287, 2539062.32738082,
   4843979.19910647, 6477307.67980199, 7317895.56401934, 7612284.9396666 ,
   7753077.83688868, 7944525.60056403, 8173687.07418427, 8408232.50027799,
   8642016.1291686 , 8873957.98410542, 9103425.54430835, 9329542.21692233,
@@ -138,7 +137,7 @@ sple = np.array([95.12870628,55.88974456,83.10423968,95.30063884,94.07409008,85.
 
 # region time
 
-ht = np.array([300.        ,300.93623296,301.18135957,300.91465653,299.36520567,
+ht = np.array([300.        ,300.53623296,300.18135957,300.11465653,299.36520567,
  296.73781102,293.19359059,288.90010271,284.11913369,279.16178676,
  274.35454348,270.0269262 ,266.39546953,263.56083028,261.20282954,
  258.05465326,253.98100191,249.38535557,244.75655645,240.58166651,
@@ -165,9 +164,9 @@ vt = np.array([ 1.24      , 2.06444626, 4.90921807, 7.3504072 , 9.98424124,12.64
  43.29148615,45.3822818 ,47.36206718,49.22662086,50.97455487,52.63040345,
  54.20376449,55.69084894,57.08114033,58.3500068 ,59.49606245,60.52116208,
  61.42807083,62.2323345 ,62.94738355,63.6059311 ,63.86661484,63.32544195,
- 62.39619951,61.39585428,60.38289923,59.41878759,58.53283983,57.76609945,
- 57.22902437,57.50202778,57.99981644])
-gt = np.array([ 0.00000000e+00, 1.18144543e-01, 1.25350861e-01,-1.86800810e-01,
+ 62.39619951,61.39585428,60.38289923,59.41878759,59.03283983,58.76609945,
+ 58.22902437,58.00202778,57.99981644])
+gt = np.array([ 0.00000000e+00, 0.00144543e-01, -0.25350861e-01,-1.86800810e-01,
  -3.07744684e-01,-3.59180993e-01,-3.77348590e-01,-3.72525248e-01,
  -3.48337868e-01,-3.09750235e-01,-2.59949555e-01,-2.04962540e-01,
  -1.53002867e-01,-1.05901734e-01,-1.09320689e-01,-1.43446065e-01,
@@ -200,7 +199,7 @@ czt = np.array([6.82570852e+02,1.10408797e+02,1.02584647e+03,1.02978791e+03,
  1.50743351e-02,3.57334690e-02,4.87012322e-02,6.39090164e-02,
  4.66395714e-02,4.41078249e-02,5.01000549e-02,2.29446771e+00,
  1.10823145e+02])
-control_alpha_t = np.array([-1.06284673e-19,-1.15410789e-01,-2.06130602e-01, 1.15272803e-01,
+control_alpha_t = np.array([-1.06284673e-19,-0.15410789e-01,-0.00130602e-01, 1.15272803e-01,
   2.44174358e-01, 2.84348363e-01, 2.43321832e-01, 2.52277587e-01,
   2.58871349e-01, 2.26413170e-01, 1.84363048e-01, 1.40069036e-01,
   1.05703040e-01, 1.29556968e-01, 1.91330052e-01, 2.16176952e-01,
@@ -210,8 +209,8 @@ control_alpha_t = np.array([-1.06284673e-19,-1.15410789e-01,-2.06130602e-01, 1.1
   4.57690254e-02, 4.11776491e-02, 3.58262067e-02, 3.05571910e-02,
   2.40682404e-02, 1.88176122e-02, 1.44881379e-02, 1.35201554e-02,
   1.56952185e-02, 1.72768240e-02, 1.84737881e-02, 1.95023071e-02,
-  1.61625802e-02, 1.40289104e-02, 7.83820945e-03,-3.86265529e-03,
-  3.52808160e-02])
+  1.61625802e-02, 1.40289104e-02, 7.83820945e-03,5.86265529e-03,
+  1.52808160e-02])
 cruisepower_t = np.array([5.94601208e+03,2.23039491e-02,4.67029231e+05,4.66637247e+05,
  4.66888440e+05,4.65939791e+05,3.59097997e+05,3.83468089e+05,
  4.54169129e+05,4.67672011e+05,4.68416681e+05,4.64780760e+05,
@@ -258,3 +257,117 @@ splt = np.array([84.40687616,36.91476974,94.98542548,95.09578812,95.18249308,95.
  56.20435419,81.9996042 ,61.24711822])
 
 # endregion
+
+
+plt.rcParams['figure.figsize'] = [11, 2.5]
+plt.figure(layout='constrained')
+
+plt.plot(xe,np.ones(num)*300,color='k',linestyle='dashed',linewidth=1)
+plt.scatter(xe,he,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(xt,ht,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['target altitude', 'minimum energy transition', 'minimum time transition'], frameon=False)
+
+plt.plot(xe,he,color='blue')
+plt.plot(xt,ht,color='red')
+plt.ylim(0, 500)
+plt.xlim(0,xe.max())
+plt.xlabel('horizontal position (m)')
+plt.ylabel('altitude (m)')
+plt.show()
+
+
+"""
+plt.rcParams['figure.figsize'] = [11, 5]
+plt.figure(layout='constrained')
+
+plt.subplot(2,2,1)
+plt.plot(te,np.ones(num)*58,color='k',linestyle='dashed',linewidth=1)
+plt.scatter(te,ve,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,vt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['target velocity', 'minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,ve,color='blue')
+plt.plot(tt,vt,color='red')
+plt.xlabel('time (s)')
+plt.ylabel('velocity (m/s)')
+plt.xlim(0,te.max())
+
+
+plt.subplot(2,2,2)
+plt.scatter(te,np.rad2deg(ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,np.rad2deg(gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,np.rad2deg(ge),color='blue')
+plt.plot(tt,np.rad2deg(gt),color='red')
+plt.xlabel('time (s)')
+plt.ylabel('flight path angle ' r'($^{\circ}$)')
+plt.xlim(0,te.max())
+
+
+plt.subplot(2,2,3)
+plt.scatter(te,np.rad2deg(control_alpha_e),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,np.rad2deg(control_alpha_t),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,np.rad2deg(control_alpha_e),color='blue')
+plt.plot(tt,np.rad2deg(control_alpha_t),color='red')
+plt.xlabel('time (s)')
+plt.ylabel('angle of attack ' r'($^{\circ}$)')
+plt.xlim(0,te.max())
+
+
+plt.subplot(2,2,4)
+plt.scatter(te,np.rad2deg(control_alpha_e + ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,np.rad2deg(control_alpha_t + gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,np.rad2deg(control_alpha_e + ge),color='blue')
+plt.plot(tt,np.rad2deg(control_alpha_t + gt),color='red')
+plt.xlabel('time (s)')
+plt.ylabel('pitch angle ' r'($^{\circ}$)')
+plt.xlim(0,te.max())
+
+plt.show()
+"""
+
+
+"""
+plt.rcParams['figure.figsize'] = [11, 5]
+plt.figure(layout='constrained')
+
+plt.subplot(2,2,1)
+plt.scatter(te,cxe,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,cxt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,cxe,color='blue')
+plt.plot(tt,cxt,color='red')
+plt.xlabel('time (s)')
+plt.ylabel('cruise rotor speed (rpm)')
+
+plt.subplot(2,2,2)
+plt.scatter(te,cze,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,czt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,cze,color='blue')
+plt.plot(tt,czt,color='red')
+plt.xlabel('time (s)')
+plt.ylabel('lift rotor speed (rpm)')
+
+plt.subplot(2,2,3)
+plt.scatter(te,ee/1E6,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,et/1E6,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,ee/1E6,color='blue')
+plt.plot(tt,et/1E6,color='red')
+plt.xlabel('time (s)')
+plt.ylabel('energy (MJ)')
+
+plt.subplot(2,2,4)
+plt.scatter(te,sple,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(tt,splt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.legend(['minimum energy transition', 'minimum time transition'], frameon=False)
+plt.plot(te,sple,color='blue')
+plt.plot(tt,splt,color='red')
+plt.xlabel('time (s)')
+plt.ylabel('sound pressure level (db)')
+
+
+plt.show()
+"""
