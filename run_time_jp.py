@@ -111,7 +111,7 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
         self.add_design_variable('control_x',lower=0,scaler=1E-3)
         self.add_design_variable('control_z',lower=0,scaler=2E-3)
-        self.add_design_variable('dt',lower=0.7,scaler=1E0)
+        self.add_design_variable('dt',lower=0.6,scaler=1E0)
         self.add_objective('dt', scaler=1)
 
         self.print_var(dt)
