@@ -149,6 +149,6 @@ plt.show()
 # post-process results and generate plots
 post(sim=sim, options=options)
 
-print(np.array2string(sim['h'],separator=','))
-print(np.array2string(sim['v'],separator=','))
-print(sim['energy'])
+print(np.array2string(sim['control_x'],separator=','))
+print(np.array2string(sim['control_z'],separator=','))
+print(np.array2string(sim['control_alpha'],separator=','))
