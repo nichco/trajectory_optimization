@@ -8,11 +8,13 @@ from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 from skmd import tonal
-from parameters_time_jp import options
+from parameters_obs_time import options
 from post_process import post
+import matplotlib.pyplot as plt
+from obs_explicit import obs
 
 """
-run file for min time trajectories
+run file for min energy trajectories
 """
 
 class RunModel(csdl.Model):
@@ -52,8 +54,8 @@ class RunModel(csdl.Model):
         control_z = self.declare_variable('control_z',shape=(num,))
         control_alpha = self.declare_variable('control_alpha',shape=(num,))
         dv = self.declare_variable('dv',shape=(num,))
-        dgamma = self.declare_variable('dgamma',shape=(num,))
         dt = self.declare_variable('dt')
+        dgamma = self.declare_variable('dgamma',shape=(num,))
 
         # max power constraints
         self.register_output('max_cruise_power', csdl.max(cruisepower))
@@ -73,6 +75,10 @@ class RunModel(csdl.Model):
         self.register_output('final_v',v[-1])
         self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
         
+        # vne constraint
+        # self.register_output('max_v',csdl.max(v))
+        # self.add_constraint('max_v',upper=options['vne'],scaler=1E-2)
+        
         # pitch angle constraints
         theta = gamma + alpha
         dtheta = self.create_output('dtheta',shape=(num-1,), val=0)
@@ -82,8 +88,8 @@ class RunModel(csdl.Model):
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
         self.add_constraint('max_theta',upper=np.deg2rad(20))
-        self.register_output('initial_theta',theta[0])
-        self.add_constraint('initial_theta',equals=options['theta_0'])
+        # self.register_output('initial_theta',theta[0])
+        # self.add_constraint('initial_theta',equals=options['theta_0'])
         self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
@@ -91,7 +97,7 @@ class RunModel(csdl.Model):
         self.register_output('final_dgamma',dgamma[-1])
         self.add_constraint('final_gamma',equals=options['gamma_f'])
         self.add_constraint('final_dgamma',equals=0.0)
-
+        
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
         self.register_output('final_dv',dv[-1])
@@ -101,33 +107,44 @@ class RunModel(csdl.Model):
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
         # self.add_constraint('max_spl_gl',upper=np.linspace(120,60,num),scaler=1E-2)
-        # self.add_constraint('seg_ospl',upper=70,scaler=1E-2)
+        # self.add_constraint('seg_ospl',upper=80,scaler=1E-2)
 
+        
+        # obstacle constraint
+        eps = 1E-1
+        self.add(obs(num_nodes=num))
+        obsi = self.declare_variable('obsi',shape=(num))
+        obs_res = h - (obsi - eps)
+        self.register_output('min_obs_res',csdl.min(obs_res))
+        self.add_constraint('min_obs_res',lower=0.0,scaler=1E0)
+        
         # compute total energy
         energy = e[-1]
         self.register_output('energy',energy)
         
-        # for the minimum time objective
-        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=5)
-        self.add_design_variable('control_x',lower=0,scaler=1E-3)
-        self.add_design_variable('control_z',lower=0,scaler=2E-3)
-        self.add_design_variable('dt',lower=0.6,scaler=1E0)
-        self.add_objective('dt', scaler=1)
-
-        self.print_var(dt)
         self.print_var(csdl.max(liftpower))
+        self.print_var(dt)
+        self.print_var(csdl.min(obs_res))
+
+        # for the minimum energy objective
+        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
+        self.add_design_variable('control_x',lower=0, scaler=1E-3)
+        self.add_design_variable('control_z',lower=0, scaler=2E-3)
+        self.add_design_variable('dt',lower=1.44,upper=4.5,scaler=1E-1)
+        self.add_objective('dt',scaler=1)
+        #self.add_objective('energy',scaler=1E-4)
 
 
 
 
 # ode problem instance
-num = 45
+num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-sim.run()
+#sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
-"""
+
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
@@ -142,10 +159,20 @@ optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-"""
+
 # post-process results and generate plots
 post(sim=sim, options=options)
 
 
-print(np.array2string(sim['e']/options['energy_scale'],separator=','))
-print(np.array2string(sim['max_spl_gl'],separator=','))
+
+print(np.array2string(sim['control_x'],separator=','))
+print(np.array2string(sim['control_z'],separator=','))
+print(np.array2string(sim['control_alpha'],separator=','))
+
+
+
+
+
+
+
+

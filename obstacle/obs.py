@@ -1,6 +1,6 @@
 from smt.surrogate_models import RBF
 import numpy as np
-from parameters_obs import options
+from parameters_obs_time import options
 
 
 n = 3500
