@@ -40,7 +40,7 @@ options['max_g'] = 0.5 # (g)
 options['be'] = 10 # (m) start of sinusoidal ramp
 options['p_i'] = 50 # (m) start of obstacle
 options['p_f'] = 12000 # (m) end of obstacle
-options['obs_height'] = 60 # (m)
+options['obs_height'] = 55 # (m)
 
 
 """

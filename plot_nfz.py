@@ -7,9 +7,9 @@ plt.rcParams.update({'font.size': 12})
 
 num = 47
 dte = 4.11975845
-dtt = 
+#dtt = 
 te = np.linspace(0,num*dte,num)
-tt = np.linspace(0,num*dtt,num)
+#tt = np.linspace(0,num*dtt,num)
 
 # region energy
 
@@ -140,7 +140,7 @@ sple = np.array([143.3296713 ,111.78299126,107.04958931, 98.25898247, 95.6427716
 
 
 # region time
-
+"""
 ht = np.array()
 xt = np.array()
 vt = np.array()
@@ -152,7 +152,7 @@ cruisepower_t = np.array()
 liftpower_t = np.array()
 et = np.array()
 splt = np.array()
-
+"""
 # endregion
 
 """

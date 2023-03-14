@@ -226,7 +226,7 @@ splt = np.array([121.87554247,123.28292792,121.85778498,120.53112174,120.8916015
 
 # endregion
 
-
+"""
 plt.rcParams['figure.figsize'] = [11, 2.5]
 plt.figure(layout='constrained')
 
@@ -235,15 +235,15 @@ plt.scatter(xe,he,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k'
 plt.scatter(xt,ht,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['target altitude', 'minimum energy takeoff', 'minimum time takeoff'], frameon=False)
 
-plt.plot(xe,he,color='blue')
-plt.plot(xt,ht,color='red')
+plt.plot(xe,he,color='blue',linewidth=2)
+plt.plot(xt,ht,color='red',linewidth=2)
 plt.ylim(-10, 400)
 plt.xlim(0,xe.max())
 plt.xlabel('horizontal position (m)')
 plt.ylabel('altitude (m)')
 plt.savefig('hx_takeoff.png', dpi=1200, bbox_inches='tight')
 plt.show()
-
+"""
 
 """
 plt.rcParams['figure.figsize'] = [11, 5]
@@ -254,8 +254,8 @@ plt.plot(te,np.ones(num)*58,color='k',linestyle='dashed',linewidth=1)
 plt.scatter(te,ve,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,vt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['target velocity', 'minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,ve,color='blue')
-plt.plot(tt,vt,color='red')
+plt.plot(te,ve,color='blue',linewidth=2)
+plt.plot(tt,vt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('velocity (m/s)')
 plt.xlim(0,te.max())
@@ -265,8 +265,8 @@ plt.subplot(2,2,2)
 plt.scatter(te,np.rad2deg(ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,np.rad2deg(gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,np.rad2deg(ge),color='blue')
-plt.plot(tt,np.rad2deg(gt),color='red')
+plt.plot(te,np.rad2deg(ge),color='blue',linewidth=2)
+plt.plot(tt,np.rad2deg(gt),color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('flight path angle ' r'($^{\circ}$)')
 plt.xlim(0,te.max())
@@ -276,8 +276,8 @@ plt.subplot(2,2,3)
 plt.scatter(te,np.rad2deg(control_alpha_e),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,np.rad2deg(control_alpha_t),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,np.rad2deg(control_alpha_e),color='blue')
-plt.plot(tt,np.rad2deg(control_alpha_t),color='red')
+plt.plot(te,np.rad2deg(control_alpha_e),color='blue',linewidth=2)
+plt.plot(tt,np.rad2deg(control_alpha_t),color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('angle of attack ' r'($^{\circ}$)')
 plt.xlim(0,te.max())
@@ -287,17 +287,18 @@ plt.subplot(2,2,4)
 plt.scatter(te,np.rad2deg(control_alpha_e + ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,np.rad2deg(control_alpha_t + gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,np.rad2deg(control_alpha_e + ge),color='blue')
-plt.plot(tt,np.rad2deg(control_alpha_t + gt),color='red')
+plt.plot(te,np.rad2deg(control_alpha_e + ge),color='blue',linewidth=2)
+plt.plot(tt,np.rad2deg(control_alpha_t + gt),color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('pitch angle ' r'($^{\circ}$)')
 plt.xlim(0,te.max())
 
+plt.savefig('s1_takeoff.png', dpi=1200, bbox_inches='tight')
 plt.show()
 """
 
 
-"""
+
 plt.rcParams['figure.figsize'] = [11, 5]
 plt.figure(layout='constrained')
 
@@ -305,8 +306,8 @@ plt.subplot(2,2,1)
 plt.scatter(te,cxe,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,cxt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,cxe,color='blue')
-plt.plot(tt,cxt,color='red')
+plt.plot(te,cxe,color='blue',linewidth=2)
+plt.plot(tt,cxt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('cruise rotor speed (rpm)')
 
@@ -314,8 +315,8 @@ plt.subplot(2,2,2)
 plt.scatter(te,cze,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,czt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,cze,color='blue')
-plt.plot(tt,czt,color='red')
+plt.plot(te,cze,color='blue',linewidth=2)
+plt.plot(tt,czt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('lift rotor speed (rpm)')
 
@@ -323,8 +324,8 @@ plt.subplot(2,2,3)
 plt.scatter(te,ee/1E6,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,et/1E6,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,ee/1E6,color='blue')
-plt.plot(tt,et/1E6,color='red')
+plt.plot(te,ee/1E6,color='blue',linewidth=2)
+plt.plot(tt,et/1E6,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('energy (MJ)')
 
@@ -332,11 +333,10 @@ plt.subplot(2,2,4)
 plt.scatter(te,sple,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.scatter(tt,splt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,sple,color='blue')
-plt.plot(tt,splt,color='red')
+plt.plot(te,sple,color='blue',linewidth=2)
+plt.plot(tt,splt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('sound pressure level (db)')
 
-
+plt.savefig('s2_takeoff.png', dpi=1200, bbox_inches='tight')
 plt.show()
-"""
