@@ -61,7 +61,7 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_power', csdl.max(cruisepower))
         self.register_output('max_lift_power', csdl.max(liftpower))
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-5)
+        self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -73,7 +73,7 @@ class RunModel(csdl.Model):
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
-        self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
+        self.add_constraint('final_v',lower=options['v_f'],scaler=1E-2)
         
         # vne constraint
         # self.register_output('max_v',csdl.max(v))
@@ -93,16 +93,16 @@ class RunModel(csdl.Model):
         self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
-        self.register_output('final_gamma',gamma[-1])
-        self.register_output('final_dgamma',dgamma[-1])
-        self.add_constraint('final_gamma',equals=options['gamma_f'])
-        self.add_constraint('final_dgamma',equals=0.0)
+        #self.register_output('final_gamma',gamma[-1])
+        #self.register_output('final_dgamma',dgamma[-1])
+        #self.add_constraint('final_gamma',equals=options['gamma_f'])
+        #self.add_constraint('final_dgamma',equals=0.0)
         
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
-        self.register_output('final_dv',dv[-1])
-        self.add_constraint('max_g',upper=options['max_g'])
-        self.add_constraint('final_dv',equals=0.0)
+        # self.register_output('final_dv',dv[-1])
+        # self.add_constraint('max_g',upper=options['max_g'])
+        # self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -116,11 +116,11 @@ class RunModel(csdl.Model):
         obsi = self.declare_variable('obsi',shape=(num))
         obs_res = h - (obsi - eps)
         self.register_output('min_obs_res',csdl.min(obs_res))
-        self.add_constraint('min_obs_res',lower=0.0,scaler=1E0)
+        self.add_constraint('min_obs_res',lower=0.0,scaler=1E-1)
         
-        self.register_output('x8',x[8])
-        self.add_constraint('x8',upper=90,scaler=1E-2)
-        self.print_var(x[8])
+        #self.register_output('x8',x[9])
+        #self.add_constraint('x8',upper=85,scaler=1E-2)
+        #self.print_var(x[9])
         
         # compute total energy
         energy = e[-1]
@@ -133,8 +133,8 @@ class RunModel(csdl.Model):
         # for the minimum energy objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
-        self.add_design_variable('control_z',lower=0, scaler=2E-3)
-        self.add_design_variable('dt',lower=2.002,upper=2.5,scaler=1E0) # 1.4998 to 4.5
+        self.add_design_variable('control_z',lower=0, scaler=1E-3)
+        self.add_design_variable('dt',lower=2.001,upper=2.5,scaler=1E0) # 1.4998 to 4.5
         self.add_objective('dt',scaler=1)
         #self.add_objective('energy',scaler=1E-4)
         
@@ -154,7 +154,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=30, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
