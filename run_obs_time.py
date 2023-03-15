@@ -118,6 +118,10 @@ class RunModel(csdl.Model):
         self.register_output('min_obs_res',csdl.min(obs_res))
         self.add_constraint('min_obs_res',lower=0.0,scaler=1E0)
         
+        self.register_output('x8',x[8])
+        self.add_constraint('x8',upper=90,scaler=1E-2)
+        self.print_var(x[8])
+        
         # compute total energy
         energy = e[-1]
         self.register_output('energy',energy)
