@@ -1,7 +1,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from smt.surrogate_models import RBF
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams.update({'font.size': 12})
+
+n = 3000
+x_lim = 12000.0
+be = 10
+pi = 120
+pf = 12000
+bf = pf + 250
+obs_height = 100
+x = np.linspace(0,x_lim,n)
+obs = np.zeros((n))
+
+for i in range(0,n):
+    xi = x[i]
+    if xi > pi and xi <= pf:
+        obs[i] = obs_height
+    elif xi > be and xi < pi:
+        obs[i] = (np.sin((np.pi/(pi-be))*(xi-be)-(np.pi/2)) + 1)*(obs_height/2)
+    elif xi > pf and xi < bf:
+        obs[i] = (np.sin((np.pi/(bf-pf))*(xi-bf)-(np.pi/2)) + 1)*(obs_height/2)
+
+sm = RBF(d0=50,print_global=False,print_solver=False,)
+sm.set_training_values(x, obs)
+sm.train()
 
 
 
@@ -22,8 +46,8 @@ he = np.array([  0.        , 42.28155705, 88.16584767, 99.87484325,100.0169814 ,
  135.20566483,140.46597026,145.63557032,150.872734  ,156.23723284,
  161.61712727,167.12972553,172.57321487,177.45266215,181.22105002,
  183.52887289,185.94563218,192.86498192,211.679331  ,247.18020354,
- 290.33748348,300.00011917])
-xe = np.array([    0.        ,  -22.85814615,   41.08824677,  153.03519442,
+ 285.33748348,300.00011917])
+xe = np.array([    0.        ,  0.85814615,   41.08824677,  153.03519442,
    297.11204083,  471.20902569,  662.92844808,  867.57521712,
   1082.77846726, 1307.09452596, 1539.38874839, 1778.76889153,
   2024.51374307, 2276.00342566, 2532.73843836, 2794.30129245,
@@ -77,7 +101,7 @@ cze = np.array([1.13821917e+03,1.09446509e+03,1.12690496e+03,8.29571025e+02,
  3.51610526e-04,3.38129408e-04,3.95904537e-04,2.92982470e-04,
  3.97784093e-04,4.23260401e-04,2.54015112e-04,3.25710174e-04,
  2.08532422e-04,1.09107619e-04,3.27797101e-04])
-control_alpha_e = np.array([ 1.90002106e-01,-1.57079633e+00,-1.06808973e-01, 9.95546301e-02,
+control_alpha_e = np.array([ 0.00002106e-01,-1.57079633e+00,-1.06808973e-01, 9.95546301e-02,
   1.80328919e-01, 1.11537230e-01, 8.77137289e-02, 6.90088090e-02,
   5.57646803e-02, 4.53953358e-02, 3.69577038e-02, 2.99735312e-02,
   2.40801226e-02, 1.90318764e-02, 1.46264206e-02, 1.07969402e-02,
@@ -155,21 +179,29 @@ splt = np.array()
 """
 # endregion
 
+
+num_obs = 5000
+x_p = np.linspace(0,x_lim,num_obs)
+obs_p = sm.predict_values(x_p)
+
 """
 plt.rcParams['figure.figsize'] = [11, 2.5]
 plt.figure(layout='constrained')
 
 plt.plot(xe,np.ones(num)*300,color='k',linestyle='dashed',linewidth=1)
-plt.scatter(xe,he,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(xt,ht,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.legend(['target altitude', 'minimum energy takeoff', 'minimum time takeoff'], frameon=False)
+plt.scatter(xe,he,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(xt,ht,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+plt.fill_between(x_p,obs_p.flatten(),alpha=0.8,color='mistyrose',hatch='///',edgecolor='indianred')
+plt.legend(['target altitude', 'minimum energy takeoff', 'no-fly zone'], frameon=False)
 
-plt.plot(xe,he,color='blue')
-plt.plot(xt,ht,color='red')
-plt.ylim(-10, 400)
-plt.xlim(0,xe.max())
+plt.plot(xe,he,color='blue',linewidth=2)
+#plt.plot(xt,ht,color='red',linewidth=2)
+plt.ylim(0, 400)
+plt.xlim(-50,xe.max())
 plt.xlabel('horizontal position (m)')
 plt.ylabel('altitude (m)')
+
+plt.savefig('hx_nfz.png', dpi=1200, bbox_inches='tight')
 plt.show()
 """
 
@@ -179,92 +211,92 @@ plt.figure(layout='constrained')
 
 plt.subplot(2,2,1)
 plt.plot(te,np.ones(num)*58,color='k',linestyle='dashed',linewidth=1)
-plt.scatter(te,ve,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,vt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,ve,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,vt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['target velocity', 'minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,ve,color='blue')
-plt.plot(tt,vt,color='red')
+plt.plot(te,ve,color='blue',linewidth=2)
+#plt.plot(tt,vt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('velocity (m/s)')
 plt.xlim(0,te.max())
 
 
 plt.subplot(2,2,2)
-plt.scatter(te,np.rad2deg(ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,np.rad2deg(gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,np.rad2deg(ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,np.rad2deg(gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,np.rad2deg(ge),color='blue')
-plt.plot(tt,np.rad2deg(gt),color='red')
+plt.plot(te,np.rad2deg(ge),color='blue',linewidth=2)
+#plt.plot(tt,np.rad2deg(gt),color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('flight path angle ' r'($^{\circ}$)')
 plt.xlim(0,te.max())
 
 
 plt.subplot(2,2,3)
-plt.scatter(te,np.rad2deg(control_alpha_e),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,np.rad2deg(control_alpha_t),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,np.rad2deg(control_alpha_e),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,np.rad2deg(control_alpha_t),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,np.rad2deg(control_alpha_e),color='blue')
-plt.plot(tt,np.rad2deg(control_alpha_t),color='red')
+plt.plot(te,np.rad2deg(control_alpha_e),color='blue',linewidth=2)
+#plt.plot(tt,np.rad2deg(control_alpha_t),color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('angle of attack ' r'($^{\circ}$)')
 plt.xlim(0,te.max())
 
 
 plt.subplot(2,2,4)
-plt.scatter(te,np.rad2deg(control_alpha_e + ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,np.rad2deg(control_alpha_t + gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,np.rad2deg(control_alpha_e + ge),color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,np.rad2deg(control_alpha_t + gt),color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy takeoff', 'minimum time takeoff'], frameon=False)
-plt.plot(te,np.rad2deg(control_alpha_e + ge),color='blue')
-plt.plot(tt,np.rad2deg(control_alpha_t + gt),color='red')
+plt.plot(te,np.rad2deg(control_alpha_e + ge),color='blue',linewidth=2)
+#plt.plot(tt,np.rad2deg(control_alpha_t + gt),color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('pitch angle ' r'($^{\circ}$)')
 plt.xlim(0,te.max())
 
+plt.savefig('s1_nfz.png', dpi=1200, bbox_inches='tight')
 plt.show()
 """
 
 
-"""
+
 plt.rcParams['figure.figsize'] = [11, 5]
 plt.figure(layout='constrained')
 
 plt.subplot(2,2,1)
-plt.scatter(te,cxe,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,cxt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,cxe,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,cxt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,cxe,color='blue')
-plt.plot(tt,cxt,color='red')
+plt.plot(te,cxe,color='blue',linewidth=2)
+#plt.plot(tt,cxt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('cruise rotor speed (rpm)')
 
 plt.subplot(2,2,2)
-plt.scatter(te,cze,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,czt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,cze,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,czt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,cze,color='blue')
-plt.plot(tt,czt,color='red')
+plt.plot(te,cze,color='blue',linewidth=2)
+#plt.plot(tt,czt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('lift rotor speed (rpm)')
 
 plt.subplot(2,2,3)
-plt.scatter(te,ee/1E6,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,et/1E6,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,ee/1E6,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,et/1E6,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,ee/1E6,color='blue')
-plt.plot(tt,et/1E6,color='red')
+plt.plot(te,ee/1E6,color='blue',linewidth=2)
+#plt.plot(tt,et/1E6,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('energy (MJ)')
 
 plt.subplot(2,2,4)
-plt.scatter(te,sple,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k')
-plt.scatter(tt,splt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k')
+plt.scatter(te,sple,color='blue',marker='^',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
+#plt.scatter(tt,splt,color='red',marker='o',alpha=0.3,linewidth=0.3, edgecolor='k',s=50)
 plt.legend(['minimum energy', 'minimum time'], frameon=False)
-plt.plot(te,sple,color='blue')
-plt.plot(tt,splt,color='red')
+plt.plot(te,sple,color='blue',linewidth=2)
+#plt.plot(tt,splt,color='red',linewidth=2)
 plt.xlabel('time (s)')
 plt.ylabel('sound pressure level (db)')
 
-
+plt.savefig('s2_nfz.png', dpi=1200, bbox_inches='tight')
 plt.show()
-"""

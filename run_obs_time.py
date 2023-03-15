@@ -68,8 +68,8 @@ class RunModel(csdl.Model):
         self.add_constraint('final_h', equals=options['h_f'], scaler=1E-2)
 
         # min altitude constraint
-        self.register_output('min_h', csdl.min(h))
-        self.add_constraint('min_h', lower=options['min_h'])
+        #self.register_output('min_h', csdl.min(h))
+        #self.add_constraint('min_h', lower=options['min_h'])
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -129,14 +129,14 @@ class RunModel(csdl.Model):
         # for the minimum energy objective
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
-        self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=1.70,upper=1.9,scaler=1E0) # 1.4998 to 4.5
-        #self.add_objective('dt',scaler=1)
+        self.add_design_variable('control_z',lower=0, scaler=2E-3)
+        self.add_design_variable('dt',lower=2.002,upper=2.5,scaler=1E0) # 1.4998 to 4.5
+        self.add_objective('dt',scaler=1)
         #self.add_objective('energy',scaler=1E-4)
         
-        obj = -1*dt
-        self.register_output('obj',obj)
-        self.add_objective('obj')
+        #obj = -1*dt
+        #self.register_output('obj',obj)
+        #self.add_objective('obj')
 
 
 
@@ -150,7 +150,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=40, ftol=1E-2)
+optimizer = SLSQP(prob, maxiter=30, ftol=1E-3)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
