@@ -126,25 +126,18 @@ class RunModel(csdl.Model):
 num = 40
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
-sim.run()
+#sim.run()
 #sim.check_partials(compact_print=False)
 #sim.check_totals(step=1E-6)
-"""
+
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
 optimizer = SLSQP(prob, maxiter=1000, ftol=1E-4)
-#optimizer = SNOPT(prob,Major_iterations=1000,
-#                    Major_optimality=1e-7,
-#                    Major_feasibility=1E-7,
-#                    append2file=True,
-#                    Linesearch_tolerance=0.99,
-#                    #Hessian_frequency=10,
-#                    Major_step_limit=0.1
-#                    )
+#optimizer = SNOPT(prob,Major_iterations=1000,Major_optimality=1e-7,Major_feasibility=1E-7,append2file=True,Linesearch_tolerance=0.99,Hessian_frequency=10,Major_step_limit=0.1)
 optimizer.solve()
 optimizer.print_results()
 # plot states from integrator
 plt.show()
-"""
+
 # post-process results and generate plots
 post(sim=sim, options=options)
 
