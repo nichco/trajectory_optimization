@@ -87,8 +87,8 @@ class RunModel(csdl.Model):
         self.register_output('max_dtheta',csdl.max(dtheta))
         self.register_output('theta',theta)
         self.register_output('max_theta',csdl.max((theta**2)**0.5))
-        self.add_constraint('max_theta',upper=np.deg2rad(20))
-        # self.register_output('initial_theta',theta[0])
+        self.add_constraint('max_theta',upper=np.deg2rad(30))
+        self.register_output('initial_theta',theta[0])
         # self.add_constraint('initial_theta',equals=options['theta_0'])
         self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
@@ -100,9 +100,9 @@ class RunModel(csdl.Model):
         
         # acceleration constraints
         self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
-        # self.register_output('final_dv',dv[-1])
+        self.register_output('final_dv',dv[-1])
         # self.add_constraint('max_g',upper=options['max_g'])
-        # self.add_constraint('final_dv',equals=0.0)
+        self.add_constraint('final_dv',equals=0.0)
         
         # acoustic constraints
         self.add(tonal(options=options,num=num), name='tonal')
@@ -118,8 +118,8 @@ class RunModel(csdl.Model):
         self.register_output('min_obs_res',csdl.min(obs_res))
         self.add_constraint('min_obs_res',lower=0.0,scaler=1E-1)
         
-        #self.register_output('x8',x[9])
-        #self.add_constraint('x8',upper=85,scaler=1E-2)
+        #self.register_output('x9',x[9])
+        #self.add_constraint('x9',upper=120,scaler=1E-2)
         #self.print_var(x[9])
         
         # compute total energy
@@ -134,10 +134,10 @@ class RunModel(csdl.Model):
         self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
-        self.add_design_variable('dt',lower=2.0,upper=2.5,scaler=1E-1) # 1.4998 to 4.5
-        self.add_objective('dt',scaler=1)
-        #self.add_objective('energy',scaler=1E-4)
-        
+        self.add_design_variable('dt',lower=1.983,upper=1.9849,scaler=1E0) # 1.4998 to 4.5
+        #self.add_objective('dt',scaler=1)
+        self.add_objective('energy',scaler=1E-4)
+
         #obj = -1*dt
         #self.register_output('obj',obj)
         #self.add_objective('obj')
@@ -154,7 +154,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=3000, ftol=1E-3)
+optimizer = SLSQP(prob, maxiter=3000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=1000,
 #                    Major_optimality=1e-7,
 #                    Major_feasibility=1E-7,
