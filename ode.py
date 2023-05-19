@@ -29,7 +29,7 @@ class ODESystemModel(csdl.Model):
         control_z = self.declare_variable('control_z', shape=(n))
         alpha = self.declare_variable('control_alpha', shape=(n))
         m = options['mass']
-        g = options['gravity']
+        g = 9.81
         num_lift_rotors = options['num_lift_rotors']
         
         # add aerodynamic model
