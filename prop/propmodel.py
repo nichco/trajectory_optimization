@@ -89,7 +89,7 @@ class Prop(csdl.Model):
         rho = self.declare_variable('density', shape=(num), val=1.225)
         n = rpm/60
         self.register_output(name + '_thrust', C_T*rho*(n**2)*(d**4))
-        self.register_output(name + '_power', C_P*rho*(n**3)*(d**5))
+        self.register_output(name + 'power', C_P*rho*(n**3)*(d**5))
 
 
 

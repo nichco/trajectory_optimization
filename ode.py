@@ -6,6 +6,7 @@ from rotors.rotor import rotor
 from motors.motor_explicit import motor
 import numpy as np
 import python_csdl_backend
+from prop.propmodel import Prop
 
 
 class ODESystemModel(csdl.Model):
@@ -50,6 +51,7 @@ class ODESystemModel(csdl.Model):
         TC = self.declare_variable(cname+'thrust', shape=(n))
         cruisepower = self.declare_variable(cname+'power', shape=(n))
 
+        """
         lname = 'lift'
         self.register_output(lname+'vAxial',v*csdl.sin(alpha))
         self.register_output(lname+'vTan',v*csdl.cos(alpha))
@@ -62,6 +64,20 @@ class ODESystemModel(csdl.Model):
         TL = num_lift_rotors*TL_s
         liftpower_s = self.declare_variable(lname+'power', shape=(n))
         liftpower = num_lift_rotors*liftpower_s
+        """
+
+        lname = 'lift'
+        self.register_output('lift_vaxial', (v*csdl.sin(alpha)))
+        self.register_output('lift_vtan', ((v*csdl.cos(alpha))**2)**0.5)
+        self.register_output('lift_rpm', 1*control_z)
+        self.add(Prop(name='lift', num_nodes=n, d=options['lift_rotor_diameter']), name='LiftProp', 
+                 promotes=['lift_thrust', 'liftpower', 'lift_rpm', 'lift_vaxial', 'lift_vtan', 'density'])
+        TL = lift_thrust = 8*self.declare_variable('lift_thrust', shape=(n))
+        liftpower = 8*self.declare_variable('liftpower', shape=(n))
+
+        self.register_output('liftm',1*control_z) # rotations per minute for motor model
+        self.add(motor(name='lift',num_nodes=n), name='lift_motor')
+        lifteta = self.declare_variable('lifteta',shape=(n))
 
 
 

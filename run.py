@@ -59,9 +59,9 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_power', csdl.max(10*cruisepower)/10)
         self.register_output('max_lift_power', csdl.max(10*liftpower)/10)
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
+        #self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
         self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
-        self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
+        #self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -69,19 +69,18 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(100*h)/100)
-        self.add_constraint('min_h', lower=options['min_h'])
+        self.add_constraint('min_h', lower=-0.01)
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
         self.add_constraint('final_v',equals=options['v_f'],scaler=1E-2)
         
         # pitch angle constraints
-        #theta = gamma + alpha
+        theta = self.register_output('theta', gamma + alpha)
         #dtheta = self.create_output('dtheta',shape=(num-1,), val=0)
         #for i in range(1,num):
         #    dtheta[i-1] = (((theta[i] - theta[i-1])/dt)**2)**0.5
         #self.register_output('max_dtheta',csdl.max(dtheta))
-        #self.register_output('theta',theta)
         #self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(20))
         #self.register_output('initial_theta',theta[0])
@@ -131,9 +130,6 @@ options['num_lift_blades'] = 2
 options['energy_scale'] = 0.0001 # scale energy for plotting
 
 # mission parameters
-options['gravity'] = 9.81 # (m/s^2)
-options['v_0'] = 0.625 # 4 (m/s)
-options['min_h'] = -0.1 # (m)
 options['alpha_0'] = 0 # (rad)
 options['h_f'] = 300 # (m)
 options['v_f'] = 58 # 43 (m/s)
@@ -141,43 +137,36 @@ options['vne'] = 65 # (m/s)
 options['x_lim'] = 5000 # (m)
 options['theta_0'] = 0.0 # (rad)
 options['gamma_f'] = 0.0 # (rad)
-options['max_g'] = 0.5 # (g)
 
-options['dt'] = 2.15999432
+options['dt'] = 2.86300868
 
-options['control_x_i'] = np.array([1478.49611216,1480.98178811,1529.61277261,1573.22831274,1605.33023483,
- 1630.98581331,1325.68386461,1287.46910033,1339.86743696,1263.6562584 ,
- 1251.32535487,1241.39490916,1212.17821459,1204.65166484,1199.24128993,
- 1186.5037763 ,1190.63105459,1193.85537146,1195.69973551,1196.65021426,
- 1199.04350553,1200.86596124,1201.85349357,1202.13528782,1202.52075349,
- 1203.72357223,1205.51812862,1207.28826333,1208.69326616,1209.64616944,
- 1209.92608225,1208.74462395,1204.64875896,1195.3825217 ,1178.85084849,
- 1149.08723753,1106.09261556,1024.90212253,1037.64371144, 665.06722568])
-options['control_z_i'] = np.array([1.12996275e+03,1.03291990e+03,1.10774032e+03,7.87463530e+02,
- 7.38730531e+02,4.98149648e+02,9.42650213e+01,9.09921098e-14,
- 1.03100208e+01,5.81990551e-01,1.00975439e-03,1.82794555e-03,
- 1.99846882e-04,4.84163052e-04,4.99547738e-04,4.22227666e-04,
- 5.72542284e-04,5.28382585e-04,6.57981121e-04,6.30165102e-04,
- 6.65704540e-04,6.72547897e-04,6.78140703e-04,6.78543610e-04,
- 6.77427651e-04,6.73575235e-04,6.72091758e-04,6.70816729e-04,
- 6.61888690e-04,6.42643649e-04,6.17300104e-04,5.90248487e-04,
- 5.63600334e-04,5.37170528e-04,5.04523290e-04,4.80961544e-04,
- 4.22227264e-04,4.69403469e-04,5.58653981e-04,0.00000000e+00])
-options['control_alpha_i'] = np.array([ 2.00489587e-19,-1.38948540e+00,-4.92507868e-01, 1.21928731e-01,
-  1.60088633e-01, 1.67457851e-01, 1.06928339e-01, 8.45766132e-02,
-  6.63405209e-02, 6.24369994e-02, 2.96994876e-02, 4.77539534e-02,
-  1.58138088e-02, 1.69457624e-02, 1.57000891e-02, 7.65332356e-03,
-  3.86478765e-03, 4.24245210e-04, 4.71990672e-03,-1.54203055e-03,
- -6.05797343e-03,-4.02878599e-03,-3.63357340e-03,-3.68309723e-03,
- -4.50940955e-03,-5.88538858e-03,-5.57637775e-03,-3.51755127e-03,
- -1.69293155e-03,-9.49276183e-04,-3.49339094e-04, 1.36294799e-03,
-  4.75339048e-03, 8.62854176e-03, 1.13839880e-02, 1.61076942e-02,
-  2.12016572e-02, 3.06008921e-02,-2.59336189e-02, 3.65392444e-02])
+options['control_x_i'] = np.array([1102.12682829, 184.44061268, 343.09978951,1292.05537858,1297.44949729,
+ 1279.56875063,1211.42475592,1196.85597471,1176.63991584,1165.62468441,
+ 1156.8184399 ,1154.0785229 ,1155.63754313,1160.89215887,1165.75787773,
+ 1170.53528197,1172.14318389,1174.12242365,1175.67388567,1177.03212989,
+ 1178.71475611,1179.86952604,1182.80048761,1189.71184813,1192.76210608,
+ 1189.90506546,1171.84874995,1102.97130014, 994.89702246, 968.36637858])
+options['control_z_i'] = np.array([1.09350496e+03,9.19060570e+02,1.40145995e+03,4.93983466e+02,
+ 2.89541639e-15,3.33779732e+01,1.40258207e+01,8.71515916e+01,
+ 9.99821607e+01,1.04791175e+02,9.30850071e+01,8.39650259e+01,
+ 3.26498850e+01,3.96773343e+00,1.57741787e+00,1.96382486e+00,
+ 2.12730338e+00,2.00659518e+00,1.88375993e+00,1.94179131e+00,
+ 2.10977038e+00,2.30250834e+00,2.09756585e+00,1.25871708e+00,
+ 3.46627780e-01,8.64863323e-03,2.72078697e-05,0.00000000e+00,
+ 6.72295197e-02,2.34358307e-01])
+options['control_alpha_i'] = np.array([ 1.45076942e-01,-1.57079633e+00,-1.06766898e+00, 1.20888520e-01,
+  1.39386888e-01, 1.12237265e-01, 3.20175095e-02, 3.32461297e-02,
+  2.14253566e-02, 1.22345742e-02, 4.46800127e-03, 2.15306907e-03,
+  4.18990757e-03,-8.48910377e-04,-3.17620705e-03,-5.53209765e-03,
+ -4.55569694e-03,-4.48500450e-03,-4.66600432e-03,-4.14648147e-03,
+ -5.27258261e-03,-4.97267092e-03,-3.77550455e-03,-1.57033635e-03,
+  4.11636770e-03, 1.26055595e-02, 2.33319283e-02, 2.53408338e-02,
+ -1.05117193e-02,-7.15975001e-02])
 
 
 
 # ode problem instance
-num = 40
+num = 30
 ODEProblem = ODEProblemTest('RK4', 'time-marching', num_times=num, display='default', visualization='end')
 sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.run()
@@ -185,7 +174,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-4)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-6)
 #optimizer = SNOPT(prob,Major_iterations=1000,Major_optimality=1e-7,Major_feasibility=1E-7,append2file=True,Linesearch_tolerance=0.99,Hessian_frequency=10,Major_step_limit=0.1)
 optimizer.solve()
 optimizer.print_results()
@@ -196,5 +185,6 @@ plt.show()
 post(sim=sim, options=options)
 
 
-print(np.array2string(sim['e']/options['energy_scale'],separator=','))
-print(np.array2string(sim['max_spl_gl'].flatten(),separator=','))
+print(np.array2string(sim['control_x'],separator=','))
+print(np.array2string(sim['control_z'],separator=','))
+print(np.array2string(sim['control_alpha'],separator=','))
