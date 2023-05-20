@@ -65,7 +65,7 @@ class RunModel(csdl.Model):
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
-        self.add_constraint('final_h', equals=options['h_f'], scaler=1E-3)
+        self.add_constraint('final_h', equals=300, scaler=1E-2)
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(100*h)/100)
@@ -83,20 +83,20 @@ class RunModel(csdl.Model):
         #self.register_output('max_dtheta',csdl.max(dtheta))
         #self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(20))
-        #self.register_output('initial_theta',theta[0])
-        #self.add_constraint('initial_theta',equals=options['theta_0'])
+        self.register_output('initial_theta',theta[0])
+        self.add_constraint('initial_theta',equals=0)
         #self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
-        #self.register_output('final_gamma',gamma[-1])
+        self.register_output('final_gamma', gamma[-1])
         #self.register_output('final_dgamma',dgamma[-1])
-        #self.add_constraint('final_gamma',equals=options['gamma_f'])
+        self.add_constraint('final_gamma', equals=0)
         #self.add_constraint('final_dgamma',equals=0.0)
         
         # acceleration constraints
-        #self.register_output('max_g',csdl.max(((dv**2)**0.5)/options['gravity']))
+        self.register_output('g', csdl.max(100*((dv**2)**0.5)/9.81)/100)
         #self.register_output('final_dv',dv[-1])
-        #self.add_constraint('max_g',upper=options['max_g'])
+        self.add_constraint('g', upper=0.5)
         #self.add_constraint('final_dv',equals=0.0)
         
         # compute total energy
@@ -130,13 +130,8 @@ options['num_lift_blades'] = 2
 options['energy_scale'] = 0.0001 # scale energy for plotting
 
 # mission parameters
-options['alpha_0'] = 0 # (rad)
-options['h_f'] = 300 # (m)
 options['v_f'] = 58 # 43 (m/s)
 options['vne'] = 65 # (m/s)
-options['x_lim'] = 5000 # (m)
-options['theta_0'] = 0.0 # (rad)
-options['gamma_f'] = 0.0 # (rad)
 
 options['dt'] = 2.86300868
 
@@ -174,7 +169,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-6)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-8)
 #optimizer = SNOPT(prob,Major_iterations=1000,Major_optimality=1e-7,Major_feasibility=1E-7,append2file=True,Linesearch_tolerance=0.99,Hessian_frequency=10,Major_step_limit=0.1)
 optimizer.solve()
 optimizer.print_results()

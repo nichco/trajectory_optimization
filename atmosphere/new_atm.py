@@ -11,7 +11,7 @@ class Atm(csdl.Model):
         n = self.parameters['num_nodes']
         
         h = self.declare_variable('h', shape=n)
-        
+        v = self.declare_variable('v', shape=n)
         
         g = 9.806 # m/(s^2)
         a = -6.5E-3 # K/m
@@ -21,19 +21,17 @@ class Atm(csdl.Model):
         R = 287 # J/(Kg-K) gas constant
         
         temperature = Ts + a*h
-        
         pressure = Ps*((temperature/Ts)**((-g)/(a*R)))
-        
         density = rhoS*((temperature/Ts)**(-((g/(a*R)) + 1)))
 
         # speed of sound
         gamma = 1.4
         a = (gamma * R * temperature)**0.5
 
-
         self.register_output('pressure', pressure)
         self.register_output('density', density)
         self.register_output('speed_of_sound', a)
+        self.register_output('mach', v/a)
 
 
 
