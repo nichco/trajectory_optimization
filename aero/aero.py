@@ -15,7 +15,7 @@ class aero(csdl.Model):
 
         s = options['wing_area']
 
-        alpha = self.declare_variable('control_alpha', shape=n)
+        alpha = self.declare_variable('alpha', shape=n)
         self.register_output('alpha_w', 1*alpha)
 
         #self.add(Atm(num_nodes=n), name='atmosphere')

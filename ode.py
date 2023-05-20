@@ -26,14 +26,15 @@ class ODESystemModel(csdl.Model):
         x = self.create_input('x', shape=n)
         e = self.create_input('e', shape=n)
         # parameters are inputs
-        control_x = self.declare_variable('control_x', shape=(n))
-        control_z = self.declare_variable('control_z', shape=(n))
-        alpha = self.declare_variable('control_alpha', shape=(n))
+        ux = self.declare_variable('control_x', shape=(n))
+        uz = self.declare_variable('control_z', shape=(n))
+        ua = self.declare_variable('control_alpha', shape=(n))
         m = options['mass']
         g = 9.81
+        alpha = 1*ua
         
         # add aerodynamic model
-        self.add(Atm(num_nodes=n), name='Atm')
+        self.add(Atm(num_nodes=n), name='atm')
         self.add(aero(num_nodes=n, options=options), name='aero')
         #self.add(Aero(num_nodes=n, wing_area=options['wing_area']), name='Aero')
         L = self.declare_variable('lift', shape=(n))
@@ -42,10 +43,10 @@ class ODESystemModel(csdl.Model):
         # rotor and motor models
         
         cname = 'cruise'
-        self.register_output(cname+'vAxial',((v*csdl.cos(alpha))**2)**0.5)
-        self.register_output(cname+'vTan',((v*csdl.sin(alpha))**2)**0.5)
-        self.register_output(cname+'n',1*control_x/60) # rotations per second for rotor model
-        self.register_output(cname+'m',1*control_x) # rotations per minute for motor model
+        self.register_output(cname+'vAxial', v*csdl.cos(alpha))
+        self.register_output(cname+'vTan', ((v*csdl.sin(alpha))**2)**0.5)
+        self.register_output(cname+'n',1*ux/60) # rotations per second for rotor model
+        self.register_output(cname+'m',1*ux) # rotations per minute for motor model
         self.add(rotor(name=cname,options=options,num_nodes=n), name=cname+'rotor')
         self.add(motor(name=cname,num_nodes=n), name=cname+'motor')
         cruiseeta = self.declare_variable(cname+'eta',shape=(n))
@@ -69,33 +70,30 @@ class ODESystemModel(csdl.Model):
         lname = 'lift'
         self.register_output(lname+'vAxial',v*csdl.sin(alpha))
         self.register_output(lname+'vTan',v*csdl.cos(alpha))
-        self.register_output(lname+'n',1*control_z/60) # rotations per second for rotor model
-        self.register_output(lname+'m',1*control_z) # rotations per minute for motor model
+        self.register_output(lname+'n',1*uz/60) # rotations per second for rotor model
+        self.register_output(lname+'m',1*uz) # rotations per minute for motor model
         self.add(rotor(name=lname,options=options,num_nodes=n), name=lname+'rotor')
         self.add(motor(name=lname,num_nodes=n), name=lname+'motor')
         lifteta = self.declare_variable(lname+'eta',shape=(n))
         TL_s = self.declare_variable(lname+'thrust', shape=(n))
-        TL = num_lift_rotors*TL_s
+        TL = 8*TL_s
         liftpower_s = self.declare_variable(lname+'power', shape=(n))
-        liftpower = num_lift_rotors*liftpower_s
+        liftpower = 8*liftpower_s
         """
 
-
-        self.register_output('lift_vaxial', (v*csdl.sin(alpha)))
+        
+        self.register_output('lift_vaxial', v*csdl.sin(alpha))
         self.register_output('lift_vtan', ((v*csdl.cos(alpha))**2)**0.5)
-        self.register_output('lift_rpm', 1*control_z)
+        self.register_output('lift_rpm', 1*uz)
         self.add(Prop(name='lift', num_nodes=n, d=options['lift_rotor_diameter']), name='LiftProp', 
                  promotes=['lift_thrust', 'liftpower', 'lift_rpm', 'lift_vaxial', 'lift_vtan', 'density'])
         TL = 8*self.declare_variable('lift_thrust', shape=(n))
         liftpower = 8*self.declare_variable('liftpower', shape=(n))
 
-        self.register_output('liftm',1*control_z) # rotations per minute for motor model
+        self.register_output('liftm',1*uz) # rotations per minute for motor model
         self.add(motor(name='lift',num_nodes=n), name='lift_motor')
         lifteta = self.declare_variable('lifteta',shape=(n))
-
-
-
-
+        
 
 
         
@@ -121,8 +119,7 @@ class ODESystemModel(csdl.Model):
        
 if __name__ == '__main__':
 
-    from parameters import options
-
+    options = {}
 
     # run model
     sim = python_csdl_backend.Simulator(ODESystemModel(num_nodes=30,options=options))

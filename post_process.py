@@ -25,7 +25,7 @@ def post(sim, options):
     control_z = sim['control_z']
     cruisepower = sim['cruisepower']
     liftpower = sim['liftpower']
-    theta = sim['theta']
+    #theta = sim['theta']
     
     
     # post-processing
@@ -35,7 +35,7 @@ def post(sim, options):
     ax1.legend(['v'])
     
     ax2.plot(gamma,color='g')
-    ax2.plot(theta,color='r')
+    #ax2.plot(theta,color='r')
     ax2.legend(['gamma','theta'])
     
     ax3.plot(h,color='r')
