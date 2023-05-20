@@ -1,15 +1,14 @@
 from smt.surrogate_models import RBF
 import numpy as np
-from parameters_obs_time import options
 
 
 n = 3500
 x_lim = 12000.0 # (m)
-be = options['be']
-pi = options['p_i']
-pf = options['p_f']
-bf = options['p_f'] + 500
-obs_height = options['obs_height']
+be = 10
+pi = 100
+pf = 12000
+bf = pf + 500
+obs_height = 100
 x = np.linspace(0,x_lim,n)
 obs = np.zeros((n))
 
@@ -33,6 +32,7 @@ sm_obs.train()
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    plt.rcParams.update(plt.rcParamsDefault)
 
     num = 10000
     x_p = np.linspace(0,x_lim,num)

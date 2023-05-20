@@ -7,6 +7,7 @@ from modopt.scipy_library import SLSQP
 #from modopt.snopt_library import SNOPT
 from modopt.csdl_library import CSDLProblem
 from post_process import post
+from obs_explicit import obs
 import matplotlib.pyplot as plt
 plt.rcParams.update(plt.rcParamsDefault)
 
@@ -29,7 +30,7 @@ class RunModel(csdl.Model):
         self.create_input('control_z',options['control_z_i'])
         self.create_input('control_alpha',options['control_alpha_i'])
         # initial conditions for states
-        self.create_input('v_0', 0.1)
+        self.create_input('v_0', 0.001)
         self.create_input('gamma_0', 0)
         self.create_input('h_0', 0)
         self.create_input('x_0', 0)
@@ -59,9 +60,7 @@ class RunModel(csdl.Model):
         self.register_output('max_cruise_power', csdl.max(10*cruisepower)/10)
         self.register_output('max_lift_power', csdl.max(10*liftpower)/10)
         self.add_constraint('max_cruise_power', upper=options['max_cruise_power'], scaler=1E-6)
-        #self.add_constraint('cruisepower', upper=options['max_cruise_power'], scaler=1E-6)
         self.add_constraint('max_lift_power', upper=options['max_lift_power'], scaler=1E-6)
-        #self.add_constraint('liftpower', upper=options['max_lift_power'], scaler=1E-6)
 
         # final altitude constraint
         self.register_output('final_h', h[-1])
@@ -69,7 +68,7 @@ class RunModel(csdl.Model):
 
         # min altitude constraint
         self.register_output('min_h', csdl.min(100*h)/100)
-        self.add_constraint('min_h', lower=-0.01)
+        #self.add_constraint('min_h', lower=-0.01)
 
         # final velocity constraint
         self.register_output('final_v',v[-1])
@@ -83,21 +82,28 @@ class RunModel(csdl.Model):
         #self.register_output('max_dtheta',csdl.max(dtheta))
         #self.register_output('max_theta',csdl.max((theta**2)**0.5))
         #self.add_constraint('max_theta',upper=np.deg2rad(20))
-        self.register_output('initial_theta',theta[0])
-        self.add_constraint('initial_theta',equals=0)
+        #self.register_output('initial_theta',theta[0])
+        #self.add_constraint('initial_theta',equals=0)
         #self.add_constraint('max_dtheta',upper=np.deg2rad(15))
         
         # flight path angle constraints
-        self.register_output('final_gamma', gamma[-1])
+        #self.register_output('final_gamma', gamma[-1])
         #self.register_output('final_dgamma',dgamma[-1])
-        self.add_constraint('final_gamma', equals=0)
+        #self.add_constraint('final_gamma', equals=0)
         #self.add_constraint('final_dgamma',equals=0.0)
         
         # acceleration constraints
-        self.register_output('g', csdl.max(100*((dv**2)**0.5)/9.81)/100)
+        #self.register_output('g', csdl.max(100*((dv**2)**0.5)/9.81)/100)
         #self.register_output('final_dv',dv[-1])
-        self.add_constraint('g', upper=0.5)
+        #self.add_constraint('g', upper=0.5)
         #self.add_constraint('final_dv',equals=0.0)
+
+        eps = 1E-1
+        self.add(obs(num_nodes=num))
+        obsi = self.declare_variable('obsi',shape=(num))
+        obs_res = h - (obsi - eps)
+        self.register_output('min_obs_res', csdl.min(1000*obs_res)/1000)
+        self.add_constraint('min_obs_res', lower=0)
         
         # compute total energy
         energy = e[-1]
@@ -107,7 +113,7 @@ class RunModel(csdl.Model):
         
         
         # for the minimum energy objective
-        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=4)
+        self.add_design_variable('control_alpha',lower=-np.pi/2,upper=np.pi/2,scaler=6)
         self.add_design_variable('control_x',lower=0, scaler=1E-3)
         self.add_design_variable('control_z',lower=0, scaler=1E-3)
         self.add_design_variable('dt',lower=2.0,scaler=1E-1)
@@ -128,11 +134,7 @@ options['num_lift_rotors'] = 8
 options['num_cruise_blades'] = 3
 options['num_lift_blades'] = 2
 options['energy_scale'] = 0.0001 # scale energy for plotting
-
-# mission parameters
 options['v_f'] = 58 # 43 (m/s)
-options['vne'] = 65 # (m/s)
-
 options['dt'] = 2.86300868
 
 options['control_x_i'] = np.array([1102.12682829, 184.44061268, 343.09978951,1292.05537858,1297.44949729,
@@ -169,7 +171,7 @@ sim = python_csdl_backend.Simulator(RunModel(options=options), analytics=0)
 #sim.check_totals(step=1E-6)
 
 prob = CSDLProblem(problem_name='Trajectory Optimization', simulator=sim)
-optimizer = SLSQP(prob, maxiter=1000, ftol=1E-8)
+optimizer = SLSQP(prob, maxiter=1000, ftol=1E-5)
 #optimizer = SNOPT(prob,Major_iterations=1000,Major_optimality=1e-7,Major_feasibility=1E-7,append2file=True,Linesearch_tolerance=0.99,Hessian_frequency=10,Major_step_limit=0.1)
 optimizer.solve()
 optimizer.print_results()

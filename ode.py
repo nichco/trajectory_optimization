@@ -1,5 +1,5 @@
 import csdl
-#from aero.aero import aero
+from aero.aero import aero
 from aero.aeromodel import Aero
 from rotors.rotor import rotor
 from motors.motor_explicit import motor
@@ -31,13 +31,11 @@ class ODESystemModel(csdl.Model):
         alpha = self.declare_variable('control_alpha', shape=(n))
         m = options['mass']
         g = 9.81
-        num_lift_rotors = options['num_lift_rotors']
         
         # add aerodynamic model
         self.add(Atm(num_nodes=n), name='Atm')
-        #self.add(aero(num_nodes=n, options=options), name='aero')
-        self.add(Aero(num_nodes=n, wing_area=options['wing_area']), name='Aero')
-        # define outputs from aerodynamic model
+        self.add(aero(num_nodes=n, options=options), name='aero')
+        #self.add(Aero(num_nodes=n, wing_area=options['wing_area']), name='Aero')
         L = self.declare_variable('lift', shape=(n))
         D = self.declare_variable('drag', shape=(n))
 
@@ -102,7 +100,6 @@ class ODESystemModel(csdl.Model):
 
         
         # system of ODE's
-        # dv = (TC/m)*csdl.cos(alpha) + (TL/m)*csdl.sin(alpha) - (D/m) - g*csdl.sin(gamma) # oops
         dv = (TC/m)*csdl.cos(alpha) - (TL/m)*csdl.sin(alpha) - (D/m) - g*csdl.sin(gamma)
         dgamma = (TC/(m*v))*csdl.sin(alpha) + (TL/(m*v))*csdl.cos(alpha) + (L/(m*v)) - (g*csdl.cos(gamma)/v)
         dh = v*csdl.sin(gamma)
